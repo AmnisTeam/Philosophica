@@ -610,10 +610,10 @@ RectTransform:
   m_Father: {fileID: 2120387568}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 10.1}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -134, y: 18}
-  m_SizeDelta: {x: 1023.2, y: 1390.42}
+  m_SizeDelta: {x: 1023.2, y: 310.42004}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &978281765
 MonoBehaviour:
@@ -907,7 +907,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6197436325962102680, guid: 48484ace79986e84e9607f2dd937f47d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -132.9
+      value: -132.90002
       objectReference: {fileID: 0}
     - target: {fileID: 6197436325962102680, guid: 48484ace79986e84e9607f2dd937f47d, type: 3}
       propertyPath: m_AnchoredPosition.y
