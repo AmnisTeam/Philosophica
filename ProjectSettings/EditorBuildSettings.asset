@@ -8,4 +8,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Game.unity
+    guid: c201dfd2c8990734696b20bcca1acc08
+  - enabled: 1
+    path: Assets/Scenes/CreateLobby.unity
+    guid: aaaf48778221a7446b5b557213636478
+  - enabled: 1
+    path: Assets/Scenes/Settings.unity
+    guid: 65ea0d40d72096a48bf5ed641f88468d
+  - enabled: 1
+    path: Assets/Scenes/FindGame.unity
+    guid: eefce175c06a258418d1889c940a20e4
   m_configObjects: {}
