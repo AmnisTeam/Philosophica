@@ -6,11 +6,12 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
+[System.Serializable]
 public class Region : MonoBehaviour
 {
     public Color regionColor;
     //public int nBorderPoints;
-    public Vector3[] borderPoints;
+    public List<Vector3> points = new List<Vector3>();
 
     private Mesh mesh;
 
@@ -65,9 +66,9 @@ public class Region : MonoBehaviour
 
     void Triangulate()
     {
-        vertices = new Vector3[borderPoints.Length];
+        vertices = new Vector3[points.Count];
         for (int i = 0; i < vertices.Length; i++)
-            vertices[i] = borderPoints[i];
+            vertices[i] = points[i];
 
         indices = new int[(vertices.Length - 2) * 3];
         int currentIndicesCount = 0;
@@ -125,25 +126,25 @@ public class Region : MonoBehaviour
         indices[currentIndicesCount++] = indexList[2];
     }
 
-    void CreateShape()
+    void CreateShapeOld()
     {
         Vector3 midPoint = new Vector3(0, 0, 0);
-        for (int i = 0; i < borderPoints.Length; i++)
-            midPoint += borderPoints[i];
-        midPoint /= (float)borderPoints.Length;
+        for (int i = 0; i < points.Count; i++)
+            midPoint += points[i];
+        midPoint /= (float)points.Count;
 
 
-        vertices = new Vector3[borderPoints.Length + 1];
+        vertices = new Vector3[points.Count + 1];
         for(int i = 0; i < vertices.Length; i++)
         {
-            if (i < borderPoints.Length)
-                vertices[i] = borderPoints[i];
+            if (i < points.Count)
+                vertices[i] = points[i];
             else
                 vertices[i] = midPoint;
         }
 
 
-        int indicesCount = borderPoints.Length * 3;
+        int indicesCount = points.Count * 3;
         indices = new int[indicesCount];
 
         int nTriangles = indices.Length / 3;
@@ -165,84 +166,47 @@ public class Region : MonoBehaviour
         }
         Color shadowColor = regionColor * 0.7f;
 
-        colors = new Color[borderPoints.Length + 1];
+        colors = new Color[points.Count + 1];
         for (int i = 0; i < colors.Length; i++)
         {
-            if (i < borderPoints.Length)
+            if (i < points.Count)
                 colors[i] = shadowColor;
             else
                 colors[i] = regionColor;
         }
-
-
-        //vertices = new Vector3[]
-        //{
-        //    new Vector3 (-1, -1, 0),
-        //    new Vector3 (0, 1, 0),
-        //    new Vector3 (1, -1, 0)
-        //};
-
-        //indices = new int[]
-        //{
-        //    0, 1, 2
-        //};
     }
 
-    void CreateShape2()
+    void CreateShape()
     {
         Triangulate();
 
         Color shadowColor = regionColor * 0.7f;
 
-        colors = new Color[borderPoints.Length];
+        colors = new Color[points.Count];
         for (int i = 0; i < colors.Length; i++)
             colors[i] = regionColor;
     }
 
-    void UpdateMesh()
+    public void UpdateMesh()
     {
-        mesh.Clear();
+        if (points.Count >= 3)
+        {
+            if (mesh == null)
+                mesh = new Mesh();
+            CreateShape();
+            mesh.Clear();
 
-        mesh.vertices = vertices;
-        mesh.triangles = indices;
-        mesh.colors = colors;
+            mesh.vertices = vertices;
+            mesh.triangles = indices;
+            mesh.colors = colors;
 
-        mesh.RecalculateNormals();
+            mesh.RecalculateNormals();
+
+            GetComponent<MeshFilter>().mesh = mesh;
+        }
     }
     void Start()
     {
-        //borderPoints = new Vector3[]
-        //{
-        //    new Vector3 (0, -1, 0),
-        //    new Vector3 (-0.5f, -2, 0),
-        //    new Vector3 (-1, -1, 0),
-        //    new Vector3 (-1, 1, 0),
-        //    new Vector3 (0, 2, 0),
-        //    new Vector3 (1, 1, 0),
-        //    new Vector3 (-1, 1, 0),
-        //    new Vector3 (-1, 0, 0),
-        //};
-
-        //borderPoints = new Vector3[]
-        //{
-        //    new Vector3 (-1, -1, 0),
-        //    new Vector3 (0, 1, 0),
-        //    new Vector3 (1, -1, 0)
-        //};
-
-        //borderPoints = new Vector3[]
-        //{
-        //    new Vector3 (-1, -1, 1),
-        //    new Vector3 (-3, -0.5f, 0),
-        //    new Vector3 (-2, 2, 0),
-        //    new Vector3 (0, 1, 0),
-        //    new Vector3 (1, -1, 0)
-        //};
-        //nBorderPoints = borderPoints.Length;
-
-        mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
-        CreateShape2();
         UpdateMesh();
     }
 

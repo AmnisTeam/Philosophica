@@ -9,7 +9,7 @@ public class RegionEditor : Editor
 {
     private RegionCreator regionCreator;
     private SelectionInfo selectionInfo;
-    private bool needsRepaint;
+    private bool regionChangedSinceLastRepaint;
 
     public override void OnInspectorGUI()
     {
@@ -21,7 +21,7 @@ public class RegionEditor : Editor
             for (int i = 0; i < regionCreator.shapes.Count; i++)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("Region " + i + 1);
+                GUILayout.Label("Region " + i);
 
                 GUI.enabled = i != selectionInfo.selectedShapeIndex;
                 if (GUILayout.Button("Select"))
@@ -34,17 +34,17 @@ public class RegionEditor : Editor
             }
         }
 
-
         if (shapeDeleteIndex != -1)
         {
-            Undo.RecordObject(regionCreator, "Delete shape");
+            //Undo.RecordObject(regionCreator, "Delete shape");
+            DestroyImmediate(regionCreator.shapes[shapeDeleteIndex]);
             regionCreator.shapes.RemoveAt(shapeDeleteIndex);
             selectionInfo.selectedShapeIndex = Mathf.Clamp(selectionInfo.selectedShapeIndex, 0, regionCreator.shapes.Count - 1);
         }
 
         if (GUI.changed)
         {
-            needsRepaint = true;
+            regionChangedSinceLastRepaint = true;
             SceneView.RepaintAll();
         }
     }
@@ -60,15 +60,15 @@ public class RegionEditor : Editor
         else
         {
             HandleInput(guiEvent);
-            if (needsRepaint)
+            if (regionChangedSinceLastRepaint)
                 HandleUtility.Repaint();
         }
     }
 
     private void CreateNewShape()
     {
-        Undo.RecordObject(regionCreator, "Create shape");
-        regionCreator.shapes.Add(new Shape());
+        //Undo.RecordObject(regionCreator, "Create shape");
+        regionCreator.shapes.Add(Instantiate(regionCreator.regionPrefab, regionCreator.transform));
         selectionInfo.selectedShapeIndex = regionCreator.shapes.Count - 1;
     }
 
@@ -81,18 +81,18 @@ public class RegionEditor : Editor
         SelectedShape.points.Insert(newPointIndex, position);
         selectionInfo.pointIndex = newPointIndex;
         selectionInfo.mouseOverShapeIndex = selectionInfo.selectedShapeIndex;
-        needsRepaint = true;
+        regionChangedSinceLastRepaint = true;
 
         SelectPointUnderMouse();
     }
 
     void DeletePointUnderMouse()
     {
-        Undo.RecordObject(regionCreator, "Delete point");
+        //Undo.RecordObject(regionCreator, "Delete point");
         SelectedShape.points.RemoveAt(selectionInfo.pointIndex);
         selectionInfo.pointIsSelected = false;
         selectionInfo.mouseIsOverPoint = false;
-        needsRepaint = true;
+        regionChangedSinceLastRepaint = true;
     }
 
     void SelectPointUnderMouse()
@@ -103,7 +103,7 @@ public class RegionEditor : Editor
         selectionInfo.lineIndex = -1;
 
         selectionInfo.positionAtStartOfDrag = SelectedShape.points[selectionInfo.pointIndex];
-        needsRepaint = true;
+        regionChangedSinceLastRepaint = true;
     }
 
     void SelectShapeUnderMouse()
@@ -111,7 +111,7 @@ public class RegionEditor : Editor
         if (selectionInfo.mouseOverShapeIndex != -1)
         {
             selectionInfo.selectedShapeIndex = selectionInfo.mouseOverShapeIndex;
-            needsRepaint = true;
+            regionChangedSinceLastRepaint = true;
         }
     }
 
@@ -170,12 +170,12 @@ public class RegionEditor : Editor
         if (selectionInfo.pointIsSelected)
         {
             SelectedShape.points[selectionInfo.pointIndex] = selectionInfo.positionAtStartOfDrag;
-            Undo.RecordObject(regionCreator, "Move point");
+            //Undo.RecordObject(regionCreator, "Move point");
             SelectedShape.points[selectionInfo.pointIndex] = mousePosition;
 
             selectionInfo.pointIsSelected = false; 
             selectionInfo.pointIndex = -1;
-            needsRepaint = true;
+            regionChangedSinceLastRepaint = true;
         }
     }
 
@@ -184,7 +184,7 @@ public class RegionEditor : Editor
         if (selectionInfo.pointIsSelected)
         {
             SelectedShape.points[selectionInfo.pointIndex] = mousePosition;
-            needsRepaint = true;
+            regionChangedSinceLastRepaint = true;
         }
     }
 
@@ -194,7 +194,7 @@ public class RegionEditor : Editor
         int mouseOverShapeIndex = -1;
         for (int shapeIndex = 0; shapeIndex < regionCreator.shapes.Count; shapeIndex++)
         {
-            Shape currentShape = regionCreator.shapes[shapeIndex];
+            Region currentShape = regionCreator.shapes[shapeIndex].GetComponent<Region>();
             for (int i = 0; i < currentShape.points.Count; i++)
             {
                 if (Vector3.Distance(mousePosition, currentShape.points[i]) < regionCreator.handleRadius)
@@ -211,7 +211,7 @@ public class RegionEditor : Editor
             selectionInfo.mouseOverShapeIndex = mouseOverShapeIndex;
             selectionInfo.pointIndex = mouseOverPointIndex;
             selectionInfo.mouseIsOverPoint = mouseOverPointIndex != -1;
-            needsRepaint = true;
+            regionChangedSinceLastRepaint = true;
         }
 
         if (selectionInfo.mouseIsOverPoint)
@@ -225,7 +225,7 @@ public class RegionEditor : Editor
             float closestLineDst = regionCreator.handleRadius;
             for (int shapeIndex = 0; shapeIndex < regionCreator.shapes.Count; shapeIndex++)
             {
-                Shape currentShape = regionCreator.shapes[shapeIndex];
+                Region currentShape = regionCreator.shapes[shapeIndex].GetComponent<Region>();
                 for (int i = 0; i < currentShape.points.Count; i++)
                 {
                     Vector3 nextPointInRegion = currentShape.points[(i + 1) % currentShape.points.Count];
@@ -247,7 +247,7 @@ public class RegionEditor : Editor
                 selectionInfo.mouseOverShapeIndex = mouseOverShapeIndex;
                 selectionInfo.lineIndex = mouseOverLineIndex;
                 selectionInfo.mouseIsOverLine = mouseOverLineIndex != -1;
-                needsRepaint = true; 
+                regionChangedSinceLastRepaint = true; 
             }
         }
     }
@@ -256,7 +256,7 @@ public class RegionEditor : Editor
     {
         for (int shapeIndex = 0; shapeIndex < regionCreator.shapes.Count; shapeIndex++)
         {
-            Shape shapeToDraw = regionCreator.shapes[shapeIndex];
+            Region shapeToDraw = regionCreator.shapes[shapeIndex].GetComponent<Region>();
             bool shapeIsSelected = shapeIndex == selectionInfo.selectedShapeIndex;
             bool mouseIsOverShape = shapeIndex == selectionInfo.mouseOverShapeIndex;
             Color deselectedShapeColor = Color.gray;
@@ -283,20 +283,24 @@ public class RegionEditor : Editor
                 Handles.DrawSolidDisc(shapeToDraw.points[i], Vector3.back, regionCreator.handleRadius);
             }
         }
-        needsRepaint = false;
+
+        if (regionChangedSinceLastRepaint)
+            regionCreator.UpdateMeshDisplay();
+        regionChangedSinceLastRepaint = false;
     }
 
     private void OnEnable()
     {
+        regionChangedSinceLastRepaint = true;
         regionCreator = target as RegionCreator;
         selectionInfo = new SelectionInfo();
-        Undo.undoRedoPerformed += OnUndoOrRedo;
+        //Undo.undoRedoPerformed += OnUndoOrRedo;
         Tools.hidden = true;
     }
 
     private void OnDisable()
     {
-        Undo.undoRedoPerformed -= OnUndoOrRedo;
+        //Undo.undoRedoPerformed -= OnUndoOrRedo;
         Tools.hidden = false;
     }
 
@@ -306,11 +310,11 @@ public class RegionEditor : Editor
             selectionInfo.selectedShapeIndex = regionCreator.shapes.Count - 1;
     }
 
-    Shape SelectedShape
+    Region SelectedShape
     {
         get
         {
-            return regionCreator.shapes[selectionInfo.selectedShapeIndex];
+            return regionCreator.shapes[selectionInfo.selectedShapeIndex].GetComponent<Region>();
         }
     }
     public class SelectionInfo
