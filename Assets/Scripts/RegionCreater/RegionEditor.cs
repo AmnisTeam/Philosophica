@@ -239,11 +239,13 @@ public class RegionEditor : Editor
         if (controlLeftMouseDown)
             SelectShapeUnderMouse();
 
+        if (leftMouseDrag)
+            DragPoint();
+
         if (leftMouseUp)
             EndMouseDragging();
 
-        if (leftMouseDrag)
-            DragPoint();
+ 
 
         if (!selectedPointInfo.isSelected)
             UpdateMouseOverInfo();
@@ -282,26 +284,158 @@ public class RegionEditor : Editor
         {
             selectedPointInfo.point = mouseInfo.positionAtStartOfDrag;
             Undo.RecordObject(regionCreator, "Move point");
-            selectedPointInfo.point = mouseInfo.position;
+            selectedPointInfo.point = FindClosestToMousePointOnLineOrPointExeptRegion(selectedRegionInfo.id);
             selectedPointInfo.Unselect();
             regionChangedSinceLastRepaint = true;
         }
+    }
+
+    private Vector3 FindClosestToMousePointOnLineAmongAllRegions()
+    {
+        int mouseOverLineIndex = -1;
+        float closestLineDst = regionCreator.handleRadius;
+        Vector3 closestPositionOnLine = mouseInfo.position;
+        for (int shapeIndex = 0; shapeIndex < regionCreator.shapes.Count; shapeIndex++)
+        {
+            Shape currentShape = regionCreator.shapes[shapeIndex];
+            for (int i = 0; i < currentShape.points.Count; i++)
+            {
+                Vector3 nextPointInRegion = currentShape.points[(i + 1) % currentShape.points.Count];
+
+                float dstFromMouseToLine = HandleUtility.DistancePointToLineSegment(mouseInfo.position.ToXY(),
+                    currentShape.points[i].ToXY(), nextPointInRegion.ToXY());
+
+                if (dstFromMouseToLine <= closestLineDst)
+                {
+                    closestLineDst = dstFromMouseToLine;
+                    mouseOverLineIndex = i;
+
+
+                    Vector3 line = nextPointInRegion - currentShape.points[i];
+                    Vector3 linePerpendicularDir = Vector3.Normalize(Vector3.Cross(line, new Vector3(0, 0, 1)));
+                    closestPositionOnLine = mouseInfo.position + linePerpendicularDir * dstFromMouseToLine;
+                }
+            }
+        }
+        return closestPositionOnLine;
+    }
+
+
+    private Vector3 FindClosestToMousePointOnLineExeptRegion(int regionId)
+    {
+        int mouseOverLineIndex = -1;
+        float closestLineDst = regionCreator.handleRadius;
+        Vector3 closestPositionOnLine = mouseInfo.position;
+        for (int shapeIndex = 0; shapeIndex < regionCreator.shapes.Count; shapeIndex++)
+        {
+            if (shapeIndex != regionId)
+            {
+                Shape currentShape = regionCreator.shapes[shapeIndex];
+                for (int i = 0; i < currentShape.points.Count; i++)
+                {
+                    Vector3 nextPointInRegion = currentShape.points[(i + 1) % currentShape.points.Count];
+
+                    float dstFromMouseToLine = HandleUtility.DistancePointToLineSegment(mouseInfo.position.ToXY(),
+                        currentShape.points[i].ToXY(), nextPointInRegion.ToXY());
+
+                    if (dstFromMouseToLine <= closestLineDst)
+                    {
+                        closestLineDst = dstFromMouseToLine;
+                        mouseOverLineIndex = i;
+
+                        Vector3 line = nextPointInRegion - currentShape.points[i];
+                        Vector3 linePerpendicularDir = Vector3.Normalize(Vector3.Cross(line, new Vector3(0, 0, 1)));
+                        closestPositionOnLine = mouseInfo.position + linePerpendicularDir * dstFromMouseToLine;
+                    }
+                }
+            }     
+        }
+        return closestPositionOnLine;
+    }
+
+    private Vector3 FindClosestToMousePointOnLineOrPointExeptRegion(int regionId)
+    {
+
+        Vector3 closestPoint = mouseInfo.position;
+        float closestPointDst = regionCreator.handleRadius;
+        for (int shapeIndex = 0; shapeIndex < regionCreator.shapes.Count; shapeIndex++)
+        {
+            if (shapeIndex != regionId)
+            {
+                Shape currentShape = regionCreator.shapes[shapeIndex];
+                for (int i = 0; i < currentShape.points.Count; i++)
+                {
+                    float dst = Vector3.Distance(mouseInfo.position, currentShape.points[i]);
+                    if (dst < closestPointDst)
+                    {
+                        closestPointDst = dst;
+                        closestPoint = currentShape.points[i];
+                    }
+                }
+            }
+        }
+
+        int mouseOverLineIndex = -1;
+        float closestLineDst = regionCreator.handleRadius;
+        Vector3 closestPositionOnLine = mouseInfo.position;
+        for (int shapeIndex = 0; shapeIndex < regionCreator.shapes.Count; shapeIndex++)
+        {
+            if (shapeIndex != regionId)
+            {
+                Shape currentShape = regionCreator.shapes[shapeIndex];
+                for (int i = 0; i < currentShape.points.Count; i++)
+                {
+                    Vector3 nextPointInRegion = currentShape.points[(i + 1) % currentShape.points.Count];
+
+                    float dstFromMouseToLine = HandleUtility.DistancePointToLineSegment(mouseInfo.position.ToXY(),
+                        currentShape.points[i].ToXY(), nextPointInRegion.ToXY());
+
+                    if (dstFromMouseToLine <= closestLineDst)
+                    {
+                        closestLineDst = dstFromMouseToLine;
+                        mouseOverLineIndex = i;
+
+                        Vector3 line = nextPointInRegion - currentShape.points[i];
+                        Vector3 linePerpendicularDir = Vector3.Normalize(Vector3.Cross(line, new Vector3(0, 0, 1)));
+                        closestPositionOnLine = mouseInfo.position + linePerpendicularDir * dstFromMouseToLine;
+                    }
+                }
+            }
+        }
+
+        if (closestPointDst < regionCreator.handleRadius)
+            return closestPoint;
+        else
+            return closestPositionOnLine;
     }
 
     private void DragPoint()
     {
         if (selectedPointInfo.isSelected)
         {
-            if (mouseInfo.isOverLine)
-            {
-                SelectedShape.points[selectedPointInfo.id] = selectedLineInfo.closestToMousePoint;
-                regionChangedSinceLastRepaint = true;
-            }
-            else
-            {
-                selectedPointInfo.point = mouseInfo.position;
-                regionChangedSinceLastRepaint = true;
-            }
+            //bool pointWasFound = false;
+            //float closestToTheMouseDst = regionCreator.handleRadius;
+            //Vector3 closestPoint = FindClosestToMousePointOnLine(0);
+            //for (int i = 1; i < regionCreator.shapes.Count; i++)
+            //{
+            //    Vector3 point = FindClosestToMousePointOnLine(i);
+            //    float dst = Vector3.Distance(mouseInfo.position, point);
+
+            //    if (dst < closestToTheMouseDst)
+            //    {
+            //        closestToTheMouseDst = dst;
+            //        closestPoint = point;
+            //    }
+            //}
+
+            //SelectedShape.points[selectedPointInfo.id] = selectedLineInfo.closestToMousePoint;
+
+            
+
+            SelectedShape.points[selectedPointInfo.id] = FindClosestToMousePointOnLineOrPointExeptRegion(selectedRegionInfo.id);
+            regionChangedSinceLastRepaint = true;
+            //selectedPointInfo.point = mouseInfo.position;
+            //regionChangedSinceLastRepaint = true;
         }
     }
 
