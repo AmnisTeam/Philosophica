@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -10,9 +11,6 @@ using UnityEngine;
 public class Region : MonoBehaviour
 {
     public Color regionColor;
-    //public int nBorderPoints;
-    public List<Vector3> points = new List<Vector3>();
-
     private Mesh mesh;
 
     private Vector3[] vertices;
@@ -64,7 +62,7 @@ public class Region : MonoBehaviour
         return cross1 <= 0 && cross2 <= 0 && cross3 <= 0;
     }
 
-    void Triangulate()
+    void Triangulate(List<Vector3> points)
     {
         vertices = new Vector3[points.Count];
         for (int i = 0; i < vertices.Length; i++)
@@ -126,7 +124,7 @@ public class Region : MonoBehaviour
         indices[currentIndicesCount++] = indexList[2];
     }
 
-    void CreateShapeOld()
+    void CreateShapeOld(List<Vector3> points)
     {
         Vector3 midPoint = new Vector3(0, 0, 0);
         for (int i = 0; i < points.Count; i++)
@@ -176,9 +174,9 @@ public class Region : MonoBehaviour
         }
     }
 
-    void CreateShape()
+    void CreateShape(List<Vector3> points)
     {
-        Triangulate();
+        Triangulate(points);
 
         Color shadowColor = regionColor * 0.7f;
 
@@ -187,32 +185,31 @@ public class Region : MonoBehaviour
             colors[i] = regionColor;
     }
 
-    public void UpdateMesh()
+    public void UpdateMesh(List<Vector3> points)
     {
+        if (mesh == null)
+            mesh = new Mesh();
+        mesh.Clear();
+
         if (points.Count >= 3)
         {
-            if (mesh == null)
-                mesh = new Mesh();
-            CreateShape();
-            mesh.Clear();
+            CreateShape(points);
 
             mesh.vertices = vertices;
             mesh.triangles = indices;
             mesh.colors = colors;
 
             mesh.RecalculateNormals();
-
-            GetComponent<MeshFilter>().mesh = mesh;
         }
+
+        GetComponent<MeshFilter>().mesh = mesh;
     }
     void Start()
     {
-        UpdateMesh();
     }
 
 
     void Update()
     {
-        
     }
 }
