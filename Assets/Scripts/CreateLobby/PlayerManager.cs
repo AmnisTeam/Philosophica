@@ -7,6 +7,7 @@ using UnityEngine.UI;
 [Serializable]
 public struct Player
 {
+    public int id;
     public bool isConnected;
     public string nickname;
 }
@@ -21,6 +22,8 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         players[0].isConnected = true;
+        players[1].isConnected = true;
+        players[2].isConnected = true;
     }
 
     // Update is called once per frame
