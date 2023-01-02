@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RegionCreator : MonoBehaviour
@@ -14,6 +15,8 @@ public class RegionCreator : MonoBehaviour
 
     public float handleRadius = .5f;
 
+    public Color nextRegionColor;
+
     public void UpdateMeshDisplay()
     {
         for (int i = 0; i < shapes.Count; i++)
@@ -25,10 +28,17 @@ public class RegionCreator : MonoBehaviour
 public class Shape
 {
     public GameObject region;
+    public int regionId;
     public List<Vector3> points = new List<Vector3>();
 
     [HideInInspector]
-    public bool needDestroyRegion;
+    public bool needDestroyRegion = true;
+
+    public Shape(GameObject region, int regionId)
+    {
+        this.region = region;
+        this.regionId = regionId;
+    }
     public void UpdateMesh()
     {
         region.GetComponent<Region>().UpdateMesh(points);
