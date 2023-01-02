@@ -431,14 +431,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   players:
   - isConnected: 0
+    nickname: 
   - isConnected: 0
+    nickname: 
   - isConnected: 0
+    nickname: 
   - isConnected: 0
+    nickname: 
   playerObjects:
   - {fileID: 1813195080}
   - {fileID: 1333115735}
   - {fileID: 1430138795}
   - {fileID: 7288178}
+  button: {fileID: 0}
 --- !u!1 &85313491
 GameObject:
   m_ObjectHideFlags: 0
@@ -2543,7 +2548,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1115863719}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 85289478}
+        m_TargetAssemblyTypeName: PlayerManager, Assembly-CSharp
+        m_MethodName: KickPlayer_3
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1115863719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3354,7 +3371,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1576599045}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 85289478}
+        m_TargetAssemblyTypeName: PlayerManager, Assembly-CSharp
+        m_MethodName: KickPlayer_2
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1576599045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4072,7 +4101,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1858403523}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 85289478}
+        m_TargetAssemblyTypeName: PlayerManager, Assembly-CSharp
+        m_MethodName: KickPlayer_4
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1858403523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4351,7 +4392,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1891357311}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 85289478}
+        m_TargetAssemblyTypeName: PlayerManager, Assembly-CSharp
+        m_MethodName: KickPlayer_1
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1891357311
 MonoBehaviour:
   m_ObjectHideFlags: 0
