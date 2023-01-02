@@ -3,14 +3,35 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static RegionEditor;
 
 [CustomEditor(typeof(RegionCreator))]
 public class RegionEditor : Editor
 {
     private RegionCreator regionCreator;
-    private SelectionInfo selectionInfo;
     private bool regionChangedSinceLastRepaint;
+
+    private MouseInfo mouseInfo;
+    private RegionInfo selectedRegionInfo;
+    private LineInfo selectedLineInfo = new LineInfo();
+    private PointInfo selectedPointInfo = new PointInfo();
+
+    private void OnEnable()
+    {
+        regionChangedSinceLastRepaint = true;
+        regionCreator = target as RegionCreator;
+        selectedRegionInfo = new RegionInfo(regionCreator);
+        mouseInfo = new MouseInfo(regionCreator);
+        Undo.undoRedoPerformed += OnUndoOrRedo;
+        Tools.hidden = true;
+    }
+
+    private void OnDisable()
+    {
+        Undo.undoRedoPerformed -= OnUndoOrRedo;
+        Tools.hidden = false;
+    }
 
     public override void OnInspectorGUI()
     {
@@ -23,9 +44,9 @@ public class RegionEditor : Editor
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Region " + i);
-                GUI.enabled = i != selectionInfo.selectedShapeIndex;
+                GUI.enabled = i != selectedRegionInfo.id;
                 if (GUILayout.Button("Select"))
-                    selectionInfo.selectedShapeIndex = i;
+                    selectedRegionInfo.id = i;
                 GUI.enabled = true;
 
                 if (GUILayout.Button("Delete"))
@@ -41,7 +62,8 @@ public class RegionEditor : Editor
 
             DestroyImmediate(regionCreator.shapes[shapeDeleteIndex].region);
             regionCreator.shapes.RemoveAt(shapeDeleteIndex);
-            selectionInfo.selectedShapeIndex = Mathf.Clamp(selectionInfo.selectedShapeIndex, 0, regionCreator.shapes.Count - 1);
+            selectedRegionInfo.id = 
+                Mathf.Clamp(selectedRegionInfo.id, 0, regionCreator.shapes.Count - 1);
         }
 
         if (GUI.changed)
@@ -86,24 +108,17 @@ public class RegionEditor : Editor
         Undo.RecordObject(regionCreator, "Create shape");
 
         shape.needDestroyRegion = false;
-        selectionInfo.selectedShapeIndex = regionCreator.shapes.Count - 1;
+        selectedRegionInfo.id = regionCreator.shapes.Count - 1;
     }
 
     private void CreateNewPoint(Vector3 position, bool needSelectPoint = true)
     {
-        //bool mouseIsOverSelectedShape = selectionInfo.mouseOverShapeIndex == selectionInfo.selectedShapeIndex;
-        //int newPointIndex = (selectionInfo.mouseIsOverLine && mouseIsOverSelectedShape)
-        //    ? selectionInfo.lineIndex + 1 : SelectedShape.points.Count;
-        //Undo.RecordObject(regionCreator, "Add point");
-        //regionCreator.shapes[selectionInfo.selectedShapeIndex].points.Insert(newPointIndex, position);
-        //selectionInfo.pointIndex = newPointIndex;
-        //selectionInfo.mouseOverShapeIndex = selectionInfo.selectedShapeIndex;
-        //regionChangedSinceLastRepaint = true;
-
-        int newPointIndex = selectionInfo.lineIndex + 1;
+        int newPointIndex = selectedLineInfo.id + 1;
         Undo.RecordObject(regionCreator, "Add point");
-        regionCreator.shapes[selectionInfo.selectedShapeIndex].points.Insert(newPointIndex, position);
-        selectionInfo.pointIndex = newPointIndex;
+        regionCreator.shapes[selectedRegionInfo.id].points.Insert(newPointIndex, position);
+
+        selectedPointInfo.id = newPointIndex;
+
         regionChangedSinceLastRepaint = true;
 
         if (needSelectPoint)
@@ -112,74 +127,131 @@ public class RegionEditor : Editor
         }
         else
         {
-            selectionInfo.pointIsSelected = false;
-            selectionInfo.mouseIsOverPoint = false;
-            selectionInfo.pointIndex = -1;
+            selectedPointInfo.isSelected = false;
+            mouseInfo.isOverPoint = false;
+            selectedPointInfo.id = -1;
         }
+    }
+
+    private void DeletePoint(int regionId, int pointId)
+    {
+        regionCreator.shapes[regionId].points.RemoveAt(pointId);
     }
 
     void DeletePointUnderMouse()
     {
         Undo.RecordObject(regionCreator, "Delete point");
-        SelectedShape.points.RemoveAt(selectionInfo.pointIndex);
-        selectionInfo.pointIsSelected = false;
-        selectionInfo.mouseIsOverPoint = false;
-        regionChangedSinceLastRepaint = true;
+        if (mouseInfo.isOverPoint)
+            DeletePoint(mouseInfo.underMouseRegionInfo.id, mouseInfo.underMousePointInfo.id);
     }
 
     void SelectPointUnderMouse()
     {
-        selectionInfo.pointIsSelected = true;
-        selectionInfo.mouseIsOverPoint = true;
-        selectionInfo.mouseIsOverLine = false;
-        selectionInfo.lineIndex = -1;
-
-        selectionInfo.positionAtStartOfDrag = SelectedShape.points[selectionInfo.pointIndex];
-        regionChangedSinceLastRepaint = true;
-    }
-
-    void SelectShapeUnderMouse()
-    {
-        if (selectionInfo.mouseOverShapeIndex != -1)
+        if (mouseInfo.underMousePointInfo.id != -1)
         {
-            selectionInfo.selectedShapeIndex = selectionInfo.mouseOverShapeIndex;
+            selectedPointInfo.isSelected = true;
+            selectedPointInfo.regionInfo = mouseInfo.underMousePointInfo.regionInfo;
+            selectedPointInfo.id = mouseInfo.underMousePointInfo.id;
+
+            mouseInfo.positionAtStartOfDrag = selectedPointInfo.point;
             regionChangedSinceLastRepaint = true;
         }
+
+    }
+
+    private void SelectOrCreatePoint()
+    {
+        bool regionUnderMouseIsSelected = mouseInfo.underMouseRegionInfo.id == selectedRegionInfo.id;
+        bool noRegionsUnderMouse = mouseInfo.underMouseRegionInfo.id == -1;
+        bool noRegions = regionCreator.shapes.Count == 0;
+
+        if (noRegions)
+            CreateNewShape();
+
+        if (regionUnderMouseIsSelected || noRegionsUnderMouse)
+        {
+            if (mouseInfo.isOverPoint)
+                SelectPointUnderMouse();
+            else
+            {
+                if (!CreatePointOnClosestToMouseLine())
+                    CreatePointUnderMouse();
+            }
+        }
+    }
+
+    private bool CreatePointUnderMouse()
+    {
+        CreateNewPoint(mouseInfo.position);
+        return true;
+    }
+
+    private bool CreatePointOnClosestToMouseLine()
+    {
+        if (mouseInfo.isOverLine)
+        {
+            CreateNewPoint(selectedLineInfo.closestToMousePoint, false);
+            return true;
+        }
+        return false;
     }
 
     private void HandleInput(Event guiEvent)
     {
-        Ray mouseRay = HandleUtility.GUIPointToWorldRay(guiEvent.mousePosition);
-        float drawPlaneZ = 0;
-        float dstToDrawPlane = (drawPlaneZ - mouseRay.origin.z) / mouseRay.direction.z;
-        Vector3 mousePosition = mouseRay.origin + mouseRay.direction * dstToDrawPlane;
+        mouseInfo.UpdateMousePosition(guiEvent);
 
-        if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0 && guiEvent.modifiers == EventModifiers.Shift)
-            HandleShiftLeftMouseDown(mousePosition);
+        bool vKey = guiEvent.keyCode == KeyCode.V;
 
-        if (guiEvent.keyCode == KeyCode.V)
-            HandleShiftVLeftMouseDown(mousePosition);
+        bool controlLeftMouseDown =
+            guiEvent.type == EventType.MouseDown &&
+            guiEvent.button == 0 &&
+            guiEvent.modifiers == EventModifiers.Control;
 
-        if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0 && guiEvent.modifiers == EventModifiers.Control)
-            HandleControlLeftMouseDown(mousePosition);
+        bool leftMouseUp =
+            guiEvent.type == EventType.MouseUp &&
+            guiEvent.button == 0;
 
-        if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0 && guiEvent.modifiers == EventModifiers.None)
-            HandleLeftMouseDown(mousePosition);
+        bool leftMouseDrag =
+            guiEvent.type == EventType.MouseDrag &&
+            guiEvent.button == 0 &&
+            guiEvent.modifiers == EventModifiers.None;
+
+        bool onlyLeftMouseDown =
+             guiEvent.type == EventType.MouseDown &&
+             guiEvent.button == 0 &&
+             guiEvent.modifiers == EventModifiers.None;
+
+        bool onlyShiftLeftMouseDown =
+            guiEvent.type == EventType.MouseDown &&
+            guiEvent.button == 0 &&
+            guiEvent.modifiers == EventModifiers.Shift;
 
 
-        if (guiEvent.type == EventType.MouseUp && guiEvent.button == 0)
-            HandleLeftMouseUp(mousePosition);
+        if (onlyLeftMouseDown)
+            SelectOrCreatePoint();
 
-        if (guiEvent.type == EventType.MouseDrag && guiEvent.button == 0 && guiEvent.modifiers == EventModifiers.None)
-            HandleLeftMouseDrag(mousePosition);
+        if (onlyShiftLeftMouseDown)
+            DeletePointOrCreateNewPointInNewShape();
 
-        if (!selectionInfo.pointIsSelected)
-            UpdateMouseOverInfo(mousePosition);
+        if (vKey)
+            CreatePointOnClosestToMouseLine();
+
+        if (controlLeftMouseDown)
+            SelectShapeUnderMouse();
+
+        if (leftMouseUp)
+            EndMouseDragging();
+
+        if (leftMouseDrag)
+            DragPoint();
+
+        if (!selectedPointInfo.isSelected)
+            UpdateMouseOverInfo();
     }
 
-    private void HandleShiftLeftMouseDown(Vector3 mousePosition)
+    private void DeletePointOrCreateNewPointInNewShape()
     {
-        if(selectionInfo.mouseIsOverPoint)
+        if(mouseInfo.isOverPoint)
         {
             SelectShapeUnderMouse();
             DeletePointUnderMouse();
@@ -187,87 +259,53 @@ public class RegionEditor : Editor
         else
         {
             CreateNewShape();
-            CreateNewPoint(mousePosition);
+            CreateNewPoint(mouseInfo.position);
             SelectPointUnderMouse();
         }
     }
 
-    private void HandleShiftVLeftMouseDown(Vector3 mousePosition)
-    {
-        if (selectionInfo.mouseIsOverLine)
-        {
-            CreateNewPoint(selectionInfo.closestPositionOnLine, false);
-        }
-        //else
-        //{
-        //    CreateNewShape();
-        //    CreateNewPoint(mousePosition);
-        //}
-    }
-
     private void SelectShape(int shapeIndex)
     {
-        selectionInfo.selectedShapeIndex = shapeIndex;
+        selectedRegionInfo.id = shapeIndex;
+        regionChangedSinceLastRepaint = true;
     }
 
-    private void HandleControlLeftMouseDown(Vector3 mousePosition)
+    private void SelectShapeUnderMouse()
     {
-        if (selectionInfo.mouseIsOverLine || selectionInfo.mouseIsOverPoint)
-            SelectShape (selectionInfo.mouseOverShapeIndex);
+        if (mouseInfo.isOverLine || mouseInfo.isOverPoint)
+            SelectShape (mouseInfo.underMouseRegionInfo.id);
     }
 
-    private void HandleLeftMouseDown(Vector3 mousePosition)
+    private void EndMouseDragging()
     {
-        if (regionCreator.shapes.Count == 0)
-            CreateNewShape();
-
-        if(selectionInfo.mouseOverShapeIndex == selectionInfo.selectedShapeIndex || selectionInfo.mouseOverShapeIndex == -1)
+        if (selectedPointInfo.isSelected)
         {
-            if (selectionInfo.mouseIsOverPoint)
-                SelectPointUnderMouse();
-            else
-            {
-                if (selectionInfo.mouseIsOverLine)
-                    CreateNewPoint(selectionInfo.closestPositionOnLine, false);
-                else
-                    CreateNewPoint(mousePosition);
-            }    
-        }
-        //SelectShapeUnderMouse();
-    }
-
-    private void HandleLeftMouseUp(Vector3 mousePosition)
-    {
-        if (selectionInfo.pointIsSelected)
-        {
-            SelectedShape.points[selectionInfo.pointIndex] = selectionInfo.positionAtStartOfDrag;
+            selectedPointInfo.point = mouseInfo.positionAtStartOfDrag;
             Undo.RecordObject(regionCreator, "Move point");
-            SelectedShape.points[selectionInfo.pointIndex] = mousePosition;
-
-            selectionInfo.pointIsSelected = false; 
-            selectionInfo.pointIndex = -1;
+            selectedPointInfo.point = mouseInfo.position;
+            selectedPointInfo.Unselect();
             regionChangedSinceLastRepaint = true;
         }
     }
 
-    private void HandleLeftMouseDrag(Vector3 mousePosition)
+    private void DragPoint()
     {
-        if (selectionInfo.pointIsSelected)
+        if (selectedPointInfo.isSelected)
         {
-            if (selectionInfo.mouseIsOverLine)
+            if (mouseInfo.isOverLine)
             {
-                SelectedShape.points[selectionInfo.pointIndex] = selectionInfo.closestPositionOnLine;
+                SelectedShape.points[selectedPointInfo.id] = selectedLineInfo.closestToMousePoint;
                 regionChangedSinceLastRepaint = true;
             }
             else
             {
-                SelectedShape.points[selectionInfo.pointIndex] = mousePosition;
+                selectedPointInfo.point = mouseInfo.position;
                 regionChangedSinceLastRepaint = true;
             }
         }
     }
 
-    private void UpdateMouseOverInfo(Vector3 mousePosition)
+    private void UpdateMouseOverInfo()
     {
         int mouseOverPointIndex = -1;
         int mouseOverShapeIndex = -1;
@@ -276,7 +314,7 @@ public class RegionEditor : Editor
             Shape currentShape = regionCreator.shapes[shapeIndex];
             for (int i = 0; i < currentShape.points.Count; i++)
             {
-                if (Vector3.Distance(mousePosition, currentShape.points[i]) < regionCreator.handleRadius)
+                if (Vector3.Distance(mouseInfo.position, currentShape.points[i]) < regionCreator.handleRadius)
                 {
                     mouseOverPointIndex = i;
                     mouseOverShapeIndex = shapeIndex;
@@ -285,24 +323,25 @@ public class RegionEditor : Editor
             }
         }
 
-        if (mouseOverPointIndex != selectionInfo.pointIndex || mouseOverShapeIndex != selectionInfo.mouseOverShapeIndex)
+        if (mouseOverPointIndex != selectedPointInfo.id || mouseOverShapeIndex != mouseInfo.underMouseRegionInfo.id)
         {
-            selectionInfo.mouseOverShapeIndex = mouseOverShapeIndex;
-            selectionInfo.pointIndex = mouseOverPointIndex;
-            selectionInfo.mouseIsOverPoint = mouseOverPointIndex != -1;
+            mouseInfo.underMouseRegionInfo.id = mouseOverShapeIndex;
+            mouseInfo.underMousePointInfo.regionInfo = mouseInfo.underMouseRegionInfo;
+            mouseInfo.underMousePointInfo.id = mouseOverPointIndex;
+            mouseInfo.isOverPoint = mouseOverPointIndex != -1;
             regionChangedSinceLastRepaint = true;
         }
 
-        if (selectionInfo.mouseIsOverPoint)
+        if (mouseInfo.isOverPoint)
         {
-            selectionInfo.mouseIsOverLine = false;
-            selectionInfo.lineIndex = -1;
-        }    
+            mouseInfo.isOverLine = false;
+            selectedLineInfo.id = -1;
+        }
         else
         {
             int mouseOverLineIndex = -1;
             float closestLineDst = regionCreator.handleRadius;
-            Vector3 closestPositionOnLine = mousePosition;
+            Vector3 closestPositionOnLine = mouseInfo.position;
             for (int shapeIndex = 0; shapeIndex < regionCreator.shapes.Count; shapeIndex++)
             {
                 Shape currentShape = regionCreator.shapes[shapeIndex];
@@ -310,7 +349,7 @@ public class RegionEditor : Editor
                 {
                     Vector3 nextPointInRegion = currentShape.points[(i + 1) % currentShape.points.Count];
 
-                    float dstFromMouseToLine = HandleUtility.DistancePointToLineSegment(mousePosition.ToXY(),
+                    float dstFromMouseToLine = HandleUtility.DistancePointToLineSegment(mouseInfo.position.ToXY(),
                         currentShape.points[i].ToXY(), nextPointInRegion.ToXY());
 
                     if (dstFromMouseToLine <= closestLineDst)
@@ -321,18 +360,18 @@ public class RegionEditor : Editor
 
                         Vector3 line = nextPointInRegion - currentShape.points[i];
                         Vector3 linePerpendicularDir = Vector3.Normalize(Vector3.Cross(line, new Vector3(0, 0, 1)));
-                        closestPositionOnLine = mousePosition + linePerpendicularDir * dstFromMouseToLine;
+                        closestPositionOnLine = mouseInfo.position + linePerpendicularDir * dstFromMouseToLine;
                     }
                 }
             }
 
-            if (selectionInfo.lineIndex != mouseOverLineIndex || mouseOverShapeIndex != selectionInfo.mouseOverShapeIndex)
+            if (selectedLineInfo.id != mouseOverLineIndex || mouseOverShapeIndex != mouseInfo.underMouseRegionInfo.id)
             {
-                selectionInfo.mouseOverShapeIndex = mouseOverShapeIndex;
-                selectionInfo.lineIndex = mouseOverLineIndex;
-                selectionInfo.mouseIsOverLine = mouseOverLineIndex != -1;
-                selectionInfo.closestPositionOnLine = closestPositionOnLine;
-                regionChangedSinceLastRepaint = true; 
+                mouseInfo.underMouseRegionInfo.id = mouseOverShapeIndex;
+                selectedLineInfo.id = mouseOverLineIndex;
+                mouseInfo.isOverLine = mouseOverLineIndex != -1;
+                selectedLineInfo.closestToMousePoint = closestPositionOnLine;
+                regionChangedSinceLastRepaint = true;
             }
         }
     }
@@ -342,15 +381,15 @@ public class RegionEditor : Editor
         for (int shapeIndex = 0; shapeIndex < regionCreator.shapes.Count; shapeIndex++)
         {
             Shape shapeToDraw = regionCreator.shapes[shapeIndex];
-            bool shapeIsSelected = shapeIndex == selectionInfo.selectedShapeIndex;
-            bool mouseIsOverShape = shapeIndex == selectionInfo.mouseOverShapeIndex;
+            bool shapeIsSelected = shapeIndex == selectedRegionInfo.id;
+            bool mouseIsOverShape = shapeIndex == mouseInfo.underMouseRegionInfo.id;
             Color deselectedShapeColor = Color.gray;
 
             for (int i = 0; i < shapeToDraw.points.Count; i++)
             {
                 Vector3 nextPoint = shapeToDraw.points[(i + 1) % shapeToDraw.points.Count];
 
-                if (i == selectionInfo.lineIndex && mouseIsOverShape)
+                if (i == selectedLineInfo.id && mouseIsOverShape)
                 {
                     Handles.color = Color.red;
                     Handles.DrawLine(shapeToDraw.points[i], nextPoint);
@@ -361,8 +400,8 @@ public class RegionEditor : Editor
                     Handles.DrawDottedLine(shapeToDraw.points[i], nextPoint, 4);
                 }
 
-                if (i == selectionInfo.pointIndex && mouseIsOverShape)
-                    Handles.color = selectionInfo.pointIsSelected ? Color.black : Color.red;
+                if (i == mouseInfo.underMousePointInfo.id && mouseIsOverShape)
+                    Handles.color = selectedPointInfo.isSelected ? Color.black : Color.red;
                 else
                     Handles.color = (shapeIsSelected) ? Color.white : deselectedShapeColor;
                 Handles.DrawSolidDisc(shapeToDraw.points[i], Vector3.back, regionCreator.handleRadius);
@@ -372,21 +411,6 @@ public class RegionEditor : Editor
         if (regionChangedSinceLastRepaint)
             regionCreator.UpdateMeshDisplay();
         regionChangedSinceLastRepaint = false;
-    }
-
-    private void OnEnable()
-    {
-        regionChangedSinceLastRepaint = true;
-        regionCreator = target as RegionCreator;
-        selectionInfo = new SelectionInfo();
-        Undo.undoRedoPerformed += OnUndoOrRedo;
-        Tools.hidden = true;
-    }
-
-    private void OnDisable()
-    {
-        Undo.undoRedoPerformed -= OnUndoOrRedo;
-        Tools.hidden = false;
     }
 
     private void OnUndoOrRedo()
@@ -408,29 +432,100 @@ public class RegionEditor : Editor
             }
         }
 
-        if (selectionInfo.selectedShapeIndex >= regionCreator.shapes.Count || selectionInfo.selectedShapeIndex == -1)
-            selectionInfo.selectedShapeIndex = regionCreator.shapes.Count - 1;
+        if (selectedRegionInfo.id >= regionCreator.shapes.Count || selectedRegionInfo.id == -1)
+            selectedRegionInfo.id = regionCreator.shapes.Count - 1;
     }
 
     Shape SelectedShape
     {
         get
         {
-            return regionCreator.shapes[selectionInfo.selectedShapeIndex];
+            return regionCreator.shapes[selectedRegionInfo.id];
         }
     }
-    public class SelectionInfo
-    {
-        public int selectedShapeIndex;
-        public int mouseOverShapeIndex;
 
-        public int pointIndex = -1;
-        public bool mouseIsOverPoint;
-        public bool pointIsSelected;
+    public class LineInfo
+    {
+        public RegionInfo regionInfo;
+        public bool isSelected;
+        public int id = -1;
+        public PointInfo startPoint;
+        public PointInfo endPoint;
+        public Vector3 closestToMousePoint;
+    }
+
+    public class PointInfo
+    {
+        public bool isSelected;
+        public RegionInfo regionInfo;
+        public int id = -1;
+
+        public void Unselect()
+        {
+            isSelected = false;
+            id = -1;
+        }
+        public Vector3 point
+        {
+            get
+            {
+                return regionInfo.region.points[id];
+            }
+            set 
+            {
+                regionInfo.region.points[id] = value;
+            }
+        }
+    }
+    public class RegionInfo
+    {
+        private RegionCreator regionCreator;
+        public bool isSelected;
+        public int id = -1;
+        public Shape region 
+        {
+            set
+            {
+                regionCreator.shapes[id] = value;
+            }
+            get
+            {
+                return regionCreator.shapes[id];
+            }
+        }
+
+        public RegionInfo(RegionCreator regionCreator)
+        {
+            this.regionCreator = regionCreator;
+        }
+    }
+
+    public class MouseInfo
+    {
+        private RegionCreator regionCreator;
+
+        public Vector3 position;
         public Vector3 positionAtStartOfDrag;
 
-        public int lineIndex = -1;
-        public bool mouseIsOverLine;
-        public Vector3 closestPositionOnLine;
+        public bool isOverRegion;
+        public bool isOverLine;
+        public bool isOverPoint;
+
+        public RegionInfo underMouseRegionInfo;
+        public LineInfo underMouseLineInfo = new LineInfo();
+        public PointInfo underMousePointInfo = new PointInfo();
+
+        public void UpdateMousePosition(Event guiEvent)
+        {
+            Ray mouseRay = HandleUtility.GUIPointToWorldRay(guiEvent.mousePosition);
+            float drawPlaneZ = 0;
+            float dstToDrawPlane = (drawPlaneZ - mouseRay.origin.z) / mouseRay.direction.z;
+            position = mouseRay.origin + mouseRay.direction * dstToDrawPlane;
+        }
+
+        public MouseInfo(RegionCreator regionCreator)
+        {
+            underMouseRegionInfo = new RegionInfo(regionCreator);
+        }
     }
 }

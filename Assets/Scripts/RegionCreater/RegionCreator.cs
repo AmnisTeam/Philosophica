@@ -6,7 +6,7 @@ using UnityEngine;
 public class RegionCreator : MonoBehaviour
 {
     public GameObject regionPrefab;
-    [HideInInspector]
+    //[HideInInspector]
     public List<Shape> shapes = new List<Shape>();
     public List<GameObject> regions = new List<GameObject>();
 
