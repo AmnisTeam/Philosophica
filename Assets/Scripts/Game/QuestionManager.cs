@@ -18,7 +18,7 @@ public class QuestionManager : MonoBehaviour
     public int selectedAnswer = -1;
     public bool haveAnswer = false;
 
-    private float time = 0.8f;
+    public float time = 0.8f;
     private float timer = 0;
     private bool c = false;
 
