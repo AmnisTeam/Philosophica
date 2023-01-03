@@ -29,6 +29,7 @@ public class PlayerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //configManager = GetComponent<ConfigManager>();
         Player p = new Player();
         p.id = id;
         p.isConnected = true;

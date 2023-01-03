@@ -390,6 +390,7 @@ GameObject:
   m_Component:
   - component: {fileID: 85289477}
   - component: {fileID: 85289478}
+  - component: {fileID: 85289479}
   m_Layer: 5
   m_Name: PlayerManager
   m_TagString: Untagged
@@ -441,6 +442,22 @@ MonoBehaviour:
   - {fileID: 738417660}
   - {fileID: 807128713}
   button: {fileID: 0}
+--- !u!114 &85289479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 85289476}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26a2c0bccea5be488553e1c29644c01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  generalVolume: {fileID: 0}
+  soundVolume: {fileID: 0}
+  musicVolume: {fileID: 0}
+  nicknameTextField: {fileID: 0}
 --- !u!1 &85313491
 GameObject:
   m_ObjectHideFlags: 0
@@ -4013,7 +4030,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1733728159}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 85289478}
+        m_TargetAssemblyTypeName: PlayerManager, Assembly-CSharp
+        m_MethodName: AddTestPlayer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1733728159
 MonoBehaviour:
   m_ObjectHideFlags: 0
