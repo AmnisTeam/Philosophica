@@ -2,11 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 [Serializable]
-public struct Player
+public class Player
 {
     public int id;
     public bool isConnected;
@@ -16,8 +17,9 @@ public struct Player
 public class PlayerManager : MonoBehaviour
 {
     const int amountPlayers = 4;
+    int id = 0;
 
-    public Player[] players = new Player[amountPlayers];
+    public List<Player> players = new List<Player>();
     public GameObject[] playerObjects = new GameObject[amountPlayers];
     public GameObject[] playerNicknames = new GameObject[amountPlayers];
     public Button button;
@@ -27,43 +29,85 @@ public class PlayerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        players[0].isConnected = true;
-        players[0].nickname = configManager.GetNickname();
-
-        players[1].isConnected = true;
-        players[2].isConnected = true;
+        Player p = new Player();
+        p.id = id;
+        p.isConnected = true;
+        p.nickname = configManager.GetNickname();
+        AddPlayer(p);
+        id++;
     }
 
     // Update is called once per frame
     void Update()
     {
-        for (int i = 0; i < players.Length; i++)
+        for (int i = 0; i < players.Count; i++)
         {
 
             if (players[i].isConnected)
             {
                 playerObjects[i].GetComponent<Animator>().SetBool("Open", true);
-                playerNicknames[0].GetComponent<TMP_Text>().SetText(players[0].nickname, true);
+
+                //для отладки
+                string s = players[i].nickname;
+                s += ' ';
+                s += players[i].id;
+                //для отладки
+
+                playerNicknames[i].GetComponent<TMP_Text>().SetText(s, true);
             }
             else
                 playerObjects[i].GetComponent<Animator>().SetBool("Open", false);
         }
     }
 
+    public void AddPlayer(Player player)
+    {
+        if (player != null)
+            players.Add(player);
+        else
+        {
+            Player p = new Player();
+            p.id = id;
+            p.isConnected = true;
+            p.nickname = "test";
+            id++;
+            players.Add(p);
+        }
+    }
+    public void AddTestPlayer()
+    {
+        Player p = new Player();
+        p.id = id;
+        p.isConnected = true;
+        p.nickname = "test";
+        id++;
+        players.Add(p);
+    }
+
+
+    public void updateSequence()
+    {
+        playerObjects[players.Count - 1].GetComponent<Animator>().SetBool("Open", false);
+    }
+
     public void KickPlayer_1()
     {
-        players[0].isConnected = false;
+        updateSequence();
+        players.RemoveAt(0);
     }
     public void KickPlayer_2()
     {
-        players[1].isConnected = false;
+        updateSequence();
+        players.RemoveAt(1);
     }
     public void KickPlayer_3()
     {
-        players[2].isConnected = false;
+        updateSequence();
+        players.RemoveAt(2);
     }
     public void KickPlayer_4()
     {
-        players[3].isConnected = false;
+        updateSequence();
+        players.RemoveAt(3);
     }
 }
