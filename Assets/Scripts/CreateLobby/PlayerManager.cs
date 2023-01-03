@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,14 +15,21 @@ public struct Player
 
 public class PlayerManager : MonoBehaviour
 {
-    public Player[] players = new Player[4];
-    public GameObject[] playerObjects = new GameObject[4];
+    const int amountPlayers = 4;
+
+    public Player[] players = new Player[amountPlayers];
+    public GameObject[] playerObjects = new GameObject[amountPlayers];
+    public GameObject[] playerNicknames = new GameObject[amountPlayers];
     public Button button;
-    
+
+    ConfigManager configManager = new ConfigManager();
+
     // Start is called before the first frame update
     void Start()
     {
         players[0].isConnected = true;
+        players[0].nickname = configManager.GetNickname();
+
         players[1].isConnected = true;
         players[2].isConnected = true;
     }
@@ -35,7 +43,7 @@ public class PlayerManager : MonoBehaviour
             if (players[i].isConnected)
             {
                 playerObjects[i].GetComponent<Animator>().SetBool("Open", true);
-
+                playerNicknames[0].GetComponent<TMP_Text>().SetText(players[0].nickname, true);
             }
             else
                 playerObjects[i].GetComponent<Animator>().SetBool("Open", false);

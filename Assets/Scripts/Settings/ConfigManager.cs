@@ -52,7 +52,6 @@ public class ConfigManager : MonoBehaviour
         Debug.Log(s);
         
          */
-
         Save();
     }
 
@@ -71,6 +70,10 @@ public class ConfigManager : MonoBehaviour
         SaveManager.Save(saveKey, GetSaveSnapshot());
     }
 
-
+    public string GetNickname()
+    {
+        var data = SaveManager.Load<SaveData>(saveKey);
+        return data.nickname;
+    }
 
 }

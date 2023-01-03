@@ -11,6 +11,6 @@ public class SaveData
 
     public SaveData()
     {
-        nickname = "123"; //Сделать рандомный никнейм с сервера
+        nickname = "test"; //Сделать рандомный никнейм с сервера
     }
 }
