@@ -7,10 +7,11 @@ public class SaveData
     public float soundVolume;
     public float musicVolume;
 
+    public string playerUuid;
     public string nickname;
 
     public SaveData()
     {
-        nickname = "test"; //Сделать рандомный никнейм с сервера
+        // небытие
     }
 }

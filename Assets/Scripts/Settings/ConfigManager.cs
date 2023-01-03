@@ -10,6 +10,7 @@ public class ConfigManager : MonoBehaviour
     public GameObject generalVolume;
     public GameObject soundVolume;
     public GameObject musicVolume;
+    public GameObject playerUuid;
     public GameObject nicknameTextField;
 
     private const string saveKey = "mainSave";
@@ -36,6 +37,7 @@ public class ConfigManager : MonoBehaviour
             soundVolume = this.soundVolume.GetComponent<Slider>().value,
             musicVolume = this.musicVolume.GetComponent<Slider>().value,
 
+            playerUuid = this.playerUuid.GetComponent<TMP_InputField>().text,
             nickname = this.nicknameTextField.GetComponent<TMP_InputField>().text,
         };
         return data;
@@ -63,6 +65,7 @@ public class ConfigManager : MonoBehaviour
         this.soundVolume.GetComponent<Slider>().value = (data.soundVolume);
         this.musicVolume.GetComponent<Slider>().value = (data.musicVolume);
 
+        this.playerUuid.GetComponent<TMP_InputField>().text = (data.playerUuid);
         this.nicknameTextField.GetComponent<TMP_InputField>().text = (data.nickname);
     }
     public void Save()
@@ -76,4 +79,9 @@ public class ConfigManager : MonoBehaviour
         return data.nickname;
     }
 
+    public string GetPlayerUuid()
+    {
+        var data = SaveManager.Load<SaveData>(saveKey);
+        return data.playerUuid;
+    }
 }
