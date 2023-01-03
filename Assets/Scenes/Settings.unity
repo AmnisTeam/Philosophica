@@ -366,7 +366,7 @@ RectTransform:
   - {fileID: 1108433820}
   - {fileID: 213400815}
   m_Father: {fileID: 2120387568}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.6612917}
   m_AnchorMax: {x: 1, y: 0.6612917}
@@ -408,7 +408,7 @@ RectTransform:
   - {fileID: 1611637759}
   - {fileID: 2136669948}
   m_Father: {fileID: 2120387568}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -482,6 +482,18 @@ MonoBehaviour:
       - m_Target: {fileID: 2136669949}
         m_TargetAssemblyTypeName: TransitionToLevel, Assembly-CSharp
         m_MethodName: changeScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Settings, Assembly-CSharp
+        m_MethodName: SaveSettings
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -619,7 +631,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 713359280}
+        m_TargetAssemblyTypeName: ConfigManager, Assembly-CSharp
+        m_MethodName: SaveSettings
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &282166783
 GameObject:
   m_ObjectHideFlags: 0
@@ -850,6 +874,66 @@ PrefabInstance:
     - target: {fileID: 6272426525592203178, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
       propertyPath: m_Name
       value: TextArea
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_Text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnDeselect.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnDeselect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnDeselect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 713359280}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnDeselect.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnDeselect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SaveSettings
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 713359280}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SaveSettings
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnDeselect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ConfigManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ConfigManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnDeselect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272426525592203180, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6272426525592203181, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
       propertyPath: m_Pivot.x
@@ -1126,6 +1210,59 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 510708202}
   m_CullTransparentMesh: 1
+--- !u!1 &713359277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 713359279}
+  - component: {fileID: 713359280}
+  m_Layer: 5
+  m_Name: SetttingsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &713359279
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713359277}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2120387568}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &713359280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713359277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26a2c0bccea5be488553e1c29644c01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  generalVolume: {fileID: 1513052788}
+  soundVolume: {fileID: 213400814}
+  musicVolume: {fileID: 1509502862}
+  nicknameTextField: {fileID: 806466605}
 --- !u!1 &765585592
 GameObject:
   m_ObjectHideFlags: 0
@@ -1158,13 +1295,18 @@ RectTransform:
   - {fileID: 121420105}
   - {fileID: 1509502863}
   m_Father: {fileID: 2120387568}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5144444}
   m_AnchorMax: {x: 1, y: 0.5144444}
   m_AnchoredPosition: {x: -256, y: 13}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &806466605 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6272426525592203178, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
+  m_PrefabInstance: {fileID: 339687289}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &835833374
 GameObject:
   m_ObjectHideFlags: 0
@@ -1803,7 +1945,7 @@ RectTransform:
   - {fileID: 1846668977}
   - {fileID: 1981442599}
   m_Father: {fileID: 2120387568}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.3602917}
   m_AnchorMax: {x: 1, y: 0.3602917}
@@ -2449,7 +2591,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 713359280}
+        m_TargetAssemblyTypeName: ConfigManager, Assembly-CSharp
+        m_MethodName: SaveSettings
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1510677514
 GameObject:
   m_ObjectHideFlags: 0
@@ -2616,7 +2770,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 713359280}
+        m_TargetAssemblyTypeName: ConfigManager, Assembly-CSharp
+        m_MethodName: SaveSettings
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1543275694
 GameObject:
   m_ObjectHideFlags: 0
@@ -2649,7 +2815,7 @@ RectTransform:
   - {fileID: 961150382}
   - {fileID: 1513052789}
   m_Father: {fileID: 2120387568}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.8052222}
   m_AnchorMax: {x: 1, y: 0.8052222}
@@ -2974,11 +3140,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2120387568}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.8438334, y: 1}
   m_AnchorMax: {x: 0.8438334, y: 1}
-  m_AnchoredPosition: {x: 15.710083, y: -75}
+  m_AnchoredPosition: {x: 15.709961, y: -75}
   m_SizeDelta: {x: 291.65, y: 55.03}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1737215475
@@ -3466,6 +3632,7 @@ RectTransform:
   - {fileID: 282166784}
   - {fileID: 844340347}
   - {fileID: 978281764}
+  - {fileID: 713359279}
   - {fileID: 1737215474}
   - {fileID: 1543275695}
   - {fileID: 180797866}
