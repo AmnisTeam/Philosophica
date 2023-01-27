@@ -41,6 +41,7 @@ public class Shape
     }
     public void UpdateMesh()
     {
+        //region.GetComponent<Renderer>().material.SetColor("_RegionColor", region.GetComponent<Region>().regionColor);
         region.GetComponent<Region>().UpdateMesh(points);
     }
 }
