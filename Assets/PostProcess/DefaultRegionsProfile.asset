@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5391aa75d6e9c5d42828f50468d7e736, type: 3}
   m_Name: DefaultRegionsPostProcess
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1
