@@ -15,7 +15,6 @@ public class Region : MonoBehaviour
 
     private Vector3[] vertices;
     private int[] indices;
-    private Color[] colors;
 
     public static float Cross(Vector3 a, Vector3 b)
     {
@@ -56,9 +55,6 @@ public class Region : MonoBehaviour
         float cross2 = Cross(bc, bp);
         float cross3 = Cross(ca, cp);
 
-        //if (cross1 > 0 || cross2 > 0 || cross3 > 0)
-        //    return false;
-        //return true;
         return cross1 <= 0 && cross2 <= 0 && cross3 <= 0;
     }
 
@@ -162,16 +158,6 @@ public class Region : MonoBehaviour
                 indices[iTimes3 + 2] = vertices.Length - 1;
             }
         }
-        Color shadowColor = regionColor * 0.7f;
-
-        colors = new Color[points.Count + 1];
-        for (int i = 0; i < colors.Length; i++)
-        {
-            if (i < points.Count)
-                colors[i] = shadowColor;
-            else
-                colors[i] = regionColor;
-        }
     }
 
     void CreateShape(List<Vector3> points)
@@ -179,10 +165,6 @@ public class Region : MonoBehaviour
         Triangulate(points);
 
         Color shadowColor = regionColor * 0.7f;
-
-        colors = new Color[points.Count];
-        for (int i = 0; i < colors.Length; i++)
-            colors[i] = regionColor;
     }
 
     public void UpdateMesh(List<Vector3> points)
@@ -197,19 +179,10 @@ public class Region : MonoBehaviour
 
             mesh.vertices = vertices;
             mesh.triangles = indices;
-            mesh.colors = colors;
 
             mesh.RecalculateNormals();
         }
 
         GetComponent<MeshFilter>().mesh = mesh;
-    }
-    void Start()
-    {
-    }
-
-
-    void Update()
-    {
     }
 }
