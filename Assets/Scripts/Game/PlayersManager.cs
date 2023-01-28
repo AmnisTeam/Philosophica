@@ -4,53 +4,76 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class Player
+public class Player : BaseRaw
 {
-    public int id;
     public int iconId;
+    public Color iconColor;
     public string nickname;
+
+    public Player()
+    {
+
+    }
+
+    public Player(int id, int iconId, Color iconColor, string nickname)
+    {
+        this.id = id;
+        this.iconId = iconId;
+        this.iconColor = iconColor;
+        this.nickname = nickname;
+    }
+}
+
+public class PlayerAnswerData : BaseRaw
+{
     public int answerId;
     public float timeToAnswer;
 }
 public class PlayersManager : MonoBehaviour
 {
-
-    public LinkedList<Player> players;
+    public int MAX_COUNT_PLAYERS = 4;
+    public BaseTable<Player> players;
+    public BaseTable<PlayerAnswerData> playerAnswerData;
     public ConfigTemp config;
+    private TabMenuManager tabMenuManager;
     
     public void connected(Player player)
     {
-        players.AddLast(player);
+        players.add(player);
+        playerAnswerData.addwid(new PlayerAnswerData(), player);
         Debug.Log("Player " + player.nickname + " has been connected!");
+        tabMenuManager.updateTabMenu();
+    }
+
+    public void disconnect(Player player)
+    {
+        int id = 0;
+        for(int x = 0; x < players.count; x++)
+            if(players.get(x) == player)
+            {
+                id = x;
+                break;
+            }
+        players.list.RemoveAt(id);
+        tabMenuManager.disconnectPlayer(id);
+    }
+
+    public void disconnect(int id)
+    {
+        players.list.RemoveAt(id);
+        tabMenuManager.disconnectPlayer(id);
     }
 
     void Start()
     {
-        players = new LinkedList<Player>();
-        Player[] bots = new Player[4];
-        for (int x = 0; x < 3; x++)
-            bots[x] = new Player();
+        tabMenuManager = GetComponent<TabMenuManager>();
+        players = new BaseTable<Player>();
+        playerAnswerData = new BaseTable<PlayerAnswerData>();
 
-        bots[0].id = 0;
-        bots[0].iconId = 0;
-        bots[0].nickname = "SpectreSpect";
-        bots[0].answerId = 0;
-
-        bots[1].id = 1;
-        bots[1].iconId = 1;
-        bots[1].nickname = "DotaKot";
-        bots[1].answerId = 1;
-
-        bots[2].id = 2;
-        bots[2].iconId = 2;
-        bots[2].nickname = "ThEnd";
-        bots[2].answerId = 2;
-
-        for (int x = 0; x < 3; x++)
-            connected(bots[x]);
-
+        connected(new Player(0, 0, new Color(255, 0, 0), "SpectreSpect"));
+        connected(new Player(1, 1, new Color(0, 255, 0), "DotaKot"));
+        connected(new Player(2, 2, new Color(0, 0, 255), "ThEnd"));
         connected(config.me);
- 
     }
 
     void Update()

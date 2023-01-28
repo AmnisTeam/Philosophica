@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class QuestionManager : MonoBehaviour
 {
-    public struct Question
+    public class Question
     {
         public string question;
         public string[] answer;
@@ -15,12 +15,14 @@ public class QuestionManager : MonoBehaviour
     private Question[] questions;
     public GameObject questionsMenu;
     public SelectionQuestions selectionQuestions;
+    public PlayersManager playersManager;
     public ConfigTemp config;
     public TMPro.TMP_Text questionText;
     public TMPro.TMP_Text[] answerText;
     public TMPro.TMP_Text minutes;
     public TMPro.TMP_Text secundes;
     public TableCompiler tableCompiler;
+    public Question activeQuestion;
 
     public float timeToQuestion;
     public float timerToQuestion;
@@ -45,15 +47,18 @@ public class QuestionManager : MonoBehaviour
             answerText[x].text = question.answer[x];
         rightAnswer = question.idRightAnswer;
         selectedAnswer = 0;
-        config.me.answerId = 0;
+        playersManager.playerAnswerData.find(config.me.id).answerId = 0;
+        playersManager.playerAnswerData.find(config.me.id).timeToAnswer = timeToQuestion;
         haveAnswer = false;
+        activeQuestion = question;
     }
 
     public void loadQuestions()
     {
         //Загрузка вопросов с диска
         questions = new Question[1];
-        questions[0].question = "Именем какого философа история фолософии делится на до и после?";
+        questions[0] = new Question();
+        questions[0].question = "Именем какого философа история философии делится на до и после?";
         questions[0].answer = new string[4];
         questions[0].answer[0] = "Сократ";
         questions[0].answer[1] = "Герадот";
@@ -69,8 +74,8 @@ public class QuestionManager : MonoBehaviour
         {
             selectedAnswer = selectionQuestions.activeSelection;
             haveAnswer = true;
-            config.me.answerId = selectedAnswer;
-            config.me.timeToAnswer = timeToQuestion - timerToQuestion;
+            playersManager.playerAnswerData.find(config.me.id).answerId = selectedAnswer;
+            playersManager.playerAnswerData.find(config.me.id).timeToAnswer = timeToQuestion - timerToQuestion;
         }
     }
 
@@ -98,8 +103,7 @@ public class QuestionManager : MonoBehaviour
             endQuestion = true;
             haveAnswer = true;
             selectedAnswer = selectionQuestions.activeSelection;
-            config.me.answerId = selectionQuestions.activeSelection;
-            config.me.timeToAnswer = timeToQuestion - timerToQuestion;
+            playersManager.playerAnswerData.find(config.me.id).answerId = selectionQuestions.activeSelection;
             timerToShowTable = timeToShowTable;
             showTable = true;
         }
