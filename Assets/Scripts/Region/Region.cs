@@ -10,11 +10,33 @@ using UnityEngine;
 [System.Serializable]
 public class Region : MonoBehaviour
 {
-    public Color regionColor;
     private Mesh mesh;
 
     private Vector3[] vertices;
     private int[] indices;
+
+    public void SetColor(Color color)
+    {
+        if (gameObject.GetComponent<Renderer>().sharedMaterial != null)
+        {
+            Material material = gameObject.GetComponent<Renderer>().sharedMaterial;
+            material.SetColor("_RegionColor", color);
+        }
+        else
+            Debug.LogError("Region instance has no material component with RegionShader shader", this);
+    }
+
+    public Color GetColor(Color color)
+    {
+        if (GetComponent<Material>() != null)
+        {
+            Material material = GetComponent<Material>();
+            return material.GetColor("_RegionColor");
+        }
+        else
+            Debug.LogError("Region instance has no material component with RegionShader shader", this);
+        return new Color(255, 0, 255);
+    }
 
     public static float Cross(Vector3 a, Vector3 b)
     {
@@ -58,7 +80,7 @@ public class Region : MonoBehaviour
         return cross1 <= 0 && cross2 <= 0 && cross3 <= 0;
     }
 
-    void Triangulate(List<Vector3> points)
+    private void Triangulate(List<Vector3> points)
     {
         vertices = new Vector3[points.Count];
         for (int i = 0; i < vertices.Length; i++)
@@ -120,51 +142,9 @@ public class Region : MonoBehaviour
         indices[currentIndicesCount++] = indexList[2];
     }
 
-    void CreateShapeOld(List<Vector3> points)
-    {
-        Vector3 midPoint = new Vector3(0, 0, 0);
-        for (int i = 0; i < points.Count; i++)
-            midPoint += points[i];
-        midPoint /= (float)points.Count;
-
-
-        vertices = new Vector3[points.Count + 1];
-        for(int i = 0; i < vertices.Length; i++)
-        {
-            if (i < points.Count)
-                vertices[i] = points[i];
-            else
-                vertices[i] = midPoint;
-        }
-
-
-        int indicesCount = points.Count * 3;
-        indices = new int[indicesCount];
-
-        int nTriangles = indices.Length / 3;
-        for (int i = 0; i < nTriangles; i++)
-        {
-            int iTimes3 = i * 3;
-            if (i < nTriangles - 1)
-            {
-                indices[iTimes3] = i;
-                indices[iTimes3 + 1] = i + 1;
-                indices[iTimes3 + 2] = vertices.Length - 1;
-            }
-            else
-            {
-                indices[iTimes3] = i;
-                indices[iTimes3 + 1] = 0;
-                indices[iTimes3 + 2] = vertices.Length - 1;
-            }
-        }
-    }
-
-    void CreateShape(List<Vector3> points)
+    private void CreateShape(List<Vector3> points)
     {
         Triangulate(points);
-
-        Color shadowColor = regionColor * 0.7f;
     }
 
     public void UpdateMesh(List<Vector3> points)

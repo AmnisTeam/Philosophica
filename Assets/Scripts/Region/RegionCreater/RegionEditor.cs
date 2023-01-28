@@ -92,7 +92,8 @@ public class RegionEditor : Editor
     private GameObject AddNewRegion()
     {
         GameObject regionGameObject = Instantiate(regionCreator.regionPrefab, regionCreator.transform);
-        regionGameObject.GetComponent<Region>().regionColor = regionCreator.nextRegionColor;
+        regionGameObject.GetComponent<Region>().SetColor(regionCreator.nextRegionColor);
+        //regionGameObject.GetComponent<Region>().regionColor = regionCreator.nextRegionColor;
         regionCreator.regions.Add(regionGameObject);
 
         return regionGameObject;
