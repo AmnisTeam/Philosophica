@@ -3033,7 +3033,7 @@ MonoBehaviour:
     - {x: 0.5845747, y: -1.5496861, z: 0}
     - {x: 0.12760144, y: -1.2471383, z: 0}
     needDestroyRegion: 0
-  - region: {fileID: 1446895890}
+  - region: {fileID: 0}
     regionId: 3
     points:
     - {x: -3.1427913, y: 1.2239984, z: 0}
@@ -3045,7 +3045,7 @@ MonoBehaviour:
   - {fileID: 1615332949}
   - {fileID: 2102410128}
   - {fileID: 1945807259}
-  - {fileID: 1446895890}
+  - {fileID: 0}
   showRegionsList: 1
   handleRadius: 0.03
   nextRegionColor: {r: 1, g: 0.7103611, b: 0, a: 0}
@@ -3064,7 +3064,6 @@ Transform:
   - {fileID: 1615332953}
   - {fileID: 2102410132}
   - {fileID: 1945807263}
-  - {fileID: 1446895894}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9474,7 +9473,7 @@ MonoBehaviour:
   me:
     id: 4575635
     iconId: 3
-    iconColor: {r: 0, g: 0, b: 0, a: 0}
+    iconColor: {r: 0.28627455, g: 0.67376024, b: 1, a: 1}
     nickname: NeBot
 --- !u!4 &1411831729
 Transform:
@@ -9742,102 +9741,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1445047065}
   m_CullTransparentMesh: 1
---- !u!1 &1446895890
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1446895894}
-  - component: {fileID: 1446895893}
-  - component: {fileID: 1446895892}
-  - component: {fileID: 1446895891}
-  m_Layer: 0
-  m_Name: Region(Clone)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1446895891
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1446895890}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2f4dcfa57f851246870a43be9e1e5ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!23 &1446895892
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1446895890}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 712d82f6bc790d445ba9ee24c016e984, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1446895893
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1446895890}
-  m_Mesh: {fileID: 1615770525}
---- !u!4 &1446895894
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1446895890}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 393300069}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1446952858
 GameObject:
   m_ObjectHideFlags: 0
@@ -11079,170 +10982,6 @@ Transform:
   m_Father: {fileID: 393300069}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!43 &1615770525
-Mesh:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  serializedVersion: 10
-  m_SubMeshes:
-  - serializedVersion: 2
-    firstByte: 0
-    indexCount: 6
-    topology: 0
-    baseVertex: 0
-    firstVertex: 0
-    vertexCount: 4
-    localAABB:
-      m_Center: {x: -3.9794595, y: -0.040510833, z: 0}
-      m_Extent: {x: 0.9507587, y: 1.2645092, z: 0}
-  m_Shapes:
-    vertices: []
-    shapes: []
-    channels: []
-    fullWeights: []
-  m_BindPose: []
-  m_BoneNameHashes: 
-  m_RootBoneNameHash: 0
-  m_BonesAABB: []
-  m_VariableBoneCountWeights:
-    m_Data: 
-  m_MeshCompression: 0
-  m_IsReadable: 1
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexFormat: 0
-  m_IndexBuffer: 030000000100010002000300
-  m_VertexData:
-    serializedVersion: 3
-    m_VertexCount: 4
-    m_Channels:
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 3
-    - stream: 0
-      offset: 12
-      format: 0
-      dimension: 3
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    - stream: 0
-      offset: 0
-      format: 0
-      dimension: 0
-    m_DataSize: 96
-    _typelessdata: 7e2349c0fbab9c3f000000000000000000000000000080bf3cd641c0791980bf000000000000000000000000000080bf59c49dc0e60aa7bf000000000000000000000000ffff7fbf08f19bc0f4b384be000000000000000000000000000080bf
-  m_CompressedMesh:
-    m_Vertices:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_UV:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Normals:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Tangents:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Weights:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_NormalSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_TangentSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_FloatColors:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
-    m_BoneIndices:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_Triangles:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
-    m_UVInfo: 0
-  m_LocalAABB:
-    m_Center: {x: -3.9794595, y: -0.040510833, z: 0}
-    m_Extent: {x: 0.9507587, y: 1.2645092, z: 0}
-  m_MeshUsageFlags: 0
-  m_BakedConvexCollisionMesh: 
-  m_BakedTriangleCollisionMesh: 
-  m_MeshMetrics[0]: 1
-  m_MeshMetrics[1]: 1
-  m_MeshOptimizationFlags: 1
-  m_StreamData:
-    serializedVersion: 2
-    offset: 0
-    size: 0
-    path: 
 --- !u!1 &1634071776
 GameObject:
   m_ObjectHideFlags: 0
@@ -15215,7 +14954,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   questionsMenu: {fileID: 1792193019}
   selectionQuestions: {fileID: 1198167368}
-  playersManager: {fileID: 0}
+  playersManager: {fileID: 267347261}
   config: {fileID: 1411831728}
   questionText: {fileID: 533297573}
   answerText:
@@ -15268,14 +15007,22 @@ MonoBehaviour:
   - {fileID: 1761540401}
   - {fileID: 566025647}
   - {fileID: 1670516547}
-  icons: []
-  tableRaw: []
-  winnerIcon: {fileID: 0}
-  winnerNickname: {fileID: 0}
-  colorRightAnswer: {r: 0, g: 0, b: 0, a: 0}
+  icons:
+  - {fileID: 1789359964}
+  - {fileID: 1466752144}
+  - {fileID: 414352252}
+  - {fileID: 224630621}
+  tableRaw:
+  - {fileID: 684783}
+  - {fileID: 1037587957}
+  - {fileID: 1179144157}
+  - {fileID: 1865479777}
+  winnerIcon: {fileID: 2052817958}
+  winnerNickname: {fileID: 497181706}
+  colorRightAnswer: {r: 0.4425163, g: 1, b: 0.36320752, a: 1}
   playersManager: {fileID: 267347261}
   questionManager: {fileID: 2002479515}
-  iconsContent: {fileID: 0}
+  iconsContent: {fileID: 375754359}
   table: []
   winner:
     id: 0
