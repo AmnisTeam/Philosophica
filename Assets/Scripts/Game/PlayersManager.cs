@@ -36,6 +36,7 @@ public class PlayersManager : MonoBehaviour
     public BaseTable<PlayerAnswerData> playerAnswerData;
     public ConfigTemp config;
     private TabMenuManager tabMenuManager;
+    public ToastShower toastShower;
     
     public void connected(Player player)
     {
@@ -54,12 +55,14 @@ public class PlayersManager : MonoBehaviour
                 id = x;
                 break;
             }
+        toastShower.showText("Игрок " + player.nickname + " покинул игру.");
         players.list.RemoveAt(id);
         tabMenuManager.disconnectPlayer(id);
     }
 
     public void disconnect(int id)
     {
+        toastShower.showText("Игрок " + players.get(id).nickname + " покинул игру.");
         players.list.RemoveAt(id);
         tabMenuManager.disconnectPlayer(id);
     }
