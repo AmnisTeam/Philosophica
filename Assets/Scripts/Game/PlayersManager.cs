@@ -7,20 +7,26 @@ using UnityEngine;
 public class Player : BaseRaw
 {
     public int iconId;
-    public Color iconColor;
+    public Color color;
     public string nickname;
+    public List<Region> claimedRegions = new List<Region>();
 
     public Player()
     {
 
     }
 
-    public Player(int id, int iconId, Color iconColor, string nickname)
+    public Player(int id, int iconId, Color color, string nickname)
     {
         this.id = id;
         this.iconId = iconId;
-        this.iconColor = iconColor;
+        this.color = color;
         this.nickname = nickname;
+    }
+
+    public void ClaimRegion(Region region)
+    {
+        claimedRegions.Add(region);
     }
 }
 
@@ -32,7 +38,7 @@ public class PlayerAnswerData : BaseRaw
 public class PlayersManager : MonoBehaviour
 {
     public int MAX_COUNT_PLAYERS = 4;
-    public BaseTable<Player> players;
+    public BaseTable<Player> players = new BaseTable<Player>();
     public BaseTable<PlayerAnswerData> playerAnswerData;
     public ConfigTemp config;
     private TabMenuManager tabMenuManager;
@@ -67,7 +73,6 @@ public class PlayersManager : MonoBehaviour
     void Start()
     {
         tabMenuManager = GetComponent<TabMenuManager>();
-        players = new BaseTable<Player>();
         playerAnswerData = new BaseTable<PlayerAnswerData>();
 
         connected(new Player(0, 0, new Color(255, 0, 0), "SpectreSpect"));

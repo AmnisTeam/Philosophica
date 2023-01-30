@@ -89,19 +89,19 @@ public class RegionEditor : Editor
         }
     }
 
-    private GameObject AddNewRegion()
+    private Region AddNewRegion()
     {
         GameObject regionGameObject = Instantiate(regionCreator.regionPrefab, regionCreator.transform);
         regionGameObject.GetComponent<Region>().SetColor(regionCreator.nextRegionColor);
         //regionGameObject.GetComponent<Region>().regionColor = regionCreator.nextRegionColor;
-        regionCreator.regions.Add(regionGameObject);
+        regionCreator.regions.Add(regionGameObject.GetComponent<Region>());
 
-        return regionGameObject;
+        return regionGameObject.GetComponent<Region>();
     }
 
     private void CreateNewShape()
     {
-        GameObject newRegion = AddNewRegion();
+        Region newRegion = AddNewRegion();
 
         Shape shape = new Shape(newRegion, regionCreator.regions.Count - 1);
         regionCreator.shapes.Add(shape);
@@ -245,8 +245,6 @@ public class RegionEditor : Editor
 
         if (leftMouseUp)
             EndMouseDragging();
-
- 
 
         if (!selectedPointInfo.isSelected)
             UpdateMouseOverInfo();
@@ -556,7 +554,7 @@ public class RegionEditor : Editor
         {
             if (regionCreator.shapes[i].region == null)
             {
-                GameObject newRegion = AddNewRegion();
+                Region newRegion = AddNewRegion();
                 regionCreator.shapes[i].region = newRegion;
             }
             if (regionCreator.shapes[i].needDestroyRegion == true)
