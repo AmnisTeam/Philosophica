@@ -516,7 +516,7 @@ public class RegionEditor : Editor
             Shape shapeToDraw = regionCreator.shapes[shapeIndex];
             bool shapeIsSelected = shapeIndex == selectedRegionInfo.id;
             bool mouseIsOverShape = shapeIndex == mouseInfo.underMouseRegionInfo.id;
-            Color deselectedShapeColor = Color.gray;
+            UnityEngine.Color deselectedShapeColor = UnityEngine.Color.gray;
 
             for (int i = 0; i < shapeToDraw.points.Count; i++)
             {
@@ -524,19 +524,19 @@ public class RegionEditor : Editor
 
                 if (i == selectedLineInfo.id && mouseIsOverShape)
                 {
-                    Handles.color = Color.red;
+                    Handles.color = UnityEngine.Color.red;
                     Handles.DrawLine(shapeToDraw.points[i], nextPoint);
                 }
                 else
                 {
-                    Handles.color = (shapeIsSelected) ? Color.black : deselectedShapeColor;
+                    Handles.color = (shapeIsSelected) ? UnityEngine.Color.black : deselectedShapeColor;
                     Handles.DrawDottedLine(shapeToDraw.points[i], nextPoint, 4);
                 }
 
                 if (i == mouseInfo.underMousePointInfo.id && mouseIsOverShape)
-                    Handles.color = selectedPointInfo.isSelected ? Color.black : Color.red;
+                    Handles.color = selectedPointInfo.isSelected ? UnityEngine.Color.black : UnityEngine.Color.red;
                 else
-                    Handles.color = (shapeIsSelected) ? Color.white : deselectedShapeColor;
+                    Handles.color = (shapeIsSelected) ? UnityEngine.Color.white : deselectedShapeColor;
                 Handles.DrawSolidDisc(shapeToDraw.points[i], Vector3.back, regionCreator.handleRadius);
             }
         }

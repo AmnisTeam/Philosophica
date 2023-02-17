@@ -69344,7 +69344,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -100.00006, y: -70.475006}
+  m_AnchoredPosition: {x: -100.00003, y: -70.475006}
   m_SizeDelta: {x: 199.99977, y: 140.95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1301204399
@@ -69802,6 +69802,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1368420071}
   m_CullTransparentMesh: 1
+--- !u!1 &1375731875 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7659292920349394579, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
+  m_PrefabInstance: {fileID: 646658960}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1382032170
 GameObject:
   m_ObjectHideFlags: 0
@@ -70336,6 +70341,16 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1449937194}
   m_CullTransparentMesh: 1
+--- !u!1 &1472638420 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7659292920349394579, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
+  m_PrefabInstance: {fileID: 2004472904858374890}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1509403170 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7659292920349394579, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
+  m_PrefabInstance: {fileID: 1407628355}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1520737896
 GameObject:
   m_ObjectHideFlags: 0
@@ -89758,6 +89773,11 @@ MonoBehaviour:
   - {fileID: 2137207665}
   - {fileID: 184674294}
   - {fileID: 612966865}
+  playerColor:
+  - {fileID: 1472638420}
+  - {fileID: 2077840811}
+  - {fileID: 1509403170}
+  - {fileID: 1375731875}
 --- !u!4 &1954961773
 Transform:
   m_ObjectHideFlags: 0
@@ -99548,6 +99568,11 @@ RectTransform:
 --- !u!1 &2019566077 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1089952454414005330, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
+  m_PrefabInstance: {fileID: 2019566075}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2077840811 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7659292920349394579, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
   m_PrefabInstance: {fileID: 2019566075}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2104158224
