@@ -8,7 +8,7 @@ public class RegionCreator : MonoBehaviour
     public GameObject regionPrefab;
     //[HideInInspector]
     public List<Shape> shapes = new List<Shape>();
-    public List<GameObject> regions = new List<GameObject>();
+    public List<Region> regions = new List<Region>();
 
     [HideInInspector]
     public bool showRegionsList;
@@ -27,14 +27,14 @@ public class RegionCreator : MonoBehaviour
 [System.Serializable]
 public class Shape
 {
-    public GameObject region;
+    public Region region;
     public int regionId;
     public List<Vector3> points = new List<Vector3>();
 
     [HideInInspector]
     public bool needDestroyRegion = true;
 
-    public Shape(GameObject region, int regionId)
+    public Shape(Region region, int regionId)
     {
         this.region = region;
         this.regionId = regionId;
@@ -42,6 +42,6 @@ public class Shape
     public void UpdateMesh()
     {
         //region.GetComponent<Renderer>().material.SetColor("_RegionColor", region.GetComponent<Region>().regionColor);
-        region.GetComponent<Region>().UpdateMesh(points);
+        region.UpdateMesh(points);
     }
 }
