@@ -1,17 +1,11 @@
-using JetBrains.Annotations;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static RegionEditor;
-using static RegionEditor2;
-using Color = UnityEngine.Color;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+#if UNITY_EDITOR
 [CustomEditor(typeof(RegionsSystem))]
 public class RegionEditor2 : Editor
 {
@@ -742,3 +736,4 @@ public class RegionEditor2 : Editor
         }
     }
 }
+#endif
