@@ -46,6 +46,8 @@ public class Triangulator : MonoBehaviour
         return cross1 <= 0 && cross2 <= 0 && cross3 <= 0;
     }
 
+    
+    // It will throw you an error if you try to pass points in a counterclock-wise order
     public static void Triangulate(List<Vector3> points, Mesh mesh)
     {
         mesh.Clear();

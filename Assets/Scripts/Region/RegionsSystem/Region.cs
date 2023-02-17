@@ -10,11 +10,12 @@ using UnityEngine;
 [System.Serializable]
 public class Region : MonoBehaviour
 {
+
     public void SetColor(Color color)
     {
         if (gameObject.GetComponent<Renderer>().sharedMaterial != null)
         {
-            Material material = gameObject.GetComponent<Renderer>().sharedMaterial;
+            Material material = gameObject.GetComponent<Renderer>().materials[0];
             material.SetColor("_RegionColor", color);
         }
         else
@@ -23,9 +24,9 @@ public class Region : MonoBehaviour
 
     public Color GetColor(Color color)
     {
-        if (GetComponent<Material>() != null)
+        if (GetComponent<Renderer>().materials[0] != null)
         {
-            Material material = GetComponent<Material>();
+            Material material = GetComponent<Renderer>().materials[0];
             return material.GetColor("_RegionColor");
         }
         else
