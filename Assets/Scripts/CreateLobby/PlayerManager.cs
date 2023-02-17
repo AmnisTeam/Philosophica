@@ -18,6 +18,12 @@ public class Client
 [Serializable]
 public class Color
 {
+    public Color(Color32 color)
+    {
+        this.color = color;
+        this.isBusy = false;
+    }
+
     public Color32 color;
     public bool isBusy;
 }
@@ -39,32 +45,22 @@ public class PlayerManager : MonoBehaviour
 
     void AddColors()
     {
-        Color c = new Color();
-        c.color = UnityEngine.Color.red;
-        colors.Add(c);
-
-        c = new Color();
-        c.color = UnityEngine.Color.green;
-        colors.Add(c);
-
-        c = new Color();
-        c.color = UnityEngine.Color.blue;
-        colors.Add(c);
-
-        c = new Color();
-        c.color = UnityEngine.Color.yellow;
-        colors.Add(c);
-
+        colors.Add(new Color(UnityEngine.Color.red));
+        colors.Add(new Color(UnityEngine.Color.green));
+        colors.Add(new Color(UnityEngine.Color.blue));
+        colors.Add(new Color(UnityEngine.Color.yellow));
+        colors.Add(new Color(UnityEngine.Color.magenta));
     }
 
     void Start()
     {
+        //configManager = GetComponent<ConfigManager>();
+
         AddColors();
 
         for (int i = 0; i < playerObjects.Length; i++)
             playerObjects[i].SetActive(false);
 
-        //configManager = GetComponent<ConfigManager>();
         Client p = new Client();
         p.id = id;
         p.isConnected = true;
@@ -73,6 +69,8 @@ public class PlayerManager : MonoBehaviour
         Color c = colors[Randomizer(0, colors.Count)];
         c.isBusy = true;
         playerColor[0].GetComponent<Image>().color = c.color;
+
+        p.playerColor = c;
 
         AddPlayer(p);
         id++;
@@ -122,7 +120,7 @@ public class PlayerManager : MonoBehaviour
     }
     public void AddTestPlayer() //для отладки
     {
-        if (clients.Count < 4)
+        if (clients.Count < amountPlayers)
         {
             Client p = new Client();
             p.id = id;
@@ -140,6 +138,7 @@ public class PlayerManager : MonoBehaviour
             }
             c.isBusy = true;
             playerColor[id].GetComponent<Image>().color = c.color;
+            p.playerColor = c;
 
 
 
@@ -154,17 +153,19 @@ public class PlayerManager : MonoBehaviour
     {
         //playerObjects[clients.Count - 1].GetComponent<Animator>().SetBool("Open", false);
         playerObjects[clients.Count].SetActive(false);
-        colors[idx].isBusy = false;
+        
         for (int i = idx; i < clients.Count; i++)
         {
             clients[i].id = i;
             playerColor[i].GetComponent<Image>().color = playerColor[i + 1].GetComponent<Image>().color;
         }
+
         id--;
     }
 
     public void KickPlayer(int idx)
     {
+        clients[idx].playerColor.isBusy = false;
         clients.RemoveAt(idx);
         updateSequence(idx);
     }
