@@ -46,6 +46,7 @@ public class PlayersManager : MonoBehaviour
     
     public void connected(Player player)
     {
+
         players.add(player);
         playerAnswerData.addwid(new PlayerAnswerData(), player);
         Debug.Log("Player " + player.nickname + " has been connected!");
@@ -73,15 +74,15 @@ public class PlayersManager : MonoBehaviour
         tabMenuManager.disconnectPlayer(id);
     }
 
-    void Start()
+    private void Awake()
     {
         tabMenuManager = GetComponent<TabMenuManager>();
         playerAnswerData = new BaseTable<PlayerAnswerData>();
+    }
 
-        connected(new Player(0, 0, new Color(255, 0, 0), "SpectreSpect"));
-        connected(new Player(1, 1, new Color(0, 255, 0), "DotaKot"));
-        connected(new Player(2, 2, new Color(0, 0, 255), "ThEnd"));
-        connected(config.me);
+    void Start()
+    {
+ 
     }
 
     void Update()
