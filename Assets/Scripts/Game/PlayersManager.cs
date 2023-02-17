@@ -49,7 +49,7 @@ public class PlayersManager : MonoBehaviour
 
         players.add(player);
         playerAnswerData.addwid(new PlayerAnswerData(), player);
-        Debug.Log("Player " + player.nickname + " has been connected!");
+        //Debug.Log("Player " + player.nickname + " has been connected!");
         tabMenuManager.updateTabMenu();
     }
 

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using static QuestionManager;
 
 public class QuestionManager : MonoBehaviour
 {
@@ -12,7 +14,7 @@ public class QuestionManager : MonoBehaviour
         public float timeToQuestion;
     }
 
-    private Question[] questions;
+    public Question[] questions;
     public GameObject questionsMenu;
     public SelectionQuestions selectionQuestions;
     public PlayersManager playersManager;
@@ -34,12 +36,17 @@ public class QuestionManager : MonoBehaviour
     public float timeToShowTable = 3;
     public float timerToShowTable = 0;
     public bool showTable = false;
+    private bool haveQuestion = false;
 
     public float time = 0.8f;
     private float timer = 0;
 
+    public Animator questionMenuAnimator;
+
     public void setQuestion(Question question)
     {
+        ShowTable(false);
+        OpenQuestionMenu();
         timeToQuestion = question.timeToQuestion;
         timerToQuestion = question.timeToQuestion;
         questionText.text = question.question;
@@ -51,6 +58,28 @@ public class QuestionManager : MonoBehaviour
         playersManager.playerAnswerData.find(config.me.id).timeToAnswer = timeToQuestion;
         haveAnswer = false;
         activeQuestion = question;
+        haveQuestion = true;
+    }
+
+    public void setQuestion(int id)
+    {
+        setQuestion(questions[id % questions.Count()]);
+    }
+
+    public void ShowTable(bool toShowTable)
+    {
+        questionMenuAnimator.SetBool("ShowTable", toShowTable);
+        showTable = toShowTable;
+    }
+
+    public void OpenQuestionMenu()
+    {
+        questionMenuAnimator.SetTrigger("Open");
+    }
+
+    public void CloseQuestionMenu()
+    {
+        questionMenuAnimator.SetTrigger("Close");
     }
 
     public void loadQuestions()
@@ -79,51 +108,57 @@ public class QuestionManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Awake()
     {
         loadQuestions();
-        setQuestion(questions[0]);
+    }
+
+    void Start()
+    {   
     }
 
     void Update()
     {
-        timer -= Time.deltaTime;
-        if (timer < 0) timer = 0;
-
-        timerToQuestion -= Time.deltaTime;
-        if (timerToQuestion < 0) timerToQuestion = 0;
-
-        if (showTable)
+        if (haveQuestion)
         {
-            timerToShowTable -= Time.deltaTime;
-            if (timerToShowTable < 0) timerToShowTable = 0;
+            timer -= Time.deltaTime;
+            if (timer < 0) timer = 0;
+
+            timerToQuestion -= Time.deltaTime;
+            if (timerToQuestion < 0) timerToQuestion = 0;
+
+            if (showTable)
+            {
+                timerToShowTable -= Time.deltaTime;
+                if (timerToShowTable < 0) timerToShowTable = 0;
+            }
+            else if (timerToQuestion == 0)
+            {
+                endQuestion = true;
+                haveAnswer = true;
+                selectedAnswer = selectionQuestions.activeSelection;
+                playersManager.playerAnswerData.find(config.me.id).answerId = selectionQuestions.activeSelection;
+                timerToShowTable = timeToShowTable;
+                showTable = true;
+            }
+
+            if (timerToShowTable == 0 && showTable)
+            {
+                questionsMenu.GetComponent<Animator>().SetBool("ShowTable", true);
+                tableCompiler.compileTheTable();
+            }
+
+            minutes.text = "";
+            secundes.text = "";
+
+
+            if ((int)(timerToQuestion / 60) / 10 == 0)
+                minutes.text += '0';
+            minutes.text += ((int)(timerToQuestion / 60)).ToString();
+
+            if ((int)(timerToQuestion % 60) / 10 == 0)
+                secundes.text += '0';
+            secundes.text += ((int)(timerToQuestion % 60)).ToString();
         }
-        else if (timerToQuestion == 0)
-        {
-            endQuestion = true;
-            haveAnswer = true;
-            selectedAnswer = selectionQuestions.activeSelection;
-            playersManager.playerAnswerData.find(config.me.id).answerId = selectionQuestions.activeSelection;
-            timerToShowTable = timeToShowTable;
-            showTable = true;
-        }
-
-        if(timerToShowTable == 0 && showTable)
-        {
-            questionsMenu.GetComponent<Animator>().SetBool("ShowTable", true);
-            tableCompiler.compileTheTable();
-        }
-
-        minutes.text = "";
-        secundes.text = "";
-
-
-        if ((int)(timerToQuestion / 60) / 10 == 0)
-            minutes.text += '0';
-        minutes.text += ((int)(timerToQuestion / 60)).ToString();
-
-        if ((int)(timerToQuestion % 60) / 10 == 0)
-            secundes.text += '0';
-        secundes.text += ((int)(timerToQuestion % 60)).ToString();
     }
 }
