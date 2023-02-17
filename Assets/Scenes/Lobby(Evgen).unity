@@ -54239,8 +54239,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -14.89}
-  m_SizeDelta: {x: 0, y: 445.54}
+  m_AnchoredPosition: {x: 0, y: 1.63}
+  m_SizeDelta: {x: 0, y: 386.28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1130972906
 GameObject:
@@ -89778,6 +89778,7 @@ MonoBehaviour:
   - {fileID: 2077840811}
   - {fileID: 1509403170}
   - {fileID: 1375731875}
+  colors: []
 --- !u!4 &1954961773
 Transform:
   m_ObjectHideFlags: 0

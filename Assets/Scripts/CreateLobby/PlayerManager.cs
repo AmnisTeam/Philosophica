@@ -9,6 +9,14 @@ using UnityEngine.UI;
 [Serializable]
 public class Client
 {
+    public Client(int id, string nickname, Color playerColor)
+    {
+        this.id = id;
+        this.isConnected = true;
+        this.nickname = nickname;
+        this.playerColor = playerColor;
+    }
+
     public int id;
     public bool isConnected;
     public string nickname;
@@ -18,6 +26,11 @@ public class Client
 [Serializable]
 public class Color
 {
+    public Color(Color32 color, bool isBusy)
+    {
+        this.color = color;
+        this.isBusy = isBusy;
+    }
     public Color(Color32 color)
     {
         this.color = color;
@@ -54,31 +67,19 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        //configManager = GetComponent<ConfigManager>();
-
         AddColors();
 
         for (int i = 0; i < playerObjects.Length; i++)
             playerObjects[i].SetActive(false);
 
-        Client p = new Client();
-        p.id = id;
-        p.isConnected = true;
-        p.nickname = configManager.GetNickname();
-
-        Color c = colors[Randomizer(0, colors.Count)];
-        c.isBusy = true;
+        Color c = RandomColor();
         playerColor[0].GetComponent<Image>().color = c.color;
 
-        p.playerColor = c;
+        Client player = new Client(id, configManager.GetNickname(), c);
+        AddPlayer(player);
 
-        AddPlayer(p);
         id++;
         playerObjects[0].SetActive(true);
-
-        AddTestPlayer();
-        AddTestPlayer();
-        AddTestPlayer();
     }
 
 
@@ -110,10 +111,7 @@ public class PlayerManager : MonoBehaviour
             clients.Add(player);
         else
         {
-            Client p = new Client();
-            p.id = id;
-            p.isConnected = true;
-            p.nickname = "test";
+            Client p = new Client(id, "test", new Color(UnityEngine.Color.white));
             id++;
             clients.Add(p);
         }
@@ -122,22 +120,11 @@ public class PlayerManager : MonoBehaviour
     {
         if (clients.Count < amountPlayers)
         {
-            Client p = new Client();
-            p.id = id;
-            p.isConnected = true;
-            p.nickname = NumberToAZ(Randomizer(0, 26)).ToString();
 
-            int qwe = 0;
-            Color c = colors[Randomizer(0, colors.Count)];
-            while (c.isBusy)
-            {
-                c = colors[Randomizer(0, colors.Count)];
-                qwe++;
-                if (qwe > 100)
-                    break;
-            }
-            c.isBusy = true;
+            Color c = RandomColor();
             playerColor[id].GetComponent<Image>().color = c.color;
+
+            Client p = new Client(id, NumberToAZ(Randomizer(0, 26)), new Color(UnityEngine.Color.white));
             p.playerColor = c;
 
 
@@ -153,7 +140,7 @@ public class PlayerManager : MonoBehaviour
     {
         //playerObjects[clients.Count - 1].GetComponent<Animator>().SetBool("Open", false);
         playerObjects[clients.Count].SetActive(false);
-        
+
         for (int i = idx; i < clients.Count; i++)
         {
             clients[i].id = i;
@@ -172,9 +159,9 @@ public class PlayerManager : MonoBehaviour
 
 
 
-    char NumberToAZ(int num) // для отладки
+    string NumberToAZ(int num) // для отладки
     {
-        return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[num];
+        return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[num].ToString();
     }
 
     int Randomizer(int f, int l)
@@ -182,5 +169,16 @@ public class PlayerManager : MonoBehaviour
         var rnd = new System.Random();
         var n = rnd.Next(f, l);
         return n;
+    }
+
+    Color RandomColor()
+    {
+        Color c = colors[Randomizer(0, colors.Count)];
+
+        while (c.isBusy)
+            c = colors[Randomizer(0, colors.Count)];
+
+        c.isBusy = true;
+        return c;
     }
 }
