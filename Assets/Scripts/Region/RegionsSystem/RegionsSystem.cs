@@ -1,16 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RegionsSystem : MonoBehaviour
 {
     public GameObject regionPrefab;
+
+    public Color nextRegionColor;
+    public float handleRadius = 0.5f;
+
     public List<RegionSerd> regionSerds;
-
-    //public int regionToDestroyId = -1;
-
-    //public int regionIdForPointToDestroy = -1;
-    //public int pointToDestroyId = -1;
 }
 
 [System.Serializable]

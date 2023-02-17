@@ -99,7 +99,7 @@ Shader "Unlit/RegionShader"
 {
     Properties
     {
-        _RegionColor ("Region color", Color) = (1,1,1,1)
+        _RegionColor ("Region color", Color) = (1,0,0,1)
     }
     SubShader
     {
@@ -142,6 +142,7 @@ Shader "Unlit/RegionShader"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                //return _RegionColor;
                 return _RegionColor;
             }
             ENDCG

@@ -30,7 +30,6 @@ public class RegionEditor2 : Editor
 
     private Vector3 mousePosition;
 
-    private float regionPointsHandlesRadius;
     private ClosestPointInfo draggedPoint;
     private Vector3 startOfDraggingPosition;
 
@@ -39,8 +38,6 @@ public class RegionEditor2 : Editor
         selectedRegionSerdColor = new Color(1.0f, 1.0f, 1.0f);
         unselectedRegionSerdColor = new Color(0.0f, 0.0f, 0.0f);
         undermousePointColor = new Color(0.6f, 0.6f, 0.6f);
-
-        regionPointsHandlesRadius = 1;
 
         startOfDraggingPosition = new Vector3();
 
@@ -91,7 +88,7 @@ public class RegionEditor2 : Editor
     private void DrawPointsAndLines()
     {
         List<ClosestPointInfo> pointsInfo = GetPointsUnderMouse();
-        List<ClosestLineInfo> lineInfo = GetClosestLinesInfoClosserThan(regionPointsHandlesRadius, GetMousePosition());
+        List<ClosestLineInfo> lineInfo = GetClosestLinesInfoClosserThan(regionsSystem.handleRadius, GetMousePosition());
 
         for (int i = 0; i < regionSerds.Count; i++)
         {
@@ -128,7 +125,7 @@ public class RegionEditor2 : Editor
                         break;
                     }
 
-                Handles.DrawSolidDisc(currentPoint, Vector3.back, regionPointsHandlesRadius);
+                Handles.DrawSolidDisc(currentPoint, Vector3.back, regionsSystem.handleRadius);
             }
         }
     }
@@ -217,6 +214,7 @@ public class RegionEditor2 : Editor
     public RegionSerd CreateRegionSerd()
     {
         Region region = InstantiateNewRegion();
+        region.SetColor(regionsSystem.nextRegionColor);
         RegionSerd regionSerd = new RegionSerd(region);
 
         Undo.RecordObject(regionsSystem, "Add new regionSerd");
@@ -366,7 +364,7 @@ public class RegionEditor2 : Editor
 
     private List<ClosestPointInfo> GetPointsUnderMouse()
     {
-        return GetClosestPointsCloserThenDistance(regionPointsHandlesRadius, GetMousePosition());
+        return GetClosestPointsCloserThenDistance(regionsSystem.handleRadius, GetMousePosition());
     }
 
     private ClosestPointInfo GetClosestPoint(Vector3 position)
@@ -501,7 +499,7 @@ public class RegionEditor2 : Editor
 
     private List<ClosestLineInfo> GetLinesInfoUnderMouse()
     {
-        List<ClosestLineInfo> closestLines = GetClosestLinesInfoClosserThan(regionPointsHandlesRadius, GetMousePosition());
+        List<ClosestLineInfo> closestLines = GetClosestLinesInfoClosserThan(regionsSystem.handleRadius, GetMousePosition());
         return closestLines;
     }
 
