@@ -89779,6 +89779,15 @@ MonoBehaviour:
   - {fileID: 1509403170}
   - {fileID: 1375731875}
   colors: []
+  images:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!4 &1954961773
 Transform:
   m_ObjectHideFlags: 0

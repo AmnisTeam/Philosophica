@@ -53,6 +53,7 @@ public class PlayerManager : MonoBehaviour
     public GameObject[] playerNicknames = new GameObject[amountPlayers];
     public GameObject[] playerColor = new GameObject[amountPlayers];
     public List<Color> colors = new List<Color>();
+    public Image[] images;
 
     ConfigManager configManager = new ConfigManager();
 
