@@ -13,9 +13,9 @@ public abstract class ToastMessage
 
 public class TemporaryToastMessage : ToastMessage
 {
-    double timerToClose = 0;
-    double timeToClose = 0;
-    bool isDone = false;
+    public double timerToClose = 0;
+    public double timeToClose = 0;
+    public bool isDone = false;
 
     public TemporaryToastMessage(string message, double timeToClose)
     {
@@ -65,7 +65,7 @@ public class ToastShower : MonoBehaviour
 
     public Queue<ToastMessage> messages;
     public ToastMessage currentMessage = null;
-
+    
     public void showText(string text, double timeToClose = 5)
     {
         messages.Enqueue(new TemporaryToastMessage(text, timeToClose));
@@ -74,6 +74,11 @@ public class ToastShower : MonoBehaviour
     public void showText(BoolToastMessage boolToastMessage)
     {
         messages.Enqueue(boolToastMessage);
+    }
+
+    public void showText(TemporaryToastMessage temporaryToastMessage)
+    {
+        messages.Enqueue(temporaryToastMessage);
     }
 
     void Start()
@@ -96,6 +101,7 @@ public class ToastShower : MonoBehaviour
         if (currentMessage != null)
         {
             currentMessage.UpdateToastMessage();
+            text.text = currentMessage.message;
             if (currentMessage.ClosingIsNeeded())
             {
                 currentMessage = null;

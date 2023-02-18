@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
@@ -23,16 +24,16 @@ public class GameplayManager : MonoBehaviour
     public QuestionManager questionManager;
     public RegionsSystem regionSystem;
     public TextMeshProUGUI nextQuestionTimeText;
+    public TextMeshProUGUI stepsText;
     public ToastShower toast;
-
-    public Camera camera;
+    public Camera cam;
 
     public StateMachine gameStateMachine = new StateMachine();
 
     public double sessionElapsedTime = 0;
 
-    public int step = 0;
-    public int maxStep = 25;
+    public int steps = 0;
+    public int maxSteps = 25;
 
     public double timeToNextQuestion = 10;
     public double timeToChooseTerretory = 10;
@@ -106,43 +107,17 @@ public class GameplayManager : MonoBehaviour
     {
         regionSelectionTimer += Time.deltaTime;
 
+        regionSelectionToast.message = winner.nickname + " выбирает территорию: " +
+            ((int)(regionSelectionMaxTime - regionSelectionTimer));
+
         if (winner.id == 4575635)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit hit;
-                if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit))
-                {
-                    if(hit.collider.gameObject.GetComponent<Region>())
-                    {
-                        Region region = hit.collider.gameObject.GetComponent<Region>();
-                        bool isAlreadyClaimed = false;
-                        for (int i = 0; i < playersManager.players.count; i++)
-                        {
-                            for (int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++)
-                            {
-                                if (region == playersManager.players.get(i).claimedRegions[j])
-                                {
-                                    isAlreadyClaimed = true;
-                                    break;
-                                }
-                            }
-                            if (isAlreadyClaimed)
-                                break;
-                        }
-
-                        if (!isAlreadyClaimed)
-                            winner.ClaimRegion(region);
-                    }           
-                }
-            }
+            GrantRegionToWinnerByMouseClick();
         }
-
-
 
         if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection)
         {
+            steps++;
             regionSelectionToast.isDone = true;
             regionSelectionStateIsEnded.state = true;
             Wait(0.8);
@@ -150,6 +125,8 @@ public class GameplayManager : MonoBehaviour
 
         if (regionSelectionTimer >= regionSelectionMaxTime)
         {
+            GrantRandomFreeRegionToPlayer(winner);
+            steps++;
             regionSelectionToast.isDone = true;
             regionSelectionStateIsEnded.state = true;
             Wait(0.8);
@@ -167,6 +144,8 @@ public class GameplayManager : MonoBehaviour
     public void PreparationUpdate()
     {
         preparationTimer += Time.deltaTime;
+
+        preparationToast.message = "Подготовка к следующему вопросу: " + ((int)(preparationTime - preparationTimer));
 
         if (preparationTimer >= preparationTime * 0.9)
             preparationToast.isDone = true;
@@ -244,15 +223,9 @@ public class GameplayManager : MonoBehaviour
         }
 
         SetNextQuestionTimeText(timeToNextQuestion);
+        SetStepsText(steps, maxSteps);
 
         UpdateRegionColors();
-
-        //if (timeToNextQuestion <= 0)
-        //{
-        //    questionManager.setQuestion(currentQuestion);
-        //    currentQuestion = (currentQuestion + 1) % questionManager.questions.Count();
-        //    timeToNextQuestion = 10;
-        //}
     }
 
     private void GrantPlayersStartingRegions()
@@ -292,5 +265,71 @@ public class GameplayManager : MonoBehaviour
     {
         waiteTime = seconds;
         waitTimer = 0;
+    }
+
+    public void GrantRandomFreeRegionToPlayer(Player player)
+    {
+        for (int r = 0; r < regionSystem.regionSerds.Count; r++)
+        {
+            Region region = regionSystem.regionSerds[r].region;
+
+            bool found = false;
+            for (int p = 0; p < playersManager.players.count; p++)
+            {
+                for (int c = 0; c < playersManager.players.get(p).claimedRegions.Count; c++)
+                {
+                    if (region == playersManager.players.get(p).claimedRegions[c])
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found)
+                    break;
+            }
+            if (!found)
+            {
+                player.ClaimRegion(region);
+                break;
+            }       
+        }
+    }
+
+    public void GrantRegionToWinnerByMouseClick()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit))
+            {
+                if (hit.collider.gameObject.GetComponent<Region>())
+                {
+                    Region region = hit.collider.gameObject.GetComponent<Region>();
+                    bool isAlreadyClaimed = false;
+                    for (int i = 0; i < playersManager.players.count; i++)
+                    {
+                        for (int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++)
+                        {
+                            if (region == playersManager.players.get(i).claimedRegions[j])
+                            {
+                                isAlreadyClaimed = true;
+                                break;
+                            }
+                        }
+                        if (isAlreadyClaimed)
+                            break;
+                    }
+
+                    if (!isAlreadyClaimed)
+                        winner.ClaimRegion(region);
+                }
+            }
+        }
+    }
+
+    public void SetStepsText(int steps, int maxSteps)
+    {
+        stepsText.text = steps + "/" + maxSteps;
     }
 }
