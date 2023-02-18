@@ -16,7 +16,7 @@ public class SelectionQuestions : MonoBehaviour
     public QuestionManager questionManager;
 
     public float speed = 0.01f;
-    public float[] opacity;
+    public float[] opacity = new float[4];
     public int activeSelection = 0;
     public float shadowMinColor = 0.2f;
     public float shadowSpeed = 0.6f;
@@ -60,6 +60,13 @@ public class SelectionQuestions : MonoBehaviour
             activeSelection = 3;
             an = false;
         }
+    }
+
+    public void setVisibleButtons()
+    {
+        shadowColor = 1;
+        for (int x = 0; x < 4; x++)
+            buttons[x].color = new Color(255, 255, 255, 1);
     }
 
     void Start()

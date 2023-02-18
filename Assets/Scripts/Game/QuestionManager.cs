@@ -59,6 +59,9 @@ public class QuestionManager : MonoBehaviour
         haveAnswer = false;
         activeQuestion = question;
         haveQuestion = true;
+        endQuestion = false;
+        selectionQuestions.setVisibleButtons();
+
     }
 
     public void setQuestion(int id)
@@ -85,7 +88,7 @@ public class QuestionManager : MonoBehaviour
     public void loadQuestions()
     {
         //Загрузка вопросов с диска
-        questions = new Question[1];
+        questions = new Question[2];
         questions[0] = new Question();
         questions[0].question = "Именем какого философа история философии делится на до и после?";
         questions[0].answer = new string[4];
@@ -95,6 +98,16 @@ public class QuestionManager : MonoBehaviour
         questions[0].answer[3] = "Кант";
         questions[0].timeToQuestion = 5;
         questions[0].idRightAnswer = 3;
+
+        questions[1] = new Question();
+        questions[1].question = "Как называются белые летающие пушистые штуки высоко в верху на улице?";
+        questions[1].answer = new string[4];
+        questions[1].answer[0] = "Коты";
+        questions[1].answer[1] = "Облока";
+        questions[1].answer[2] = "Мед";
+        questions[1].answer[3] = "Зелёнка";
+        questions[1].timeToQuestion = 10;
+        questions[1].idRightAnswer = 1;
     }
 
     public void checkSelectAnswer()

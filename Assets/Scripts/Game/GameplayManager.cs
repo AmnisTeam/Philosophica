@@ -23,6 +23,7 @@ public class GameplayManager : MonoBehaviour
     public QuestionManager questionManager;
     public RegionsSystem regionSystem;
     public TextMeshProUGUI nextQuestionTimeText;
+    public ToastShower toast;
 
     public StateMachine gameStateMachine = new StateMachine();
 
@@ -34,16 +35,28 @@ public class GameplayManager : MonoBehaviour
     public double timeToNextQuestion = 10;
     public double timeToChooseTerretory = 10;
 
-    public int currentQuestion = 0;
+    public int currentQuestion = 1;
 
-    public double viewResultsTimer = 0;
+    private double viewResultsTimer = 0;
     public double viewResultsTime = 7;
+
+    private double regionSelectionTimer = 0;
+    public double regionSelectionMaxTime = 10;
+
+    private double preparationTimer = 0;
+    public double preparationTime = 10;
+
+    public BoolToastMessage regionSelectionToast;
+    public BoolToastMessage preparationToast;
 
     public BoolCondition askQuestionStateIsEnded;
     public BoolCondition viewResultsStateIsEnded;
+    public BoolCondition regionSelectionStateIsEnded;
+    public BoolCondition preparationStateIsEnded;
 
     public void AskQuestionStart()
     {
+        askQuestionStateIsEnded.state = false;
         questionManager.setQuestion(currentQuestion);
     }
 
@@ -51,18 +64,17 @@ public class GameplayManager : MonoBehaviour
     {
         if (questionManager.timerToQuestion <= 0)
             askQuestionStateIsEnded.state = true;
-
     }
 
     public void ViewResultsStart()
     {
-        Debug.Log("ViewResultsStart");
+        viewResultsTimer = 0;
+        viewResultsStateIsEnded.state = false;
     }
 
     public void ViewResultsUpdate()
     {
         viewResultsTimer += Time.deltaTime;
-        Debug.Log((int)viewResultsTimer);
         if (viewResultsTimer >= viewResultsTime)
         {
             viewResultsStateIsEnded.state = true;
@@ -72,12 +84,46 @@ public class GameplayManager : MonoBehaviour
 
     public void RegionSelectionStart()
     {
-        Debug.Log("RegionSelectionStart");
+        string winnerNickname = questionManager.tableCompiler.table[0].nickname;
+        regionSelectionToast = new BoolToastMessage(winnerNickname + " выбирает территорию");
+        toast.showText(regionSelectionToast);
+        regionSelectionTimer = 0;
+        regionSelectionStateIsEnded.state = false;
     }
 
     public void RegionSelectionUpdate()
     {
+        regionSelectionTimer += Time.deltaTime;
 
+        if (regionSelectionTimer >= regionSelectionMaxTime * 0.9)
+            regionSelectionToast.isDone = true;
+
+        if (regionSelectionTimer >= regionSelectionMaxTime)
+        {
+            regionSelectionStateIsEnded.state = true;          
+        }
+    }
+
+    public void PreparationStart()
+    {
+        preparationToast = new BoolToastMessage("Подготовка к следующему вопросу");
+        toast.showText(preparationToast);
+        preparationTimer = 0;
+        preparationStateIsEnded.state = false;
+    }
+
+    public void PreparationUpdate()
+    {
+        preparationTimer += Time.deltaTime;
+
+        if (preparationTimer >= preparationTime * 0.9)
+            preparationToast.isDone = true;
+
+        if (preparationTimer >= preparationTime)
+        {
+            preparationStateIsEnded.state = true;
+            currentQuestion = (currentQuestion + 1) % questionManager.questions.Count();
+        }
     }
 
     public void Awake()
@@ -106,6 +152,19 @@ public class GameplayManager : MonoBehaviour
         viewResultsStateIsEnded = new BoolCondition();
         Transition fromViewResultsToRegionSelection = new Transition(viewResultsStateIsEnded, 1, 2);
         gameStateMachine.transitions.Add(fromViewResultsToRegionSelection);
+
+        State preparationState = new State();
+        preparationState.startEvents += PreparationStart;
+        preparationState.updateEvents += PreparationUpdate;
+        gameStateMachine.states.Add(preparationState);
+
+        regionSelectionStateIsEnded = new BoolCondition();
+        Transition fromRegionSelectionToPreparation = new Transition(regionSelectionStateIsEnded, 2, 3);
+        gameStateMachine.transitions.Add(fromRegionSelectionToPreparation);
+
+        preparationStateIsEnded = new BoolCondition();
+        Transition fromPreparationToAskQuestion = new Transition(preparationStateIsEnded, 3, 0);
+        gameStateMachine.transitions.Add(fromPreparationToAskQuestion);
     }
 
     public void Start()
