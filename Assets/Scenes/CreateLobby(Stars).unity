@@ -49245,6 +49245,17 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!114 &878558054 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8233861575582510200, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
+  m_PrefabInstance: {fileID: 333807387}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 036b91e5dbca42c428169c44c782cb41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &879254514
 GameObject:
   m_ObjectHideFlags: 0
@@ -70786,7 +70797,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bc95c4cb6c68d5488389e3087051b5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lobbyIcon: {fileID: 0}
+  iconScroller: {fileID: 878558054}
   lobbyName: {fileID: 299048232}
   lobbyPassword: {fileID: 1444878641}
 --- !u!4 &1665670966

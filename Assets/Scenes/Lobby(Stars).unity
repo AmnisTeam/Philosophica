@@ -99726,7 +99726,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f7cab38c48b24645857fe24179aafde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lobbyIcon: {fileID: 0}
+  lobbyGameObject: {fileID: 1074337197}
   lobbyName: {fileID: 1184993074}
   lobbyCode: {fileID: 1146994061}
   lobbyPassword: {fileID: 1427699575}
