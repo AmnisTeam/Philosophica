@@ -14,7 +14,7 @@ public class TableCompiler : MonoBehaviour
     public CanvasGroup[] tableRaw;
     public Image winnerIcon;
     public TMPro.TMP_Text winnerNickname;
-    public Color colorRightAnswer;
+    public UnityEngine.Color colorRightAnswer;
 
     public PlayersManager playersManager;
     public QuestionManager questionManager;
@@ -43,7 +43,7 @@ public class TableCompiler : MonoBehaviour
             if (answerData.answerId == questionManager.rightAnswer)
                 answer[x].color = colorRightAnswer;
             icons[x].sprite = iconsContent.icons[table[x].iconId].sprite;
-            icons[x].color = table[x].iconColor;
+            icons[x].color = table[x].color;
 
             minutes[x].text = "";
             secundes[x].text = "";
@@ -66,7 +66,7 @@ public class TableCompiler : MonoBehaviour
         winner = table[0];
         winnerNickname.SetText(winner.nickname);
         winnerIcon.sprite = iconsContent.icons[table[0].iconId].sprite;
-        winnerIcon.color = table[0].iconColor;
+        winnerIcon.color = table[0].color;
     }
 
     void Start()
