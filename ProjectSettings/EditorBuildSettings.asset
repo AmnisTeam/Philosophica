@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Settings(Stars).unity
     guid: 8213e8a447a0ad14892660a5953236a6
+  - enabled: 1
+    path: Assets/Scenes/CreateLobby(Stars).unity
+    guid: 3eec8e4cd99b0bb48a2854fa6267749a
   m_configObjects: {}
