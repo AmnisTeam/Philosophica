@@ -25,6 +25,8 @@ public class GameplayManager : MonoBehaviour
     public TextMeshProUGUI nextQuestionTimeText;
     public ToastShower toast;
 
+    public Camera camera;
+
     public StateMachine gameStateMachine = new StateMachine();
 
     public double sessionElapsedTime = 0;
@@ -45,6 +47,12 @@ public class GameplayManager : MonoBehaviour
 
     private double preparationTimer = 0;
     public double preparationTime = 10;
+
+    private double waitTimer = 0;
+    private double waiteTime = 0;
+
+    private int winnerRegionsCountAtStartOfSelection;
+    private Player winner;
 
     public BoolToastMessage regionSelectionToast;
     public BoolToastMessage preparationToast;
@@ -84,9 +92,12 @@ public class GameplayManager : MonoBehaviour
 
     public void RegionSelectionStart()
     {
-        string winnerNickname = questionManager.tableCompiler.table[0].nickname;
-        regionSelectionToast = new BoolToastMessage(winnerNickname + " выбирает территорию");
+        winner = questionManager.tableCompiler.table[0];
+        winnerRegionsCountAtStartOfSelection = winner.claimedRegions.Count;
+
+        regionSelectionToast = new BoolToastMessage(winner.nickname + " выбирает территорию");
         toast.showText(regionSelectionToast);
+
         regionSelectionTimer = 0;
         regionSelectionStateIsEnded.state = false;
     }
@@ -95,12 +106,53 @@ public class GameplayManager : MonoBehaviour
     {
         regionSelectionTimer += Time.deltaTime;
 
-        if (regionSelectionTimer >= regionSelectionMaxTime * 0.9)
+        if (winner.id == 4575635)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit))
+                {
+                    if(hit.collider.gameObject.GetComponent<Region>())
+                    {
+                        Region region = hit.collider.gameObject.GetComponent<Region>();
+                        bool isAlreadyClaimed = false;
+                        for (int i = 0; i < playersManager.players.count; i++)
+                        {
+                            for (int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++)
+                            {
+                                if (region == playersManager.players.get(i).claimedRegions[j])
+                                {
+                                    isAlreadyClaimed = true;
+                                    break;
+                                }
+                            }
+                            if (isAlreadyClaimed)
+                                break;
+                        }
+
+                        if (!isAlreadyClaimed)
+                            winner.ClaimRegion(region);
+                    }           
+                }
+            }
+        }
+
+
+
+        if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection)
+        {
             regionSelectionToast.isDone = true;
+            regionSelectionStateIsEnded.state = true;
+            Wait(0.8);
+        }
 
         if (regionSelectionTimer >= regionSelectionMaxTime)
         {
-            regionSelectionStateIsEnded.state = true;          
+            regionSelectionToast.isDone = true;
+            regionSelectionStateIsEnded.state = true;
+            Wait(0.8);
         }
     }
 
@@ -170,9 +222,9 @@ public class GameplayManager : MonoBehaviour
     public void Start()
     {
         playersManager.connected(playersManager.config.me);
-        playersManager.connected(new Player(0, 0, new Color(255, 0, 0), "SpectreSpect"));
-        playersManager.connected(new Player(1, 1, new Color(0, 255, 0), "DotaKot"));
-        playersManager.connected(new Player(2, 2, new Color(0, 0, 255), "ThEnd"));
+        playersManager.connected(new Player(0, 0, new Color(1f, 0.3725f, 0.396f), "SpectreSpect"));
+        playersManager.connected(new Player(1, 1, new Color(0.372f, 0.4745f, 1f), "DotaKot"));
+        playersManager.connected(new Player(2, 2, new Color(0.549f, 1f, 0.372f), "ThEnd"));
 
         GrantPlayersStartingRegions();
 
@@ -183,9 +235,13 @@ public class GameplayManager : MonoBehaviour
     {
         sessionElapsedTime += Time.deltaTime;
         timeToNextQuestion -= Time.deltaTime;
+        waitTimer += Time.deltaTime;
 
-        gameStateMachine.UpdateEvents();
-        gameStateMachine.UpdateConditions();
+        if (waitTimer >= waiteTime)
+        {
+            gameStateMachine.UpdateConditions();
+            gameStateMachine.UpdateEvents();        
+        }
 
         SetNextQuestionTimeText(timeToNextQuestion);
 
@@ -230,5 +286,11 @@ public class GameplayManager : MonoBehaviour
             secondsNonsignificantZero = "0";
 
         nextQuestionTimeText.text = minutesNonsignificantZero + minutes + ":" + secondsNonsignificantZero + restOfSeconds;
+    }
+
+    public void Wait(double seconds)
+    {
+        waiteTime = seconds;
+        waitTimer = 0;
     }
 }

@@ -40,5 +40,6 @@ public class Region : MonoBehaviour
             GetComponent<MeshFilter>().sharedMesh = new Mesh();
 
         Triangulator.Triangulate(points, GetComponent<MeshFilter>().sharedMesh);
+        GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().sharedMesh;
     }
 }
