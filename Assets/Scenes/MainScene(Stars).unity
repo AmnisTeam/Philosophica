@@ -63728,7 +63728,7 @@ MonoBehaviour:
   autoConnectClientBuild: 0
   sendRate: 30
   offlineScene: Assets/Scenes/MainScene(Stars).unity
-  onlineScene: Assets/Scenes/Lobby(Evgen).unity
+  onlineScene: Assets/Scenes/Lobby(Stars).unity
   transport: {fileID: 1450569955}
   networkAddress: localhost
   maxConnections: 100
