@@ -39,7 +39,7 @@ public class BackgroundMusic : MonoBehaviour
         {
             var data = SaveManager.Load<SaveData>(ConfigManager.saveKey);
 
-            this.volume = data.soundVolume;
+            this.volume = data.musicVolume;
             this.audioSource.volume = this.volume;
         }
         else
