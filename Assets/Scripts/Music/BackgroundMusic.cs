@@ -5,69 +5,46 @@ using UnityEngine.UI;
 
 public class BackgroundMusic : MonoBehaviour
 {
-    //public Slider slider;
+    [Header("Genaral")]
+    public float generalVolume;
 
-    //public string saveVolumeKey;
-    //public string sliderTag;
-    //public string textVolumeTag;
-
-    public string settingsTag;
-
-    public float volume;
-
+    [Header("Music")]
     public AudioClip[] backgroundMusic;
-    public AudioSource audioSource;
+    public AudioSource backgroundMusicSource;
+    public float backgroundVolume;
+
+    private void UpdateBackgroundVolume()
+    {
+        if (PlayerPrefs.HasKey(ConfigManager.saveKey))
+        {
+            var data = SaveManager.Load<SaveData>(ConfigManager.saveKey);
+
+            this.generalVolume = data.generalVolume;
+
+            this.backgroundVolume = data.musicVolume;
+            this.backgroundMusicSource.volume = this.backgroundVolume * generalVolume;
+        }
+        else
+        {
+            this.backgroundVolume = 0.5f;
+            this.backgroundMusicSource.volume = this.backgroundVolume;
+        }
+    }
 
     void Awake()
     {
         var rnd = new System.Random();
         var n = rnd.Next(0, backgroundMusic.Length);
-        audioSource.clip = backgroundMusic[n];
+        backgroundMusicSource.clip = backgroundMusic[n];
 
-        /*
-        if (settingsMusicVolume != null)
-        {
-            this.volume = settingsMusicVolume.GetComponent<Slider>().value;
-            this.audioSource.volume = this.volume;
-        }
-        else
-        {
-            this.volume = 0.5f;
-        }*/
+        UpdateBackgroundVolume();
 
-        if (PlayerPrefs.HasKey(ConfigManager.saveKey))
-        {
-            var data = SaveManager.Load<SaveData>(ConfigManager.saveKey);
-
-            this.volume = data.musicVolume;
-            this.audioSource.volume = this.volume;
-        }
-        else
-        {
-            this.volume = 0.5f;
-            this.audioSource.volume = this.volume;
-        }
-
-        audioSource.Play();
-
+        backgroundMusicSource.Play();
 
     }
 
-    //private void LateUpdate()
-    //{
-    //    GameObject settingsMusicVolume = GameObject.FindWithTag(this.settingsTag);
-    //    if (settingsMusicVolume != null)
-    //    {
-    //        this.volume = settingsMusicVolume.GetComponent<Slider>().value;
-
-    //        //this.slider = settings.GetComponent<Slider>();
-    //        //this.volume = slider.value;
-
-    //        //if (this.audioSource.volume != this.volume)
-    //        //{
-    //        //    PlayerPrefs.SetFloat(this.saveVolumeKey, this.volume);
-    //        //}
-    //    }
-    //    this.audioSource.volume = this.volume;
-    //}
+    private void LateUpdate()
+    {
+        UpdateBackgroundVolume();
+    }
 }
