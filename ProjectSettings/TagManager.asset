@@ -4,7 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - SOUND_MANAGER_TAG
+  - BACKGROUND_MUSIC_TAG
+  - SOUND_EFFECTS_TAG
   layers:
   - Default
   - TransparentFX
