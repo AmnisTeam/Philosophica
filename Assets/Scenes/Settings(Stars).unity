@@ -627,7 +627,7 @@ GameObject:
   - component: {fileID: 242705950}
   m_Layer: 5
   m_Name: Slider
-  m_TagString: Untagged
+  m_TagString: settingsMusicVolumeTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -887,7 +887,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &358918447
 GameObject:
@@ -1517,7 +1517,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 600, y: -76.55898}
+  m_AnchoredPosition: {x: 600, y: -114.00198}
   m_SizeDelta: {x: 1200, y: 926.89}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &770469285
@@ -1790,13 +1790,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 835833374}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10522.489}
+  m_LocalScale: {x: 105.22489, y: 105.22489, z: 105.22489}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_Father: {fileID: 2120387568}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &840152534
 GameObject:
@@ -3506,7 +3506,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -601, y: -75.55701}
+  m_AnchoredPosition: {x: -601, y: -113}
   m_SizeDelta: {x: 1200, y: 926.89}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1813922696
@@ -3971,7 +3971,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2120387564
 GameObject:
@@ -4072,8 +4072,9 @@ RectTransform:
   - {fileID: 1757783154}
   - {fileID: 1584773274}
   - {fileID: 1025093927}
+  - {fileID: 835833377}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4398,6 +4399,42 @@ PrefabInstance:
       propertyPath: iconsContent
       value: 
       objectReference: {fileID: 1025093928}
+    - target: {fileID: 8233861575582510200, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
+      propertyPath: sprites.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8233861575582510200, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
+      propertyPath: sprites.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: b6c8fa383d2692c42aaa236860ff3195, type: 3}
+    - target: {fileID: 8233861575582510200, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
+      propertyPath: sprites.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 7951c81a8f4ba81428e4c3437c686901, type: 3}
+    - target: {fileID: 8233861575582510200, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
+      propertyPath: sprites.Array.data[2]
+      value: 
+      objectReference: {fileID: 21300000, guid: 5688eca440b30fd41a7cc0ca271a390e, type: 3}
+    - target: {fileID: 8233861575582510200, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
+      propertyPath: sprites.Array.data[3]
+      value: 
+      objectReference: {fileID: 21300000, guid: 5c23197d490560f42babe165b76f2be1, type: 3}
+    - target: {fileID: 8233861575582510200, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
+      propertyPath: sprites.Array.data[4]
+      value: 
+      objectReference: {fileID: 21300000, guid: 4d92b04ca6b99aa4f9dcfbd294d1eab0, type: 3}
+    - target: {fileID: 8233861575582510200, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
+      propertyPath: sprites.Array.data[5]
+      value: 
+      objectReference: {fileID: 21300000, guid: adb451624805d5849a1b1edcd54788fb, type: 3}
+    - target: {fileID: 8233861575582510200, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
+      propertyPath: sprites.Array.data[6]
+      value: 
+      objectReference: {fileID: 21300000, guid: 17034f6b163f39640b003fc7c64c904d, type: 3}
+    - target: {fileID: 8233861575582510200, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
+      propertyPath: sprites.Array.data[7]
+      value: 
+      objectReference: {fileID: 21300000, guid: 3ec9bbcf51b1f9c40b90032123980b57, type: 3}
     - target: {fileID: 8233861575600692081, guid: 0a2cf74114f70a0428d7d9559cb7a282, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

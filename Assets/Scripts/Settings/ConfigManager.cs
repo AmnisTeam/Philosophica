@@ -13,7 +13,7 @@ public class ConfigManager : MonoBehaviour
     public GameObject playerUuid;
     public GameObject nicknameTextField;
 
-    private const string saveKey = "mainSave";
+    public const string saveKey = "mainSave";
 
 
 
@@ -71,6 +71,12 @@ public class ConfigManager : MonoBehaviour
     {
         var data = SaveManager.Load<SaveData>(saveKey);
         return data.nickname;
+    }
+
+    public float GetSoundVolume()
+    {
+        var data = SaveManager.Load<SaveData>(saveKey);
+        return data.soundVolume;
     }
 
     public string GetPlayerUuid()
