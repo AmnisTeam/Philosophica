@@ -15,7 +15,7 @@ public class IconScroller : MonoBehaviour
     public float friction = 0.01f;
     public float gravityVelCof = 0;
     public int selectedId;
-    public IconsContent iconsContent;
+    public Sprite[] sprites;
 
     public Vector2 GetMousePosition()
     {
@@ -69,7 +69,7 @@ public class IconScroller : MonoBehaviour
     void Start()
     {
         oldMousePos = Input.mousePosition;
-        value = iconsContent.icons.Length * 1000;
+        value = sprites.Length * 1000;
     }
 
     void Update()
@@ -101,14 +101,14 @@ public class IconScroller : MonoBehaviour
             float width = (iconWidth + offset) * icons.Length;
             icons[x].transform.localPosition = new Vector2(-(x - value) * (iconWidth + offset) + dragFieldWidth / 2 - iconWidth / 2 - teleport, 0);
             int id = x + (int)((value + icons.Length - x) / icons.Length) * icons.Length;
-            icons[x].GetComponent<Image>().sprite = iconsContent.icons[id % iconsContent.icons.Length].sprite;
+            icons[x].GetComponent<Image>().sprite = sprites[id % sprites.Length];
             float posX = icons[x].transform.localPosition.x;
             CanvasGroup canvasGroup = icons[x].GetComponent<CanvasGroup>();
             float a = ((float)posX / ((iconWidth + offset) * (icons.Length - 2)));
             a = 1 - Mathf.Abs(a);
             canvasGroup.alpha = a;
         }
-        selectedId = ((int)(Mathf.Round(value)) + 1) % iconsContent.icons.Length;
+        selectedId = ((int)(Mathf.Round(value)) + 1) % sprites.Length;
 
         oldMousePos = Input.mousePosition;
     }
