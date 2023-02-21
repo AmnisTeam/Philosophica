@@ -7,6 +7,7 @@ public class Battle
     public Opponent opponent1;
     public Opponent opponent2;
     public List<QuestionManager.Question> questions = new List<QuestionManager.Question>();
+    public int currentQuestion = 0;
 
     public Battle(Opponent opponent1, Opponent opponent2)
     {
