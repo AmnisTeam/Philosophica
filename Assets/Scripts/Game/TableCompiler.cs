@@ -14,7 +14,7 @@ public class TableCompiler : MonoBehaviour
     public CanvasGroup[] tableRaw;
     public Image winnerIcon;
     public TMPro.TMP_Text winnerNickname;
-    public Color colorRightAnswer;
+    public UnityEngine.Color colorRightAnswer;
 
     public PlayersManager playersManager;
     public QuestionManager questionManager;

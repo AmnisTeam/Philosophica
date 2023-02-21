@@ -13,20 +13,14 @@ public class ConfigManager : MonoBehaviour
     public GameObject playerUuid;
     public GameObject nicknameTextField;
 
-    private const string saveKey = "mainSave";
+    public const string saveKey = "mainSave";
 
 
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         Load();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     private SaveData GetSaveSnapshot()
@@ -57,7 +51,7 @@ public class ConfigManager : MonoBehaviour
         Save();
     }
 
-    public void Load()
+    private void Load()
     {
         var data = SaveManager.Load<SaveData>(saveKey);
 
@@ -68,7 +62,7 @@ public class ConfigManager : MonoBehaviour
         this.playerUuid.GetComponent<TMP_InputField>().text = (data.playerUuid);
         this.nicknameTextField.GetComponent<TMP_InputField>().text = (data.nickname);
     }
-    public void Save()
+    private void Save()
     {
         SaveManager.Save(saveKey, GetSaveSnapshot());
     }
@@ -77,6 +71,12 @@ public class ConfigManager : MonoBehaviour
     {
         var data = SaveManager.Load<SaveData>(saveKey);
         return data.nickname;
+    }
+
+    public float GetSoundVolume()
+    {
+        var data = SaveManager.Load<SaveData>(saveKey);
+        return data.soundVolume;
     }
 
     public string GetPlayerUuid()

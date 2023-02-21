@@ -1,25 +1,19 @@
-using JetBrains.Annotations;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static RegionEditor;
-using static RegionEditor2;
-using Color = UnityEngine.Color;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+#if UNITY_EDITOR
 [CustomEditor(typeof(RegionsSystem))]
 public class RegionEditor2 : Editor
 {
     private RegionsSystem regionsSystem;
 
-    public Color selectedRegionSerdColor;
-    public Color unselectedRegionSerdColor;
-    public Color undermousePointColor;
+    public UnityEngine.Color selectedRegionSerdColor;
+    public UnityEngine.Color unselectedRegionSerdColor;
+    public UnityEngine.Color undermousePointColor;
 
     private List<RegionSerd> regionSerds;
     private RegionSerd selectedRegionSerd;
@@ -35,9 +29,9 @@ public class RegionEditor2 : Editor
 
     private void OnEnable()
     {
-        selectedRegionSerdColor = new Color(1.0f, 1.0f, 1.0f);
-        unselectedRegionSerdColor = new Color(0.0f, 0.0f, 0.0f);
-        undermousePointColor = new Color(0.6f, 0.6f, 0.6f);
+        selectedRegionSerdColor = new UnityEngine.Color(1.0f, 1.0f, 1.0f);
+        unselectedRegionSerdColor = new UnityEngine.Color(0.0f, 0.0f, 0.0f);
+        undermousePointColor = new UnityEngine.Color(0.6f, 0.6f, 0.6f);
 
         startOfDraggingPosition = new Vector3();
 
@@ -105,13 +99,13 @@ public class RegionEditor2 : Editor
                     Handles.color = unselectedRegionSerdColor;
 
 
-                Color lastColor = Handles.color;
+                UnityEngine.Color lastColor = Handles.color;
 
                 for (int k = 0; k < lineInfo.Count; k++)
                 {
                     if (lineInfo[k].regionSerdId == i && lineInfo[k].p0Id == j)
                     {
-                        Handles.color = new Color(0, 0, 1.0f);
+                        Handles.color = new UnityEngine.Color(0, 0, 1.0f);
                     }
                 }
                 Handles.DrawDottedLine(currentPoint, nextPoint, 4);
@@ -742,3 +736,4 @@ public class RegionEditor2 : Editor
         }
     }
 }
+#endif

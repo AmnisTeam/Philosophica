@@ -11,6 +11,7 @@ public class IconScroller1 : MonoBehaviour
     public GameObject iconPrifab;
     private GameObject[] icons;
     public float offset = 20;
+    public float borderedOffset = 20;
     public float value = 0;
 
     public bool Intersect()

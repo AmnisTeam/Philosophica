@@ -7,7 +7,7 @@ public class RegionsSystem : MonoBehaviour
 {
     public GameObject regionPrefab;
 
-    public Color nextRegionColor;
+    public UnityEngine.Color nextRegionColor;
     public float handleRadius = 0.5f;
 
     public List<RegionSerd> regionSerds;

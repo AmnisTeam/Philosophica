@@ -105,13 +105,13 @@ public class SelectionQuestions : MonoBehaviour
         for (int x = 0; x < 6; x++)
         {
             if(!(questionManager.endQuestion && 0 == questionManager.rightAnswer))
-                selection0[x].color = new Color(255, 255, 255, opacity[0]);
+                selection0[x].color = new UnityEngine.Color(255, 255, 255, opacity[0]);
             if (!(questionManager.endQuestion && 1 == questionManager.rightAnswer))
-                selection1[x].color = new Color(255, 255, 255, opacity[1]);
+                selection1[x].color = new UnityEngine.Color(255, 255, 255, opacity[1]);
             if (!(questionManager.endQuestion && 2 == questionManager.rightAnswer))
-                selection2[x].color = new Color(255, 255, 255, opacity[2]);
+                selection2[x].color = new UnityEngine.Color(255, 255, 255, opacity[2]);
             if (!(questionManager.endQuestion && 3 == questionManager.rightAnswer))
-                selection3[x].color = new Color(255, 255, 255, opacity[3]);
+                selection3[x].color = new UnityEngine.Color(255, 255, 255, opacity[3]);
         }
 
         if(questionManager.haveAnswer)
@@ -126,26 +126,26 @@ public class SelectionQuestions : MonoBehaviour
 
             for (int x = 0; x < 4; x++)
                 if (x != activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
-                    buttons[x].color = new Color(255, 255, 255, shadowColor);
+                    buttons[x].color = new UnityEngine.Color(255, 255, 255, shadowColor);
 
             cavasGroup.alpha = shadowChoosButtonColor;
         }
 
         if(questionManager.endQuestion)
         {
-            buttons[questionManager.rightAnswer].color = new Color(255, 255, 255, buttons[questionManager.rightAnswer].color.a + shadowSpeed * Time.deltaTime > 1 ? 1 : buttons[questionManager.rightAnswer].color.a + shadowSpeed * Time.deltaTime);
+            buttons[questionManager.rightAnswer].color = new UnityEngine.Color(255, 255, 255, buttons[questionManager.rightAnswer].color.a + shadowSpeed * Time.deltaTime > 1 ? 1 : buttons[questionManager.rightAnswer].color.a + shadowSpeed * Time.deltaTime);
             if (questionManager.rightAnswer == 0)
                 for (int x = 0; x < 6; x++)
-                    selection0[x].color = new Color(0, 255, 0, selection0[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection0[x].color.a + speed * Time.deltaTime);
+                    selection0[x].color = new UnityEngine.Color(0, 255, 0, selection0[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection0[x].color.a + speed * Time.deltaTime);
             if (questionManager.rightAnswer == 1)
                 for (int x = 0; x < 6; x++)
-                    selection1[x].color = new Color(0, 255, 0, selection1[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection1[x].color.a + speed * Time.deltaTime);
+                    selection1[x].color = new UnityEngine.Color(0, 255, 0, selection1[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection1[x].color.a + speed * Time.deltaTime);
             if (questionManager.rightAnswer == 2)
                 for (int x = 0; x < 6; x++)
-                    selection2[x].color = new Color(0, 255, 0, selection2[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection2[x].color.a + speed * Time.deltaTime);
+                    selection2[x].color = new UnityEngine.Color(0, 255, 0, selection2[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection2[x].color.a + speed * Time.deltaTime);
             if (questionManager.rightAnswer == 3)
                 for (int x = 0; x < 6; x++)
-                    selection3[x].color = new Color(0, 255, 0, selection3[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection3[x].color.a + speed * Time.deltaTime);
+                    selection3[x].color = new UnityEngine.Color(0, 255, 0, selection3[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection3[x].color.a + speed * Time.deltaTime);
         }
     }
 }

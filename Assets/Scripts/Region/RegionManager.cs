@@ -7,7 +7,7 @@ public class RegionManager : MonoBehaviour
     public PlayersManager playersManager;
     public RegionCreator regionCreator;
 
-    public Color baseRegionColor;
+    public UnityEngine.Color baseRegionColor;
 
     private List<Player> players; 
     private List<Region> regions;

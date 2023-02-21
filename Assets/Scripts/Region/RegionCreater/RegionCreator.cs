@@ -15,7 +15,7 @@ public class RegionCreator : MonoBehaviour
 
     public float handleRadius = .5f;
 
-    public Color nextRegionColor;
+    public UnityEngine.Color nextRegionColor;
 
     public void UpdateMeshDisplay()
     {

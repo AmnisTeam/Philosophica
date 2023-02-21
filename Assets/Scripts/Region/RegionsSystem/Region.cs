@@ -11,7 +11,7 @@ using UnityEngine;
 public class Region : MonoBehaviour
 {
 
-    public void SetColor(Color color)
+    public void SetColor(UnityEngine.Color color)
     {
         if (gameObject.GetComponent<Renderer>().sharedMaterial != null)
         {
@@ -22,7 +22,7 @@ public class Region : MonoBehaviour
             Debug.LogError("Region instance has no material component with RegionShader shader", this);
     }
 
-    public Color GetColor(Color color)
+    public UnityEngine.Color GetColor(UnityEngine.Color color)
     {
         if (GetComponent<Renderer>().materials[0] != null)
         {
@@ -31,7 +31,7 @@ public class Region : MonoBehaviour
         }
         else
             Debug.LogError("Region instance has no material component with RegionShader shader", this);
-        return new Color(255, 0, 255);
+        return new UnityEngine.Color(255, 0, 255);
     }
 
     public void UpdateMesh(List<Vector3> points)
