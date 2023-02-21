@@ -38,7 +38,7 @@ public class GeneralBasics2d : MonoBehaviour {
 	GameObject createSpriteDude( string name, Vector3 pos, bool hasParticles = true ){
 		GameObject go = new GameObject(name);
 		SpriteRenderer ren = go.AddComponent<SpriteRenderer>();
-		go.GetComponent<SpriteRenderer>().color = new Color(0f,181f/255f,1f);
+		go.GetComponent<SpriteRenderer>().color = new UnityEngine.Color(0f,181f/255f,1f);
 		ren.sprite = Sprite.Create( dudeTexture, new Rect(0.0f,0.0f,256.0f,256.0f), new Vector2(0.5f,0f), 256f);
 		go.transform.position = pos;
 
@@ -74,7 +74,7 @@ public class GeneralBasics2d : MonoBehaviour {
 				float red   = Mathf.Sin(period + LeanTween.tau*0f/3f) * 0.5f + 0.5f;
 	  			float green = Mathf.Sin(period + LeanTween.tau*1f/3f) * 0.5f + 0.5f;
 	  			float blue  = Mathf.Sin(period + LeanTween.tau*2f/3f) * 0.5f + 0.5f;
-				Color rainbowColor = new Color(red, green, blue);
+                Color rainbowColor = new UnityEngine.Color(red, green, blue);
 				LeanTween.color(dude, rainbowColor, 0.3f).setDelay(1.2f + i*0.4f);
 				
 				// Push into the wheel

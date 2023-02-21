@@ -3753,7 +3753,7 @@ public class LTRect : System.Object{
         get{
             if(colorTouched){
                 colorTouched = false;
-                GUI.color = new Color(GUI.color.r,GUI.color.g,GUI.color.b,1.0f);
+                GUI.color = new UnityEngine.Color(GUI.color.r, GUI.color.g, GUI.color.b,1.0f);
             }
             if(rotateEnabled){
                 if(rotateFinished){
@@ -3766,7 +3766,7 @@ public class LTRect : System.Object{
                 }
             }
             if(alphaEnabled){
-                GUI.color = new Color(GUI.color.r,GUI.color.g,GUI.color.b,alpha);
+                GUI.color = new UnityEngine.Color(GUI.color.r, GUI.color.g, GUI.color.b, alpha);
                 colorTouched = true;
             }
             if(fontScaleToFit){

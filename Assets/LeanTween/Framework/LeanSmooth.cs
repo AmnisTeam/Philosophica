@@ -101,7 +101,7 @@ public class LeanSmooth {
         float b = damp(current.b, target.b, ref currentVelocity.b, smoothTime, maxSpeed, deltaTime);
         float a = damp(current.a, target.a, ref currentVelocity.a, smoothTime, maxSpeed, deltaTime);
 
-        return new Color(r, g, b, a);
+        return new UnityEngine.Color(r, g, b, a);
     }
 
     /**
@@ -187,7 +187,7 @@ public class LeanSmooth {
         float b = spring(current.b, target.b, ref currentVelocity.b, smoothTime, maxSpeed, deltaTime, friction, accelRate);
         float a = spring(current.a, target.a, ref currentVelocity.a, smoothTime, maxSpeed, deltaTime, friction, accelRate);
 
-        return new Color(r, g, b, a);
+        return new UnityEngine.Color(r, g, b, a);
     }
 
     /**
@@ -262,7 +262,7 @@ public class LeanSmooth {
         float b = linear(current.b, target.b, moveSpeed);
         float a = linear(current.a, target.a, moveSpeed);
 
-        return new Color(r, g, b, a);
+        return new UnityEngine.Color(r, g, b, a);
     }
 
     /**
@@ -359,6 +359,6 @@ public class LeanSmooth {
         float b = bounceOut(current.b, target.b, ref currentVelocity.b, smoothTime, maxSpeed, deltaTime, friction, accelRate, hitDamping);
         float a = bounceOut(current.a, target.a, ref currentVelocity.a, smoothTime, maxSpeed, deltaTime, friction, accelRate, hitDamping);
 
-        return new Color(r, g, b, a);
+        return new UnityEngine.Color(r, g, b, a);
     }
 }

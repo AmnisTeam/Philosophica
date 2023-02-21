@@ -99,9 +99,9 @@ public class TestingPunch : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            LeanTween.color( this.gameObject, new Color(1f, 0f, 0f, 0.5f), 1f);
+            LeanTween.color( this.gameObject, new UnityEngine.Color(1f, 0f, 0f, 0.5f), 1f);
 
-            Color to = new Color(Random.Range(0f,1f),0f,Random.Range(0f,1f),0.0f);
+            Color to = new UnityEngine.Color(Random.Range(0f,1f),0f, Random.Range(0f,1f),0.0f);
             GameObject l = GameObject.Find("LCharacter");
             LeanTween.color( l, to, 4.0f ).setLoopPingPong(1).setEase(LeanTweenType.easeOutBounce);
         }
@@ -113,7 +113,7 @@ public class TestingPunch : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.V))
         {
-            LeanTween.value( gameObject, updateColor, new Color(1.0f,0.0f,0.0f,1.0f), Color.blue, 4.0f );//.setRepeat(2).setLoopPingPong().setEase(LeanTweenType.easeOutBounce);
+            LeanTween.value(gameObject, updateColor, new UnityEngine.Color(1.0f,0.0f,0.0f,1.0f), Color.blue, 4.0f );//.setRepeat(2).setLoopPingPong().setEase(LeanTweenType.easeOutBounce);
         }
 
         if (Input.GetKeyDown(KeyCode.P))

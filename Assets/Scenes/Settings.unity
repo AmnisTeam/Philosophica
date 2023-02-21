@@ -2579,6 +2579,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BlackBackground
       objectReference: {fileID: 0}
+    - target: {fileID: 3337968913479204520, guid: 2c07bcdf7431d3843af02c239d76e0cd, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3337968913479204527, guid: 2c07bcdf7431d3843af02c239d76e0cd, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

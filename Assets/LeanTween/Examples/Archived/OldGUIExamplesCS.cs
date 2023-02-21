@@ -73,7 +73,7 @@ public class OldGUIExamplesCS : MonoBehaviour {
 			LeanTween.alpha( grumpyRect, 0.0f, 1.0f).setEase(LeanTweenType.easeOutQuad);
 			LeanTween.alpha( grumpyRect, 1.0f, 1.0f).setDelay(1.0f).setEase(LeanTweenType.easeInQuad);
 		}
-		GUI.color = new Color(1.0f,1.0f,1.0f,1.0f); // Reset to normal alpha, otherwise other gui elements will be effected
+        GUI.color = new UnityEngine.Color(1.0f,1.0f,1.0f,1.0f); // Reset to normal alpha, otherwise other gui elements will be effected
 
 		if(GUI.Button(buttonRect4.rect, "Rotate")){
 			LeanTween.rotate( buttonRect4, 150.0f, 1.0f ).setEase(LeanTweenType.easeOutElastic);

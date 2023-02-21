@@ -80,16 +80,9 @@ public class PlayersManager : MonoBehaviour
         playerAnswerData = new BaseTable<PlayerAnswerData>();
     }
 
-<<<<<<< HEAD
     void Start()
     {
- 
-=======
-        connected(new Player(0, 0, new UnityEngine.Color(255, 0, 0), "SpectreSpect"));
-        connected(new Player(1, 1, new UnityEngine.Color(0, 255, 0), "DotaKot"));
-        connected(new Player(2, 2, new UnityEngine.Color(0, 0, 255), "ThEnd"));
-        connected(config.me);
->>>>>>> 5594b574412b00ad6b88b33dec058f75d5215389
+
     }
 
     void Update()

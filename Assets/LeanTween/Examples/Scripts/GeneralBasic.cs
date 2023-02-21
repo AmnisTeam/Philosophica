@@ -57,7 +57,7 @@ public class GeneralBasic : MonoBehaviour {
 				float red   = Mathf.Sin(period + LeanTween.tau*0f/3f) * 0.5f + 0.5f;
 	  			float green = Mathf.Sin(period + LeanTween.tau*1f/3f) * 0.5f + 0.5f;
 	  			float blue  = Mathf.Sin(period + LeanTween.tau*2f/3f) * 0.5f + 0.5f;
-				Color rainbowColor = new Color(red, green, blue);
+                Color rainbowColor = new UnityEngine.Color(red, green, blue);
 				LeanTween.color(dude, rainbowColor, 0.3f).setDelay(1.2f + i*0.4f);
 				
 				// Push into the wheel

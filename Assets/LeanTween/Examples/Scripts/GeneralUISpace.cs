@@ -38,8 +38,8 @@ public class GeneralUISpace : MonoBehaviour {
 		LeanTween.textAlpha( mainParagraphText, 1f, 0.6f).setEase(LeanTweenType.easeOutQuad).setDelay(0.6f);
 		LeanTween.move( mainParagraphText, mainParagraphText.anchoredPosition3D + new Vector3(0f,10f,0f), 0.6f).setEase(LeanTweenType.easeOutQuad).setDelay(0.6f);
 
-		// Flash text to purple and back
-		LeanTween.textColor( mainTitleText, new Color(133f/255f,145f/255f,223f/255f), 0.6f).setEase(LeanTweenType.easeOutQuad).setDelay(0.6f).setLoopPingPong().setRepeat(-1);
+        // Flash text to purple and back
+        LeanTween.textColor(mainTitleText, new UnityEngine.Color(133f/255f,145f/255f,223f/255f), 0.6f).setEase(LeanTweenType.easeOutQuad).setDelay(0.6f).setLoopPingPong().setRepeat(-1);
 
 		// Fade button in
 		LeanTween.textAlpha(mainButton2, 1f, 2f ).setFrom(0f).setDelay(0f).setEase(LeanTweenType.easeOutQuad);
@@ -71,8 +71,8 @@ public class GeneralUISpace : MonoBehaviour {
 		// Play a series of sprites on the window on repeat endlessly
 		LeanTween.play(chatRect, chatSprites).setLoopPingPong();
 
-		// Animate the bar up and down while changing the color to red-ish
-		LeanTween.color( chatBar2, new Color(248f/255f,67f/255f,108f/255f, 0.5f), 1.2f).setEase(LeanTweenType.easeInQuad).setLoopPingPong().setDelay(1.2f);
+        // Animate the bar up and down while changing the color to red-ish
+        LeanTween.color(chatBar2, new UnityEngine.Color(248f/255f,67f/255f,108f/255f, 0.5f), 1.2f).setEase(LeanTweenType.easeInQuad).setLoopPingPong().setDelay(1.2f);
 		LeanTween.scale( chatBar2, new Vector2(1f,0.7f), 1.2f).setEase(LeanTweenType.easeInQuad).setLoopPingPong();
 
 		// Write in paragraph text

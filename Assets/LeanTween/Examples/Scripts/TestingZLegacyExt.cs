@@ -135,7 +135,7 @@ public class TestingZLegacyExt : MonoBehaviour {
     public void colorExample()
     {
         GameObject lChar = GameObject.Find("LCharacter");
-		lChar.LeanColor( new Color(1.0f, 0.0f, 0.0f, 0.5f), 0.5f).setEase(LeanTweenType.easeOutBounce).setRepeat(2).setLoopPingPong().setUseEstimatedTime(useEstimatedTime);
+		lChar.LeanColor( new UnityEngine.Color(1.0f, 0.0f, 0.0f, 0.5f), 0.5f).setEase(LeanTweenType.easeOutBounce).setRepeat(2).setLoopPingPong().setUseEstimatedTime(useEstimatedTime);
     }
 
     public void moveOnACurveExample()

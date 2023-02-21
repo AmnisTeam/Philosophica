@@ -66,7 +66,7 @@ public class SelectionQuestions : MonoBehaviour
     {
         shadowColor = 1;
         for (int x = 0; x < 4; x++)
-            buttons[x].color = new Color(255, 255, 255, 1);
+            buttons[x].color = new UnityEngine.Color(255, 255, 255, 1);
     }
 
     void Start()

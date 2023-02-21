@@ -9,7 +9,7 @@ using UnityEngine.UI;
 [Serializable]
 public class Client
 {
-    public Client(int id, string nickname, Color playerColor)
+    public Client(int id, string nickname, LocalColor playerColor)
     {
         this.id = id;
         this.isConnected = true;
@@ -20,18 +20,18 @@ public class Client
     public int id;
     public bool isConnected;
     public string nickname;
-    public Color playerColor;
+    public LocalColor playerColor;
 }
 
 [Serializable]
-public class Color
+public class LocalColor
 {
-    public Color(Color32 color, bool isBusy)
+    public LocalColor(Color32 color, bool isBusy)
     {
         this.color = color;
         this.isBusy = isBusy;
     }
-    public Color(Color32 color)
+    public LocalColor(Color32 color)
     {
         this.color = color;
         this.isBusy = false;
@@ -53,18 +53,18 @@ public class PlayerManager : MonoBehaviour
     public GameObject[] playerNicknames = new GameObject[amountPlayers];
     public GameObject[] playerColor = new GameObject[amountPlayers];
     public GameObject[] playerIcon = new GameObject[amountPlayers];
-    public List<Color> colors = new List<Color>();
+    public List<LocalColor> colors = new List<LocalColor>();
     public Sprite[] icons;
 
     ConfigManager configManager = new ConfigManager();
 
     void AddColors()
     {
-        colors.Add(new Color(UnityEngine.Color.red));
-        colors.Add(new Color(UnityEngine.Color.green));
-        colors.Add(new Color(UnityEngine.Color.blue));
-        colors.Add(new Color(UnityEngine.Color.yellow));
-        colors.Add(new Color(UnityEngine.Color.magenta));
+        colors.Add(new LocalColor(UnityEngine.Color.red));
+        colors.Add(new LocalColor(UnityEngine.Color.green));
+        colors.Add(new LocalColor(UnityEngine.Color.blue));
+        colors.Add(new LocalColor(UnityEngine.Color.yellow));
+        colors.Add(new LocalColor(UnityEngine.Color.magenta));
     }
 
     void Start()
@@ -74,7 +74,7 @@ public class PlayerManager : MonoBehaviour
         for (int i = 0; i < playerObjects.Length; i++)
             playerObjects[i].SetActive(false);
 
-        Color c = RandomColor();
+        LocalColor c = RandomColor();
         playerColor[0].GetComponent<Image>().color = c.color;
         playerIcon[0].GetComponent<Image>().sprite = icons[Randomizer(0, icons.Length)];
         playerIcon[0].GetComponent<Image>().color = c.color;
@@ -115,7 +115,7 @@ public class PlayerManager : MonoBehaviour
             clients.Add(player);
         else
         {
-            Client p = new Client(id, "test", new Color(UnityEngine.Color.white));
+            Client p = new Client(id, "test", new LocalColor(UnityEngine.Color.white));
             id++;
             clients.Add(p);
         }
@@ -125,10 +125,10 @@ public class PlayerManager : MonoBehaviour
         if (clients.Count < amountPlayers)
         {
 
-            Color c = RandomColor();
+            LocalColor c = RandomColor();
             playerColor[id].GetComponent<Image>().color = c.color;
 
-            Client p = new Client(id, NumberToAZ(Randomizer(0, 26)), new Color(UnityEngine.Color.white));
+            Client p = new Client(id, NumberToAZ(Randomizer(0, 26)), new LocalColor(UnityEngine.Color.white));
             playerIcon[id].GetComponent<Image>().sprite = icons[Randomizer(0, icons.Length)];
             playerIcon[id].GetComponent<Image>().color = c.color;
             p.playerColor = c;
@@ -179,9 +179,9 @@ public class PlayerManager : MonoBehaviour
         return n;
     }
 
-    Color RandomColor()
+    LocalColor RandomColor()
     {
-        Color c = colors[Randomizer(0, colors.Count)];
+        LocalColor c = colors[Randomizer(0, colors.Count)];
 
         while (c.isBusy)
             c = colors[Randomizer(0, colors.Count)];

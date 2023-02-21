@@ -82,7 +82,7 @@ public class Following : MonoBehaviour {
     {
         LeanTween.moveLocalY(followArrow.gameObject, Random.Range(-100f, 100f), 0f);
 
-        var randomCol = new Color(Random.value, Random.value, Random.value);
+        var randomCol = new UnityEngine.Color(Random.value, Random.value, Random.value);
         LeanTween.color(followArrow.gameObject, randomCol, 0f);
 
         var randomVal = Random.Range(5f, 10f);

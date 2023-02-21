@@ -452,9 +452,9 @@ public class GameplayManager : MonoBehaviour
     public void Start()
     {
         playersManager.connected(playersManager.config.me);
-        playersManager.connected(new Player(0, 0, new Color(1f, 0.3725f, 0.396f), "SpectreSpect"));
-        playersManager.connected(new Player(1, 1, new Color(0.372f, 0.4745f, 1f), "DotaKot"));
-        playersManager.connected(new Player(2, 2, new Color(0.549f, 1f, 0.372f), "ThEnd"));
+        playersManager.connected(new Player(0, 0, new UnityEngine.Color(1f, 0.3725f, 0.396f), "SpectreSpect"));
+        playersManager.connected(new Player(1, 1, new UnityEngine.Color(0.372f, 0.4745f, 1f), "DotaKot"));
+        playersManager.connected(new Player(2, 2, new UnityEngine.Color(0.549f, 1f, 0.372f), "ThEnd"));
 
         GrantPlayersStartingRegions();
 

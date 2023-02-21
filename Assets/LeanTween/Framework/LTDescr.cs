@@ -421,7 +421,7 @@ public class LTDescr
 				alphaRecursive(this.trans, val, this.useRecursion);
 				#else
 				if(this.spriteRen!=null){
-					this.spriteRen.color = new Color( this.spriteRen.color.r, this.spriteRen.color.g, this.spriteRen.color.b, val);
+					this.spriteRen.color = new UnityEngine.Color( this.spriteRen.color.r, this.spriteRen.color.g, this.spriteRen.color.b, val);
 					alphaRecursiveSprite(this.trans, val);
 				}else{
 					alphaRecursive(this.trans, val, this.useRecursion);
@@ -437,7 +437,7 @@ public class LTDescr
 			alphaRecursive(this.trans, val, this.useRecursion);
 			#else
 			if(this.spriteRen!=null){
-				this.spriteRen.color = new Color( this.spriteRen.color.r, this.spriteRen.color.g, this.spriteRen.color.b, val);
+				this.spriteRen.color = new UnityEngine.Color( this.spriteRen.color.r, this.spriteRen.color.g, this.spriteRen.color.b, val);
 				alphaRecursiveSprite(this.trans, val);
 			}else{
 				alphaRecursive(this.trans, val, this.useRecursion);
@@ -474,7 +474,7 @@ public class LTDescr
 				mesh.colors32 = colors;
 			}// fix end
 			Color32 c = mesh.colors32[0];
-			c = new Color( c.r, c.g, c.b, val);
+			c = new UnityEngine.Color( c.r, c.g, c.b, val);
 			for (int k= 0; k < vertices.Length; k++)
 				colors[k] = c;
 			mesh.colors32 = colors;
@@ -1045,10 +1045,10 @@ public class LTDescr
 		if(renderer!=null){
 			foreach(Material mat in renderer.materials){
 				if(mat.HasProperty("_Color")){
-					mat.color = new Color( mat.color.r, mat.color.g, mat.color.b, val);
+					mat.color = new UnityEngine.Color( mat.color.r, mat.color.g, mat.color.b, val);
 				}else if(mat.HasProperty("_TintColor")){
 					Color col = mat.GetColor ("_TintColor");
-					mat.SetColor("_TintColor", new Color( col.r, col.g, col.b, val));
+					mat.SetColor("_TintColor", new UnityEngine.Color( col.r, col.g, col.b, val));
 				}
 			}
 		}
@@ -1098,7 +1098,7 @@ public class LTDescr
 			foreach (Transform child in transform) {
 				SpriteRenderer ren = child.GetComponent<SpriteRenderer>();
 				if(ren!=null)
-					ren.color = new Color( ren.color.r, ren.color.g, ren.color.b, val);
+					ren.color = new UnityEngine.Color( ren.color.r, ren.color.g, ren.color.b, val);
 				alphaRecursiveSprite(child, val);
 			}
 		}
@@ -1177,7 +1177,7 @@ public class LTDescr
 	private static Color tweenColor( LTDescr tween, float val ){
 		Vector3 diff3 = tween._optional.point - tween._optional.axis;
 		float diffAlpha = tween.to.y - tween.from.y;
-		return new Color(tween._optional.axis.x + diff3.x*val, tween._optional.axis.y + diff3.y*val, tween._optional.axis.z + diff3.z*val, tween.from.y + diffAlpha*val);
+		return new UnityEngine.Color(tween._optional.axis.x + diff3.x* val, tween._optional.axis.y + diff3.y* val, tween._optional.axis.z + diff3.z* val, tween.from.y + diffAlpha* val);
 	}
 
 	/**
