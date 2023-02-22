@@ -4,5 +4,20 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/CreateLobby(Stars).unity
+    guid: 3eec8e4cd99b0bb48a2854fa6267749a
+  - enabled: 1
+    path: Assets/Scenes/FindGame(Stars).unity
+    guid: b24000fedac736944b967e9c96df0522
+  - enabled: 1
+    path: Assets/Scenes/Lobby(Stars).unity
+    guid: 487c54600eef8a6478eda1afdb156c3c
+  - enabled: 1
+    path: Assets/Scenes/MainScene(Stars).unity
+    guid: df50c20b6dc1c1e4ca3a1bfb36ebfca6
+  - enabled: 1
+    path: Assets/Scenes/Settings(Stars).unity
+    guid: 8213e8a447a0ad14892660a5953236a6
   m_configObjects: {}
