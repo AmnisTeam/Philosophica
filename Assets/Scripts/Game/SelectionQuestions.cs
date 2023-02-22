@@ -135,7 +135,7 @@ public class SelectionQuestions : MonoBehaviour
                     selection3[x].color = new UnityEngine.Color(0, 255, 0, selection3[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection3[x].color.a + speed * Time.deltaTime);
             */
 
-            backgrounds[questionManager.rightAnswer].color = new UnityEngine.Color(0, 255, 0, 1);
+            backgrounds[questionManager.rightAnswer].color = new UnityEngine.Color(0, 0.5f, 0, 1);
         }
     }
 }
