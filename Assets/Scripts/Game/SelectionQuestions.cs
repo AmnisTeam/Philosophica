@@ -11,6 +11,8 @@ public class SelectionQuestions : MonoBehaviour
     public Image[] selection3;
 
     public TMPro.TMP_Text[] buttons;
+    public Image[] borders;
+    public Image[] backgrounds;
     public CanvasGroup cavasGroup;
 
     public QuestionManager questionManager;
@@ -37,9 +39,14 @@ public class SelectionQuestions : MonoBehaviour
 
     public void setVisibleButtons()
     {
-        shadowColor = 1;
+        //shadowColor = 1;
+        //for (int x = 0; x < 4; x++)
+        //    buttons[x].color = new UnityEngine.Color(255, 255, 255, 1);
         for (int x = 0; x < 4; x++)
-            buttons[x].color = new UnityEngine.Color(255, 255, 255, 1);
+        {
+            borders[x].color = new UnityEngine.Color(0, 0, 255, 0);
+            backgrounds[x].color = new UnityEngine.Color(0, 0, 0, 1);
+        }
     }
 
     void Start()
@@ -49,6 +56,8 @@ public class SelectionQuestions : MonoBehaviour
         opacity[1] = 0;
         opacity[2] = 0;
         opacity[3] = 0;
+        for (int x = 0; x < 4; x++)
+            borders[x].color = new UnityEngine.Color(255, 255, 255, 0);
     }
 
     void Update()
@@ -98,14 +107,19 @@ public class SelectionQuestions : MonoBehaviour
                 shadowChoosButtonColor = 0;
 
             for (int x = 0; x < 4; x++)
-                if (x != activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
-                    buttons[x].color = new UnityEngine.Color(255, 255, 255, shadowColor);
+                //if (x != activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
+                if (x == activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
+                {
+                    //buttons[x].color = new UnityEngine.Color(255, 255, 255, shadowColor);
+                    borders[x].color = new UnityEngine.Color(255, 255, 255, 1);
+                }
 
             cavasGroup.alpha = shadowChoosButtonColor;
         }
 
         if(questionManager.endQuestion)
         {
+            /*
             buttons[questionManager.rightAnswer].color = new UnityEngine.Color(255, 255, 255, buttons[questionManager.rightAnswer].color.a + shadowSpeed * Time.deltaTime > 1 ? 1 : buttons[questionManager.rightAnswer].color.a + shadowSpeed * Time.deltaTime);
             if (questionManager.rightAnswer == 0)
                 for (int x = 0; x < 6; x++)
@@ -119,6 +133,9 @@ public class SelectionQuestions : MonoBehaviour
             if (questionManager.rightAnswer == 3)
                 for (int x = 0; x < 6; x++)
                     selection3[x].color = new UnityEngine.Color(0, 255, 0, selection3[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection3[x].color.a + speed * Time.deltaTime);
+            */
+
+            backgrounds[questionManager.rightAnswer].color = new UnityEngine.Color(0, 255, 0, 1);
         }
     }
 }
