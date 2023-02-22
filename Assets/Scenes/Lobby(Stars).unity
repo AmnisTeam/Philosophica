@@ -43768,6 +43768,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1113540923}
     m_Modifications:
+    - target: {fileID: -5170372303696982971, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
+      propertyPath: sceneId
+      value: 3482504719
+      objectReference: {fileID: 0}
     - target: {fileID: 1089952454414005330, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
       propertyPath: m_Name
       value: Player 4
@@ -70022,6 +70026,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1113540923}
     m_Modifications:
+    - target: {fileID: -5170372303696982971, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
+      propertyPath: sceneId
+      value: 2705442173
+      objectReference: {fileID: 0}
     - target: {fileID: 1089952454414005330, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
       propertyPath: m_Name
       value: Player 3
@@ -89841,7 +89849,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1954961772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99541,6 +99549,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1113540923}
     m_Modifications:
+    - target: {fileID: -5170372303696982971, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
+      propertyPath: sceneId
+      value: 182116599
+      objectReference: {fileID: 0}
     - target: {fileID: 1089952454414005330, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
       propertyPath: m_Name
       value: Player 2
@@ -104564,6 +104576,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1113540923}
     m_Modifications:
+    - target: {fileID: -5170372303696982971, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
+      propertyPath: sceneId
+      value: 994796861
+      objectReference: {fileID: 0}
     - target: {fileID: 1089952454414005330, guid: ff549d6d0a12b574d88ec602521aaba9, type: 3}
       propertyPath: m_Name
       value: Player 1
