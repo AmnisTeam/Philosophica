@@ -46,6 +46,7 @@ public class GameplayManager : MonoBehaviour
     public TextMeshProUGUI opponentsAnnouncementOpponent2Nickname;
 
     public GameObject QuestionNumberAnnouncement;
+    public GameObject askQuestionInBattle;
 
     public StateMachine gameStateMachine = new StateMachine();
 
@@ -346,12 +347,15 @@ public class GameplayManager : MonoBehaviour
 
     public void AskQuestionInBattleStart()
     {
-        Debug.Log("AskQuestionInBattleStart");
+        askQuestionInBattle.SetActive(true);
+        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponent1, battle.opponent2, 
+            battle.questions[battle.currentQuestion]);
+        askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
     }
 
     public void AskQuestionInBattleUpdate()
     {
-
+        askQuestionInBattle.GetComponent<AskQuestionInBattle>().timer += Time.deltaTime;
     }
 
     public void Awake()
@@ -458,7 +462,7 @@ public class GameplayManager : MonoBehaviour
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(0);
+        gameStateMachine.Start(5);
     }
 
     public void Update()
