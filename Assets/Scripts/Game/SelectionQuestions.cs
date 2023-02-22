@@ -26,38 +26,11 @@ public class SelectionQuestions : MonoBehaviour
 
     public bool an = false;
 
-    public void toActiveSelection0()
+    public void toActiveSelection(int idx)
     {
         if (!questionManager.haveAnswer)
         {
-            activeSelection = 0;
-            an = false;
-        }
-    }
-
-    public void toActiveSelection1()
-    {
-        if (!questionManager.haveAnswer)
-        {
-            activeSelection = 1;
-            an = false;
-        }
-    }
-
-    public void toActiveSelection2()
-    {
-        if (!questionManager.haveAnswer)
-        {
-            activeSelection = 2;
-            an = false;
-        }
-    }
-
-    public void toActiveSelection3()
-    {
-        if (!questionManager.haveAnswer)
-        {
-            activeSelection = 3;
+            activeSelection = idx;
             an = false;
         }
     }
