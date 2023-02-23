@@ -5,10 +5,10 @@ using UnityEngine.UI;
 
 public class SelectionQuestions : MonoBehaviour
 {
-    public Image[] selection0;
-    public Image[] selection1;
-    public Image[] selection2;
-    public Image[] selection3;
+    //public Image[] selection0;
+    //public Image[] selection1;
+    //public Image[] selection2;
+    //public Image[] selection3;
 
     public TMPro.TMP_Text[] buttons;
     public Image[] borders;
@@ -82,17 +82,17 @@ public class SelectionQuestions : MonoBehaviour
                 opacity[activeSelection] = 1;
         }
 
-        for (int x = 0; x < 6; x++)
-        {
-            if(!(questionManager.endQuestion && 0 == questionManager.rightAnswer))
-                selection0[x].color = new UnityEngine.Color(255, 255, 255, opacity[0]);
-            if (!(questionManager.endQuestion && 1 == questionManager.rightAnswer))
-                selection1[x].color = new UnityEngine.Color(255, 255, 255, opacity[1]);
-            if (!(questionManager.endQuestion && 2 == questionManager.rightAnswer))
-                selection2[x].color = new UnityEngine.Color(255, 255, 255, opacity[2]);
-            if (!(questionManager.endQuestion && 3 == questionManager.rightAnswer))
-                selection3[x].color = new UnityEngine.Color(255, 255, 255, opacity[3]);
-        }
+        //for (int x = 0; x < 6; x++)
+        //{
+        //    if(!(questionManager.endQuestion && 0 == questionManager.rightAnswer))
+        //        selection0[x].color = new UnityEngine.Color(255, 255, 255, opacity[0]);
+        //    if (!(questionManager.endQuestion && 1 == questionManager.rightAnswer))
+        //        selection1[x].color = new UnityEngine.Color(255, 255, 255, opacity[1]);
+        //    if (!(questionManager.endQuestion && 2 == questionManager.rightAnswer))
+        //        selection2[x].color = new UnityEngine.Color(255, 255, 255, opacity[2]);
+        //    if (!(questionManager.endQuestion && 3 == questionManager.rightAnswer))
+        //        selection3[x].color = new UnityEngine.Color(255, 255, 255, opacity[3]);
+        //}
 
         if(questionManager.haveAnswer)
         {
