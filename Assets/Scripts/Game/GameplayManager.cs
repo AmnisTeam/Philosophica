@@ -500,7 +500,7 @@ public class GameplayManager : MonoBehaviour
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(5);
+        gameStateMachine.Start(0);
     }
 
     public void Update()

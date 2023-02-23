@@ -44,7 +44,7 @@ public class SelectionQuestions : MonoBehaviour
         //    buttons[x].color = new UnityEngine.Color(255, 255, 255, 1);
         for (int x = 0; x < 4; x++)
         {
-            borders[x].color = new UnityEngine.Color(0, 0, 255, 0);
+            borders[x].GetComponent<CanvasGroup>().alpha = 0;
             backgrounds[x].color = new UnityEngine.Color(0, 0, 0, 1);
         }
     }
@@ -56,8 +56,6 @@ public class SelectionQuestions : MonoBehaviour
         opacity[1] = 0;
         opacity[2] = 0;
         opacity[3] = 0;
-        for (int x = 0; x < 4; x++)
-            borders[x].color = new UnityEngine.Color(255, 255, 255, 0);
     }
 
     void Update()
@@ -111,7 +109,7 @@ public class SelectionQuestions : MonoBehaviour
                 if (x == activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
                 {
                     //buttons[x].color = new UnityEngine.Color(255, 255, 255, shadowColor);
-                    borders[x].color = new UnityEngine.Color(255, 255, 255, 1);
+                    borders[x].GetComponent<CanvasGroup>().alpha = 1;
                 }
 
             cavasGroup.alpha = shadowChoosButtonColor;
