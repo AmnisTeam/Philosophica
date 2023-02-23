@@ -9,12 +9,12 @@ using UnityEngine.UI;
 [Serializable]
 public class Client
 {
-    public Client(int id, string nickname, LocalColor playerColor)
+    public Client(int id, string nickname/*, LocalColor playerColor*/)
     {
         this.id = id;
         this.isConnected = true;
         this.nickname = nickname;
-        this.playerColor = playerColor;
+        this.playerColor = new LocalColor(UnityEngine.Color.white);
     }
 
     public int id;
@@ -74,16 +74,10 @@ public class PlayerManager : MonoBehaviour
         for (int i = 0; i < playerObjects.Length; i++)
             playerObjects[i].SetActive(false);
 
-        LocalColor c = RandomColor();
-        playerColor[0].GetComponent<Image>().color = c.color;
-        playerIcon[0].GetComponent<Image>().sprite = icons[Randomizer(0, icons.Length)];
-        playerIcon[0].GetComponent<Image>().color = c.color;
+        AddPlayer(new Client(id, configManager.GetNickname()));
 
-        Client player = new Client(id, configManager.GetNickname(), c);
-        AddPlayer(player);
-
-        id++;
-        playerObjects[0].SetActive(true);
+        
+        AddPlayer(new Client(id, "123"));
     }
 
 
@@ -94,8 +88,6 @@ public class PlayerManager : MonoBehaviour
 
             if (clients[i].isConnected)
             {
-                //playerObjects[i].GetComponent<Animator>().SetBool("Open", true);
-
                 ////для отладки
                 string s = clients[i].nickname;
                 s += ' ';
@@ -104,40 +96,31 @@ public class PlayerManager : MonoBehaviour
 
                 playerNicknames[i].GetComponent<TMP_Text>().SetText(s, true);
             }
-            //else
-                //playerObjects[i].GetComponent<Animator>().SetBool("Open", false);
         }
     }
 
     public void AddPlayer(Client player)
     {
-        if (player != null)
-            clients.Add(player);
-        else
+        if (clients.Count < amountPlayers)
         {
-            Client p = new Client(id, "test", new LocalColor(UnityEngine.Color.white));
+            LocalColor c = RandomColor();
+
+            playerColor[id].GetComponent<Image>().color = c.color;
+            playerIcon[id].GetComponent<Image>().sprite = icons[Randomizer(0, icons.Length)];
+            playerIcon[id].GetComponent<Image>().color = c.color;
+
+            player.playerColor = c;
+
+            clients.Add(player);
+            playerObjects[id].SetActive(true);
             id++;
-            clients.Add(p);
         }
     }
     public void AddTestPlayer() //для отладки
     {
         if (clients.Count < amountPlayers)
         {
-
-            LocalColor c = RandomColor();
-            playerColor[id].GetComponent<Image>().color = c.color;
-
-            Client p = new Client(id, NumberToAZ(Randomizer(0, 26)), new LocalColor(UnityEngine.Color.white));
-            playerIcon[id].GetComponent<Image>().sprite = icons[Randomizer(0, icons.Length)];
-            playerIcon[id].GetComponent<Image>().color = c.color;
-            p.playerColor = c;
-
-
-
-            clients.Add(p);
-            playerObjects[id].SetActive(true);
-            id++;
+            AddPlayer(new Client(id, NumberToAZ(Randomizer(0, 26))));
         }
     }
 
@@ -182,6 +165,16 @@ public class PlayerManager : MonoBehaviour
     LocalColor RandomColor()
     {
         LocalColor c = colors[Randomizer(0, colors.Count)];
+
+        // Если цвета закончились
+        int count_colors = 0;
+        for (int i = 0; i < colors.Count; i++)
+            if (colors[i].isBusy)
+                count_colors++;
+
+        if (count_colors == colors.Count)
+            return new LocalColor(UnityEngine.Color.black, true);
+        // Если цвета закончились
 
         while (c.isBusy)
             c = colors[Randomizer(0, colors.Count)];
