@@ -13,7 +13,7 @@ public class SoundEffects : MonoBehaviour
 
     public float soundVolume;
 
-    public void PlayTap()
+    public void PlayTapOnButtonClick()
     {
         soundSource.clip = tap;
         soundSource.Play();
@@ -21,7 +21,7 @@ public class SoundEffects : MonoBehaviour
 
     private void Awake()
     {
-        PlayTap();
+        PlayTapOnButtonClick();
     }
 
     private void UpdateBackgroundVolume()
