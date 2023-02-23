@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static RegionEditor;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(RegionCreator))]
 public class RegionEditor : Editor
 {
@@ -662,3 +660,4 @@ public class RegionEditor : Editor
         }
     }
 }
+#endif

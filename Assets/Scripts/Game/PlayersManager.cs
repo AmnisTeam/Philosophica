@@ -34,6 +34,17 @@ public class PlayerAnswerData : BaseRaw
 {
     public int answerId;
     public float timeToAnswer;
+
+    public PlayerAnswerData()
+    {
+
+    }
+
+    public PlayerAnswerData(int answerId, float timeToAnswer)
+    {
+        this.answerId = answerId;
+        this.timeToAnswer = timeToAnswer;
+    }
 }
 public class PlayersManager : MonoBehaviour
 {
@@ -46,9 +57,10 @@ public class PlayersManager : MonoBehaviour
     
     public void connected(Player player)
     {
+
         players.add(player);
         playerAnswerData.addwid(new PlayerAnswerData(), player);
-        Debug.Log("Player " + player.nickname + " has been connected!");
+        //Debug.Log("Player " + player.nickname + " has been connected!");
         tabMenuManager.updateTabMenu();
     }
 
@@ -73,15 +85,15 @@ public class PlayersManager : MonoBehaviour
         tabMenuManager.disconnectPlayer(id);
     }
 
-    void Start()
+    private void Awake()
     {
         tabMenuManager = GetComponent<TabMenuManager>();
         playerAnswerData = new BaseTable<PlayerAnswerData>();
+    }
 
-        connected(new Player(0, 0, new UnityEngine.Color(255, 0, 0), "SpectreSpect"));
-        connected(new Player(1, 1, new UnityEngine.Color(0, 255, 0), "DotaKot"));
-        connected(new Player(2, 2, new UnityEngine.Color(0, 0, 255), "ThEnd"));
-        connected(config.me);
+    void Start()
+    {
+
     }
 
     void Update()

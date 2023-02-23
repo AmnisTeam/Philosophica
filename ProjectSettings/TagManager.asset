@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - BACKGROUND_MUSIC_TAG
+  - SOUND_EFFECTS_TAG
+  - ROOM_MANAGER_TAG
+  - GAME_LEAVE_TO_LOBBY
   layers:
   - Default
   - TransparentFX
