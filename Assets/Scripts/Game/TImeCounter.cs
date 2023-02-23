@@ -5,9 +5,10 @@ using UnityEngine.UI;
 
 public class TImeCounter : MonoBehaviour
 {
-    public TMPro.TMP_Text minutesText;
-    public TMPro.TMP_Text secundesText;
+    //public TMPro.TMP_Text minutesText;
+    //public TMPro.TMP_Text secundesText;
     public float time;
+    public TMPro.TMP_Text timeText;
 
     void Start()
     {
@@ -17,17 +18,18 @@ public class TImeCounter : MonoBehaviour
     void Update()
     {
         time += Time.deltaTime;
+        timeText.text = GameplayManager.GetTimeStr(time);
 
-        minutesText.text = "";
-        secundesText.text = "";
+        //minutesText.text = "";
+        //secundesText.text = "";
 
 
-        if ((int)(time / 60) / 10 == 0)
-            minutesText.text += '0';
-        minutesText.text += ((int)(time / 60)).ToString();
+        //if ((int)(time / 60) / 10 == 0)
+        //    minutesText.text += '0';
+        //minutesText.text += ((int)(time / 60)).ToString();
 
-        if ((int)(time % 60) / 10 == 0)
-            secundesText.text += '0';
-        secundesText.text += ((int)(time % 60)).ToString();
+        //if ((int)(time % 60) / 10 == 0)
+        //    secundesText.text += '0';
+        //secundesText.text += ((int)(time % 60)).ToString();
     }
 }

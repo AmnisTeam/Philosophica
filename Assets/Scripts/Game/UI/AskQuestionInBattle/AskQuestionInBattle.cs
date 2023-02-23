@@ -45,15 +45,15 @@ public class AskQuestionInBattle : MonoBehaviour
         {
             opponentsAnswersData[i] = new PlayerAnswerData();
             opponentsAnswersData[i].answerId = -1;
-            opponentsAnswersData[i].timeToAnswer = float.NaN;
+            opponentsAnswersData[i].timeToAnswer = 0;
         }
 
         opponents = new Opponent[2];
         opponents[0] = opponent1;
         opponents[1] = opponent2;
 
-        opponents[0].playerAnswerData.Add(new PlayerAnswerData(-1, float.NaN));
-        opponents[1].playerAnswerData.Add(new PlayerAnswerData(-1, float.NaN));
+        opponents[0].playerAnswerData.Add(new PlayerAnswerData(-1, 0));
+        opponents[1].playerAnswerData.Add(new PlayerAnswerData(-1, 0));
 
         opponent1Name.text = opponent1.player.nickname;
         opponent1Name.color = opponent1.player.color;
@@ -62,7 +62,6 @@ public class AskQuestionInBattle : MonoBehaviour
         opponent1Avatar.color = opponent1.player.color;
 
         opponent1HealthBar.value = (float)(opponent1.health / opponent1.maxHealh);
-
         opponent1HealthPointsText.text = "<color=#FF4F4F>" + opponent1.health + "</color> / " + opponent1.maxHealh;
 
 
@@ -73,7 +72,6 @@ public class AskQuestionInBattle : MonoBehaviour
         opponent2Avatar.color = opponent2.player.color;
 
         opponent2HealthBar.value = (float)(opponent2.health / opponent2.maxHealh);
-
         opponent2HealthPointsText.text = "<color=#FF4F4F>" + opponent1.health + "</color> / " + opponent1.maxHealh;
 
         this.questionText.text = question.question;

@@ -47,6 +47,7 @@ public class GameplayManager : MonoBehaviour
 
     public GameObject QuestionNumberAnnouncement;
     public GameObject askQuestionInBattle;
+    public GameObject battleRoundResults;
 
     public StateMachine gameStateMachine = new StateMachine();
 
@@ -112,6 +113,7 @@ public class GameplayManager : MonoBehaviour
     public BoolCondition opponentsAnnouncementIsEnded;
     public BoolCondition questionNumberAnnouncementIsEnded;
     public BoolCondition askQuestionInBattleIsEnded;
+    public BoolCondition correctAnsewerRevealingInBattleIsEnded;
 
     public void AskQuestionStart()
     {
@@ -384,7 +386,21 @@ public class GameplayManager : MonoBehaviour
         if (correctAnsewerRevealingTimer >= correctAnsewerRevealingTime)
         {
             askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
+            correctAnsewerRevealingInBattleIsEnded.state = true;
+            Wait(0.3f);
         }
+    }
+
+    public void BattleRoundResultsStart()
+    {
+        battleRoundResults.SetActive(true);
+        battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+        battleRoundResults.GetComponent<BattleRoundResults>().Init(battle.opponent1, battle.opponent2);
+    }
+
+    public void BattleRoundResultsUpdate()
+    {
+
     }
 
     public void Awake()
@@ -489,6 +505,15 @@ public class GameplayManager : MonoBehaviour
         askQuestionInBattleIsEnded = new BoolCondition();
         Transition fromAskQuestionInBattleToCorrectAnsewerRevealingInBattle = new Transition(askQuestionInBattleIsEnded, 9, 10);
         gameStateMachine.transitions.Add(fromAskQuestionInBattleToCorrectAnsewerRevealingInBattle);
+
+        State battleRoundResultsState = new State(); // 11
+        battleRoundResultsState.startEvents += BattleRoundResultsStart;
+        battleRoundResultsState.updateEvents += BattleRoundResultsUpdate;
+        gameStateMachine.states.Add(battleRoundResultsState);
+
+        correctAnsewerRevealingInBattleIsEnded = new BoolCondition();
+        Transition fromCorrectAnsewerRevealingInBattleToBattleRoundResults = new Transition(correctAnsewerRevealingInBattleIsEnded, 10, 11);
+        gameStateMachine.transitions.Add(fromCorrectAnsewerRevealingInBattleToBattleRoundResults);
     }
 
     public void Start()
@@ -500,7 +525,7 @@ public class GameplayManager : MonoBehaviour
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(0);
+        gameStateMachine.Start(5);
     }
 
     public void Update()
@@ -554,7 +579,7 @@ public class GameplayManager : MonoBehaviour
         nextQuestionTimeText.text = minutesNonsignificantZero + minutes + ":" + secondsNonsignificantZero + restOfSeconds;
     }
 
-    public string GetTimeStr(double seconds)
+    public static string GetTimeStr(double seconds)
     {
         int minutes = (int)seconds / 60;
         int restOfSeconds = (int)seconds % 60;
