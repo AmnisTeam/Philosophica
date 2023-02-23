@@ -18,45 +18,65 @@ using Mirror;
 /// </summary>
 public class RoomManager : NetworkRoomManager
 {
+    public static RoomManager instance;
+
+    public RoomManager() {
+        instance = this;
+    }
+
     #region Server Callbacks
 
     /// <summary>
     /// This is called on the server when the server is started - including when a host is started.
     /// </summary>
-    public override void OnRoomStartServer() { }
+    public override void OnRoomStartServer() {
+        base.OnRoomStartServer();
+    }
 
     /// <summary>
     /// This is called on the server when the server is stopped - including when a host is stopped.
     /// </summary>
-    public override void OnRoomStopServer() { }
+    public override void OnRoomStopServer() {
+        base.OnRoomStopServer();   
+    }
 
     /// <summary>
     /// This is called on the host when a host is started.
     /// </summary>
-    public override void OnRoomStartHost() { }
+    public override void OnRoomStartHost() {
+        base.OnRoomStartHost();
+    }
 
     /// <summary>
     /// This is called on the host when the host is stopped.
     /// </summary>
-    public override void OnRoomStopHost() { }
+    public override void OnRoomStopHost() {
+        base.OnRoomStopHost();
+    }
 
     /// <summary>
     /// This is called on the server when a new client connects to the server.
     /// </summary>
     /// <param name="conn">The new connection.</param>
-    public override void OnRoomServerConnect(NetworkConnectionToClient conn) { }
+    public override void OnRoomServerConnect(NetworkConnectionToClient conn) {
+        base.OnRoomServerConnect(conn);
+    }
 
     /// <summary>
     /// This is called on the server when a client disconnects.
     /// </summary>
     /// <param name="conn">The connection that disconnected.</param>
-    public override void OnRoomServerDisconnect(NetworkConnectionToClient conn) { }
+    public override void OnRoomServerDisconnect(NetworkConnectionToClient conn) {
+        base.OnRoomServerDisconnect(conn);
+    }
 
     /// <summary>
     /// This is called on the server when a networked scene finishes loading.
     /// </summary>
     /// <param name="sceneName">Name of the new scene.</param>
-    public override void OnRoomServerSceneChanged(string sceneName) { }
+    public override void OnRoomServerSceneChanged(string sceneName) {
+        base.OnRoomServerSceneChanged(sceneName);
+    }
 
     /// <summary>
     /// This allows customization of the creation of the room-player object on the server.
@@ -126,7 +146,9 @@ public class RoomManager : NetworkRoomManager
     /// This is called on the server when CheckReadyToBegin finds that players are not ready
     /// <para>May be called multiple times while not ready players are joining</para>
     /// </summary>
-    public override void OnRoomServerPlayersNotReady() { }
+    public override void OnRoomServerPlayersNotReady() {
+        base.OnRoomServerPlayersNotReady();
+    }
 
     #endregion
 
@@ -135,37 +157,51 @@ public class RoomManager : NetworkRoomManager
     /// <summary>
     /// This is a hook to allow custom behaviour when the game client enters the room.
     /// </summary>
-    public override void OnRoomClientEnter() { }
+    public override void OnRoomClientEnter() {
+        base.OnRoomClientEnter();
+    }
 
     /// <summary>
     /// This is a hook to allow custom behaviour when the game client exits the room.
     /// </summary>
-    public override void OnRoomClientExit() { }
+    public override void OnRoomClientExit() {
+        base.OnRoomClientExit();
+    }
 
     /// <summary>
     /// This is called on the client when it connects to server.
     /// </summary>
-    public override void OnRoomClientConnect() { }
+    public override void OnRoomClientConnect() {
+        base.OnRoomClientConnect();
+    }
 
     /// <summary>
     /// This is called on the client when disconnected from a server.
     /// </summary>
-    public override void OnRoomClientDisconnect() { }
+    public override void OnRoomClientDisconnect() {
+        base.OnRoomClientDisconnect();
+    }
 
     /// <summary>
     /// This is called on the client when a client is started.
     /// </summary>
-    public override void OnRoomStartClient() { }
+    public override void OnRoomStartClient() {
+        base.OnRoomStartClient();
+    }
 
     /// <summary>
     /// This is called on the client when the client stops.
     /// </summary>
-    public override void OnRoomStopClient() { }
+    public override void OnRoomStopClient() {
+        base.OnRoomStopClient();
+    }
 
     /// <summary>
     /// This is called on the client when the client is finished loading a new networked scene.
     /// </summary>
-    public override void OnRoomClientSceneChanged() { }
+    public override void OnRoomClientSceneChanged() {
+        base.OnRoomClientSceneChanged();
+    }
 
     #endregion
 
@@ -177,4 +213,8 @@ public class RoomManager : NetworkRoomManager
     }
 
     #endregion
+
+    public override void ServerChangeScene(string newSceneName) {
+        base.ServerChangeScene(newSceneName);
+    }
 }

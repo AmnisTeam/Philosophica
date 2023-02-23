@@ -84,7 +84,13 @@ public class RoomPlayer : NetworkRoomPlayer
     /// </summary>
     /// <param name="oldIndex">The old index value</param>
     /// <param name="newIndex">The new index value</param>
-    public override void IndexChanged(int oldIndex, int newIndex) { }
+    public override void IndexChanged(int oldIndex, int newIndex) {
+        /*if (isServer) {
+            readyToBegin = false;
+        } else {
+            readyToBegin = true;
+        }*/
+    }
 
     /// <summary>
     /// This is a hook that is invoked on clients when a RoomPlayer switches between ready or not ready.
