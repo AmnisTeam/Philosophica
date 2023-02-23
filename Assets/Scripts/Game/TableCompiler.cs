@@ -8,8 +8,9 @@ public class TableCompiler : MonoBehaviour
 {
     public TMPro.TMP_Text[] nickname;
     public TMPro.TMP_Text[] answer;
-    public TMPro.TMP_Text[] minutes;
-    public TMPro.TMP_Text[] secundes;
+    //public TMPro.TMP_Text[] minutes;
+    //public TMPro.TMP_Text[] secundes;
+    public TMPro.TMP_Text[] time;
     public Image[] icons;
     public CanvasGroup[] tableRaw;
     public Image winnerIcon;
@@ -45,16 +46,18 @@ public class TableCompiler : MonoBehaviour
             icons[x].sprite = iconsContent.icons[table[x].iconId].sprite;
             icons[x].color = table[x].color;
 
-            minutes[x].text = "";
-            secundes[x].text = "";
+            //minutes[x].text = "";
+            //secundes[x].text = "";
+            //time[x].text = "";
 
-            if ((int)(answerData.timeToAnswer / 60) / 10 == 0)
-                minutes[x].text += '0';
-            minutes[x].text += ((int)(answerData.timeToAnswer / 60)).ToString();
+            //if ((int)(answerData.timeToAnswer / 60) / 10 == 0)
+            //    minutes[x].text += '0';
+            //minutes[x].text += ((int)(answerData.timeToAnswer / 60)).ToString();
 
-            if ((int)(answerData.timeToAnswer % 60) / 10 == 0)
-                secundes[x].text += '0';
-            secundes[x].text += ((int)(answerData.timeToAnswer % 60)).ToString();
+            //if ((int)(answerData.timeToAnswer % 60) / 10 == 0)
+            //    secundes[x].text += '0';
+            //secundes[x].text += ((int)(answerData.timeToAnswer % 60)).ToString();
+            time[x].text = GetTimeStr(answerData.timeToAnswer);
         }
 
         for (int x = 0; x < questionManager.playersManager.MAX_COUNT_PLAYERS; x++)
@@ -69,13 +72,20 @@ public class TableCompiler : MonoBehaviour
         winnerIcon.color = table[0].color;
     }
 
-    void Start()
+    public string GetTimeStr(double seconds)
     {
-        
+        int minutes = (int)seconds / 60;
+        int restOfSeconds = (int)seconds % 60;
+
+        string minutesNonsignificantZero = "";
+        string secondsNonsignificantZero = "";
+
+        if (Math.Abs(minutes) < 10)
+            minutesNonsignificantZero = "0";
+        if (Math.Abs(restOfSeconds) < 10)
+            secondsNonsignificantZero = "0";
+
+        return minutesNonsignificantZero + minutes + ":" + secondsNonsignificantZero + restOfSeconds;
     }
 
-    void Update()
-    {
-        
-    }
 }
