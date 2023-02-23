@@ -5,9 +5,13 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Color = UnityEngine.Color;
 
 public class AskQuestionInBattle : MonoBehaviour
 {
+    public Color answerColor;
+    public Color correctAnswerColor;
+
     public IconsContent iconsContent;
     public Image opponent1Avatar;
     public TextMeshProUGUI opponent1Name;
@@ -21,9 +25,12 @@ public class AskQuestionInBattle : MonoBehaviour
 
     public TextMeshProUGUI timerText;
 
-    public TextMeshProUGUI question;
+    public TextMeshProUGUI questionText;
+
+    public QuestionManager.Question question;
 
     public TextMeshProUGUI[] answers;
+    public Image[] answersBackgrounds;
     public Image[] answersBorders;
 
     public PlayerAnswerData[] opponentsAnswersData;
@@ -44,6 +51,9 @@ public class AskQuestionInBattle : MonoBehaviour
         opponents = new Opponent[2];
         opponents[0] = opponent1;
         opponents[1] = opponent2;
+
+        opponents[0].playerAnswerData.Add(new PlayerAnswerData(-1, float.NaN));
+        opponents[1].playerAnswerData.Add(new PlayerAnswerData(-1, float.NaN));
 
         opponent1Name.text = opponent1.player.nickname;
         opponent1Name.color = opponent1.player.color;
@@ -66,7 +76,8 @@ public class AskQuestionInBattle : MonoBehaviour
 
         opponent2HealthPointsText.text = "<color=#FF4F4F>" + opponent1.health + "</color> / " + opponent1.maxHealh;
 
-        this.question.text = question.question;
+        this.questionText.text = question.question;
+        this.question = question;
 
         for (int a = 0; a < answers.Length && a < question.answer.Length; a++)
             answers[a].text = question.answer[a];
@@ -90,13 +101,45 @@ public class AskQuestionInBattle : MonoBehaviour
             for (int i = 0; i < answersBorders.Length; i++)
                 if (answersBorders[i].GetComponent<CanvasGroup>().alpha > 0)
                     answersBorders[i].GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f);
+                    
 
             answersBorders[buttonId].GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f);
+            //MarkAnswerAsCorrect(buttonId);
 
             Debug.Log("buttonId: " + buttonId + ", " + "timeToAnsnwer: " + timer);
+
+            int lastElementId = opponents[clientNumber].playerAnswerData.Count - 1;
+            opponents[clientNumber].playerAnswerData[lastElementId].answerId = buttonId;
+            opponents[clientNumber].playerAnswerData[lastElementId].timeToAnswer = (float)timer;
+
             opponentsAnswersData[clientNumber].answerId = buttonId;
             opponentsAnswersData[clientNumber].timeToAnswer = (float)timer;
         }
+    }
+
+    public void ShowCorrectAnswer()
+    {
+        //for (int i = 0; i < question.answer.Length; i++)
+        //    if (i != question.idRightAnswer)
+        //        MarkAnswerAsDefault(i);
+        MarkAnswerAsCorrect(question.idRightAnswer);
+    }
+
+    public void HideCorrectAnswer()
+    {
+        MarkAnswerAsDefault(question.idRightAnswer);
+        //for (int i = 0; i < question.answer.Length; i++)
+        //    MarkAnswerAsDefault(i);
+    }
+
+    public void MarkAnswerAsCorrect(int answerId)
+    {
+        LeanTween.color(answersBackgrounds[answerId].rectTransform, correctAnswerColor, 0.3f);
+    }
+
+    public void MarkAnswerAsDefault(int answerId)
+    {
+        LeanTween.color(answersBackgrounds[answerId].rectTransform, answerColor, 0.3f);
     }
 
 

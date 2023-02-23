@@ -34,6 +34,17 @@ public class PlayerAnswerData : BaseRaw
 {
     public int answerId;
     public float timeToAnswer;
+
+    public PlayerAnswerData()
+    {
+
+    }
+
+    public PlayerAnswerData(int answerId, float timeToAnswer)
+    {
+        this.answerId = answerId;
+        this.timeToAnswer = timeToAnswer;
+    }
 }
 public class PlayersManager : MonoBehaviour
 {

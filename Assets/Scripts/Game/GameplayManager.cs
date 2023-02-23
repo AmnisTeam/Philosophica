@@ -84,6 +84,11 @@ public class GameplayManager : MonoBehaviour
     private double questionNumberAnnouncementTimer = 0;
     public double questionNumberAnnouncementTime;
 
+    public double askQuestionInBattleTime;
+
+    private double correctAnsewerRevealingTimer;
+    public double correctAnsewerRevealingTime;
+
     private double waitTimer = 0;
     private double waiteTime = 0;
 
@@ -106,6 +111,7 @@ public class GameplayManager : MonoBehaviour
     public BoolCondition attackAnnouncementIsEnded;
     public BoolCondition opponentsAnnouncementIsEnded;
     public BoolCondition questionNumberAnnouncementIsEnded;
+    public BoolCondition askQuestionInBattleIsEnded;
 
     public void AskQuestionStart()
     {
@@ -355,7 +361,30 @@ public class GameplayManager : MonoBehaviour
 
     public void AskQuestionInBattleUpdate()
     {
-        askQuestionInBattle.GetComponent<AskQuestionInBattle>().timer += Time.deltaTime;
+        AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
+        askQuestionInBattleComponent.timer += Time.deltaTime;
+        askQuestionInBattleComponent.timerText.text = GetTimeStr(askQuestionInBattleTime - askQuestionInBattleComponent.timer);
+
+        if (askQuestionInBattleComponent.timer >= askQuestionInBattleTime)
+        {    
+            askQuestionInBattleIsEnded.state = true;
+        }
+    }
+
+    public void CorrectAnsewerRevealingInBattleStart()
+    {
+        AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
+        askQuestionInBattleComponent.ShowCorrectAnswer();
+    }
+
+    public void CorrectAnsewerRevealingInBattleUpdate()
+    {
+        correctAnsewerRevealingTimer += Time.deltaTime;
+
+        if (correctAnsewerRevealingTimer >= correctAnsewerRevealingTime)
+        {
+            askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
+        }
     }
 
     public void Awake()
@@ -451,6 +480,15 @@ public class GameplayManager : MonoBehaviour
         questionNumberAnnouncementIsEnded = new BoolCondition();
         Transition fromQuestionNumberAnnouncementToAskQuestionInBattle = new Transition(questionNumberAnnouncementIsEnded, 8, 9);
         gameStateMachine.transitions.Add(fromQuestionNumberAnnouncementToAskQuestionInBattle);
+
+        State correctAnsewerRevealingInBattleState = new State(); // 10
+        correctAnsewerRevealingInBattleState.startEvents += CorrectAnsewerRevealingInBattleStart;
+        correctAnsewerRevealingInBattleState.updateEvents += CorrectAnsewerRevealingInBattleUpdate;
+        gameStateMachine.states.Add(correctAnsewerRevealingInBattleState);
+
+        askQuestionInBattleIsEnded = new BoolCondition();
+        Transition fromAskQuestionInBattleToCorrectAnsewerRevealingInBattle = new Transition(askQuestionInBattleIsEnded, 9, 10);
+        gameStateMachine.transitions.Add(fromAskQuestionInBattleToCorrectAnsewerRevealingInBattle);
     }
 
     public void Start()

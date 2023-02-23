@@ -9,8 +9,11 @@ public class Opponent
     public double maxHealh;
     public int roundsWon;
 
+    public List<PlayerAnswerData> playerAnswerData;
+
     public Opponent(Player player, double health, double maxHealh, int roundsWon)
     {
+        playerAnswerData = new List<PlayerAnswerData>();
         this.player = player;
         this.health = health;
         this.maxHealh = maxHealh;
