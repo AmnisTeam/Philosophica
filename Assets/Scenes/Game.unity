@@ -2913,6 +2913,9 @@ MonoBehaviour:
   questionNumberAnnouncementTime: 2
   askQuestionInBattleTime: 10
   correctAnsewerRevealingTime: 2
+  BattleRoundResultsTime: 0
+  battleRoundResultsNotificationDelay: 1.5
+  damageDealingDelay: 1.3
 --- !u!1 &268063264
 GameObject:
   m_ObjectHideFlags: 0
@@ -4447,14 +4450,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 20
+    m_Left: 0
     m_Right: 0
     m_Top: 20
     m_Bottom: 0
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 1260, y: 102}
+  m_CellSize: {x: 1296.22, y: 102}
   m_Spacing: {x: 0, y: 20}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -7214,6 +7217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e561f271612276a4baa38b198754736e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  correctAnswerColor: {r: 0, g: 0.8235294, b: 0.29411766, a: 1}
   iconsContent: {fileID: 375754359}
   opponent1Avatar: {fileID: 783660360}
   opponent1Name: {fileID: 677961033}
@@ -7223,6 +7227,7 @@ MonoBehaviour:
   opponent2Name: {fileID: 1668340834}
   opponent2HealthBar: {fileID: 1328003875}
   opponent2HealthPointsText: {fileID: 954741632}
+  notification: {fileID: 1869872434}
   playerRowPrefab: {fileID: 3405096108269945255, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
   tableContent: {fileID: 390250905}
 --- !u!1001 &722542647
@@ -14285,7 +14290,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1260
+      value: 1296.22
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_SizeDelta.y
@@ -14321,7 +14326,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 650
+      value: 648.11
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -16237,7 +16242,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1260
+      value: 1296.22
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_SizeDelta.y
@@ -16273,7 +16278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 650
+      value: 648.11
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -17762,6 +17767,7 @@ GameObject:
   - component: {fileID: 1869872433}
   - component: {fileID: 1869872435}
   - component: {fileID: 1869872434}
+  - component: {fileID: 1869872436}
   m_Layer: 5
   m_Name: DamageNotifyingText
   m_TagString: Untagged
@@ -17889,6 +17895,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1869872432}
   m_CullTransparentMesh: 1
+--- !u!225 &1869872436
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869872432}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1879899444
 GameObject:
   m_ObjectHideFlags: 0

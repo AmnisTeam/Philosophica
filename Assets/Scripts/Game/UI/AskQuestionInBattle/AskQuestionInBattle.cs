@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Color = UnityEngine.Color;
@@ -52,8 +53,8 @@ public class AskQuestionInBattle : MonoBehaviour
         opponents[0] = opponent1;
         opponents[1] = opponent2;
 
-        opponents[0].playerAnswerData.Add(new PlayerAnswerData(-1, 0));
-        opponents[1].playerAnswerData.Add(new PlayerAnswerData(-1, 0));
+        opponents[0].playerAnswerData.Add(new PlayerAnswerData());
+        opponents[1].playerAnswerData.Add(new PlayerAnswerData());
 
         opponent1Name.text = opponent1.player.nickname;
         opponent1Name.color = opponent1.player.color;
@@ -62,7 +63,8 @@ public class AskQuestionInBattle : MonoBehaviour
         opponent1Avatar.color = opponent1.player.color;
 
         opponent1HealthBar.value = (float)(opponent1.health / opponent1.maxHealh);
-        opponent1HealthPointsText.text = "<color=#FF4F4F>" + opponent1.health + "</color> / " + opponent1.maxHealh;
+        //opponent1HealthPointsText.text = "<color=#FF4F4F>" + opponent1.health + "</color> / " + opponent1.maxHealh;
+        opponent1HealthPointsText.text = GetHealthStr(opponent1.health, opponent1.maxHealh, GlobalVariables.healthColor);
 
 
         opponent2Name.text = opponent2.player.nickname;
@@ -72,7 +74,8 @@ public class AskQuestionInBattle : MonoBehaviour
         opponent2Avatar.color = opponent2.player.color;
 
         opponent2HealthBar.value = (float)(opponent2.health / opponent2.maxHealh);
-        opponent2HealthPointsText.text = "<color=#FF4F4F>" + opponent1.health + "</color> / " + opponent1.maxHealh;
+        //opponent2HealthPointsText.text = "<color=#FF4F4F>" + opponent2.health + "</color> / " + opponent2.maxHealh;
+        opponent2HealthPointsText.text = GetHealthStr(opponent2.health, opponent2.maxHealh, GlobalVariables.healthColor);
 
         this.questionText.text = question.question;
         this.question = question;
@@ -80,6 +83,7 @@ public class AskQuestionInBattle : MonoBehaviour
         for (int a = 0; a < answers.Length && a < question.answer.Length; a++)
             answers[a].text = question.answer[a];
         timer = 0;
+        ResetAnswersWithoutAnimation();
     }
 
     public void SelectAnswer(int buttonId)
@@ -125,9 +129,17 @@ public class AskQuestionInBattle : MonoBehaviour
 
     public void HideCorrectAnswer()
     {
-        MarkAnswerAsDefault(question.idRightAnswer);
-        //for (int i = 0; i < question.answer.Length; i++)
-        //    MarkAnswerAsDefault(i);
+        for (int i = 0; i < question.answer.Length; i++)
+            MarkAnswerAsDefault(i);
+    }
+
+    public void ResetAnswersWithoutAnimation()
+    {
+        for (int i = 0; i < question.answer.Length; i++)
+        {
+            answersBorders[i].GetComponent<CanvasGroup>().alpha = 0;
+            answersBackgrounds[i].color = answerColor;
+        }
     }
 
     public void MarkAnswerAsCorrect(int answerId)
@@ -140,14 +152,9 @@ public class AskQuestionInBattle : MonoBehaviour
         LeanTween.color(answersBackgrounds[answerId].rectTransform, answerColor, 0.3f);
     }
 
-
-    void Start()
+    public static string GetHealthStr(double health, double maxHealth, Color healthColor)
     {
-        
-    }
-
-    void Update()
-    {
-        
+        string hex = healthColor.ToHexString();
+        return "<color=#" + hex + ">" + (int)health + "</color> / " + maxHealth;
     }
 }
