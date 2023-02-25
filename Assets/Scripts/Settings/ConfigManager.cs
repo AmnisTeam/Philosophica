@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class ConfigManager : MonoBehaviour
 {
@@ -64,6 +65,8 @@ public class ConfigManager : MonoBehaviour
     }
     private void Save()
     {
+        var data = SaveManager.Load<SaveData>(saveKey);
+        PhotonNetwork.NickName = data.nickname;
         SaveManager.Save(saveKey, GetSaveSnapshot());
     }
 

@@ -8,7 +8,7 @@ public class BackgroundTask : MonoBehaviour {
     void Start() {
         if (!PlayerPrefs.HasKey("player_uuid")) {
             string playerUuid = Guid.NewGuid().ToString();
-            string playerName = ServerUtils.getNickname(playerUuid);
+            string playerName = "Nickname";//ServerUtils.getNickname(playerUuid);
             PlayerPrefs.SetString("player_uuid", playerUuid);
             PlayerPrefs.SetString("nickname", playerName);
 

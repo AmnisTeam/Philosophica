@@ -8,6 +8,9 @@ TagManager:
   - SOUND_EFFECTS_TAG
   - ROOM_MANAGER_TAG
   - GAME_LEAVE_TO_LOBBY
+  - PLAYERS_LOBBY_TAG
+  - Bullet
+  - ICONS_CONTENT_TAG
   layers:
   - Default
   - TransparentFX

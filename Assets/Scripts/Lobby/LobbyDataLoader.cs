@@ -18,8 +18,8 @@ public class LobbyDataLoader : MonoBehaviour
         lobbyIcon = lobbyGameObject.GetComponent<Image>();
 
         lobbyIcon.sprite = CreateLobbyDataHolder.icons[CreateLobbyDataHolder.lobbyIconID];
-        lobbyName.text = CreateLobbyDataHolder.lobbyName;
+        /*lobbyName.text = CreateLobbyDataHolder.lobbyName;
         lobbyCode.text = "#123456";
-        lobbyPassword.text = CreateLobbyDataHolder.lobbyPassword;
+        lobbyPassword.text = CreateLobbyDataHolder.lobbyPassword;*/
     }
 }

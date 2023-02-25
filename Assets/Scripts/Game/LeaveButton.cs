@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Mirror;
 
-public class LeaveButton : NetworkBehaviour {
+public class LeaveButton : MonoBehaviour {
     void Start() {
 
     }
@@ -16,7 +15,7 @@ public class LeaveButton : NetworkBehaviour {
     private void Awake() {
         Button btn = GameObject.FindGameObjectWithTag("GAME_LEAVE_TO_LOBBY").GetComponent<Button>();
 
-        btn.onClick.AddListener(() => {            
+        /*btn.onClick.AddListener(() => {            
             if (NetworkServer.active && NetworkClient.isConnected) {
                 NetworkManager.singleton.StopHost();
             } else if (NetworkClient.isConnected) {
@@ -26,6 +25,6 @@ public class LeaveButton : NetworkBehaviour {
             }
 
             //RoomManager.instance.ServerChangeScene("MainScene(Stars)");
-        });
+        });*/
     }
 }
