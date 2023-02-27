@@ -11,6 +11,9 @@ TagManager:
   - PLAYERS_LOBBY_TAG
   - Bullet
   - ICONS_CONTENT_TAG
+  - settingsMusicVolumeTag
+  - COLOR_CONTENT_TAG
+  - a
   layers:
   - Default
   - TransparentFX
