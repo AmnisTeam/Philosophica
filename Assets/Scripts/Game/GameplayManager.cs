@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
@@ -47,6 +48,7 @@ public class GameplayManager : MonoBehaviour
 
     public GameObject QuestionNumberAnnouncement;
     public GameObject askQuestionInBattle;
+    public GameObject battleRoundResults;
 
     public StateMachine gameStateMachine = new StateMachine();
 
@@ -89,6 +91,14 @@ public class GameplayManager : MonoBehaviour
     private double correctAnsewerRevealingTimer;
     public double correctAnsewerRevealingTime;
 
+    private double BattleRoundResultsTimer;
+    public double BattleRoundResultsTime;
+
+    public double battleRoundResultsNotificationDelay;
+
+    private double damageDealingDelayTimer;
+    public double damageDealingDelay;
+
     private double waitTimer = 0;
     private double waiteTime = 0;
 
@@ -112,6 +122,8 @@ public class GameplayManager : MonoBehaviour
     public BoolCondition opponentsAnnouncementIsEnded;
     public BoolCondition questionNumberAnnouncementIsEnded;
     public BoolCondition askQuestionInBattleIsEnded;
+    public BoolCondition correctAnsewerRevealingInBattleIsEnded;
+    public BoolCondition roundIsEnded;
 
     public void AskQuestionStart()
     {
@@ -214,6 +226,7 @@ public class GameplayManager : MonoBehaviour
         stageTwoAnnoucment.SetActive(true);
         stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
         stageTwoAnnouncmentTimer = 0;
+        stageTwoAnnouncementIsEnded.state = false;
     }
 
     public void stageTwoAnnouncementUpdate()
@@ -245,6 +258,7 @@ public class GameplayManager : MonoBehaviour
 
         offenseAnnouncementTimerText.text = GetTimeStr(offensivePlayerSelectionTime);
         battle = null;
+        offensivePlayerSelectionIsEnded.state = false;
     }
 
     public void offensivePlayerSelectionUpdate()
@@ -279,8 +293,9 @@ public class GameplayManager : MonoBehaviour
     {
         attackAnnouncement.SetActive(true);
         attackAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
-        attackAnnouncementText.text = battle.opponent1.player.nickname + " напал на " + battle.opponent2.player.nickname + ".";
+        attackAnnouncementText.text = battle.opponents[0].player.nickname + " напал на " + battle.opponents[1].player.nickname + ".";
         attackAnnouncementTimer = 0;
+        attackAnnouncementIsEnded.state = false;
     }
 
     public void AttackAnnouncementUpdate()
@@ -301,8 +316,8 @@ public class GameplayManager : MonoBehaviour
         opponentsAnnouncement.SetActive(true);
         opponentsAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
 
-        Player player1 = battle.opponent1.player;
-        Player player2 = battle.opponent2.player;
+        Player player1 = battle.opponents[0].player;
+        Player player2 = battle.opponents[1].player;
 
 
         opponentsAnnouncementOpponent1Icon.sprite = iconsContent.icons[player1.iconId].sprite;
@@ -316,7 +331,9 @@ public class GameplayManager : MonoBehaviour
         opponentsAnnouncementOpponent2Icon.color = player2.color;
 
         opponentsAnnouncementOpponent2Nickname.text = player2.nickname;
-        opponentsAnnouncementOpponent2Nickname.color = player2.color;     
+        opponentsAnnouncementOpponent2Nickname.color = player2.color;
+        
+        opponentsAnnouncementIsEnded.state = false;
     }
 
     public void OpponentsAnnouncementUpdate()
@@ -337,6 +354,8 @@ public class GameplayManager : MonoBehaviour
         questionNumberAnnouncementTimer = 0;
         QuestionNumberAnnouncement.SetActive(true);
         QuestionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+
+        questionNumberAnnouncementIsEnded.state = false;
     }
 
     public void QuestionNumberAnnouncementUpdate()
@@ -354,9 +373,11 @@ public class GameplayManager : MonoBehaviour
     public void AskQuestionInBattleStart()
     {
         askQuestionInBattle.SetActive(true);
-        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponent1, battle.opponent2, 
+        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], 
             battle.questions[battle.currentQuestion]);
         askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+
+        askQuestionInBattleIsEnded.state = false;
     }
 
     public void AskQuestionInBattleUpdate()
@@ -375,6 +396,8 @@ public class GameplayManager : MonoBehaviour
     {
         AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
         askQuestionInBattleComponent.ShowCorrectAnswer();
+
+        correctAnsewerRevealingInBattleIsEnded.state = false;
     }
 
     public void CorrectAnsewerRevealingInBattleUpdate()
@@ -384,6 +407,37 @@ public class GameplayManager : MonoBehaviour
         if (correctAnsewerRevealingTimer >= correctAnsewerRevealingTime)
         {
             askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
+            correctAnsewerRevealingInBattleIsEnded.state = true;
+            Wait(0.3f);
+        }
+    }
+
+    public void BattleRoundResultsStart()
+    {
+        damageDealingDelayTimer = 0;
+        battleRoundResults.GetComponent<BattleRoundResults>().Init(battle);
+        battleRoundResults.SetActive(true);
+        battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+        battleRoundResults.GetComponent<BattleRoundResults>().notification.GetComponent<CanvasGroup>().
+            LeanAlpha(1, 0.3f).setEaseLinear().setDelay((float)battleRoundResultsNotificationDelay);
+
+        roundIsEnded.state = false;
+    }
+
+    public void BattleRoundResultsUpdate()
+    {
+        BattleRoundResultsTimer += Time.deltaTime;
+        damageDealingDelayTimer += Time.deltaTime;
+
+        if (damageDealingDelayTimer >= damageDealingDelay + battleRoundResultsNotificationDelay)
+        {
+            battleRoundResults.GetComponent<BattleRoundResults>().InflictDamageOnLoser();
+            battleRoundResults.GetComponent<BattleRoundResults>().UpdateOpponentsHealthGradudally(0.4f);
+            battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear().setDelay(1.5f);
+            battle.currentQuestion++;
+            roundIsEnded.state = true;
+            Wait(1.8f);
+            damageDealingDelayTimer = double.NaN;
         }
     }
 
@@ -489,6 +543,19 @@ public class GameplayManager : MonoBehaviour
         askQuestionInBattleIsEnded = new BoolCondition();
         Transition fromAskQuestionInBattleToCorrectAnsewerRevealingInBattle = new Transition(askQuestionInBattleIsEnded, 9, 10);
         gameStateMachine.transitions.Add(fromAskQuestionInBattleToCorrectAnsewerRevealingInBattle);
+
+        State battleRoundResultsState = new State(); // 11
+        battleRoundResultsState.startEvents += BattleRoundResultsStart;
+        battleRoundResultsState.updateEvents += BattleRoundResultsUpdate;
+        gameStateMachine.states.Add(battleRoundResultsState);
+
+        correctAnsewerRevealingInBattleIsEnded = new BoolCondition();
+        Transition fromCorrectAnsewerRevealingInBattleToBattleRoundResults = new Transition(correctAnsewerRevealingInBattleIsEnded, 10, 11);
+        gameStateMachine.transitions.Add(fromCorrectAnsewerRevealingInBattleToBattleRoundResults);
+
+        roundIsEnded = new BoolCondition();
+        Transition fromCorrectAnsewerRevealingToQuestionNumberAnounce = new Transition(roundIsEnded, 11, 8);
+        gameStateMachine.transitions.Add(fromCorrectAnsewerRevealingToQuestionNumberAnounce);
     }
 
     public void Start()
@@ -500,7 +567,7 @@ public class GameplayManager : MonoBehaviour
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(0);
+        gameStateMachine.Start(5);
     }
 
     public void Update()
@@ -554,7 +621,7 @@ public class GameplayManager : MonoBehaviour
         nextQuestionTimeText.text = minutesNonsignificantZero + minutes + ":" + secondsNonsignificantZero + restOfSeconds;
     }
 
-    public string GetTimeStr(double seconds)
+    public static string GetTimeStr(double seconds)
     {
         int minutes = (int)seconds / 60;
         int restOfSeconds = (int)seconds % 60;

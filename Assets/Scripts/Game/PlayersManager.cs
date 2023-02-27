@@ -37,7 +37,8 @@ public class PlayerAnswerData : BaseRaw
 
     public PlayerAnswerData()
     {
-
+        answerId = -1;
+        timeToAnswer = -1;
     }
 
     public PlayerAnswerData(int answerId, float timeToAnswer)
