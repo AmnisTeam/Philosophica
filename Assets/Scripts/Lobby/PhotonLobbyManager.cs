@@ -74,6 +74,10 @@ public class PhotonLobbyManager : MonoBehaviourPunCallbacks {
         PhotonNetwork.LeaveRoom();
     }
 
+    public void StartGameFunc() {
+        PhotonNetwork.LoadLevel("Game");
+    }
+
     public void UpdateList() {
         foreach (Transform spawn in spawnPoints) {
             for (var i = spawn.childCount-1; i >= 0; i--) {

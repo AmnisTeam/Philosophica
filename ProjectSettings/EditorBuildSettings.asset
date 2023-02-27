@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lobby(Stars).unity
     guid: 487c54600eef8a6478eda1afdb156c3c
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Game.unity
     guid: c7a9add87816e0746a4535107bf33160
   - enabled: 1

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class LeaveButton : MonoBehaviour {
     void Start() {
@@ -26,5 +27,7 @@ public class LeaveButton : MonoBehaviour {
 
             //RoomManager.instance.ServerChangeScene("MainScene(Stars)");
         });*/
+
+
     }
 }
