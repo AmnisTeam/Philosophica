@@ -21,5 +21,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks {
 
         SceneManager.LoadScene("MainScene(Stars)");
         PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.EnableCloseConnection = true;
     }
 }

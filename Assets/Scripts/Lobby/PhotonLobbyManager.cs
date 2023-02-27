@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 using TMPro;
-using System;
-using UnityEngine.UI;
 
 public class PhotonLobbyManager : MonoBehaviourPunCallbacks {
     public string mainSceneName;
@@ -18,6 +15,8 @@ public class PhotonLobbyManager : MonoBehaviourPunCallbacks {
     Sprite[] icons;
     GameObject colorsHolder;
     ColorsHolder instanceColorHolder;
+
+    public GameObject startButton;
 
     void Start() {
         avatarSprites = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG");
@@ -44,6 +43,10 @@ public class PhotonLobbyManager : MonoBehaviourPunCallbacks {
                 });
             }
         }
+
+        if (!PhotonNetwork.IsMasterClient) {
+            startButton.gameObject.SetActive(false);
+        }
     }
 
     void Update() {
@@ -55,7 +58,6 @@ public class PhotonLobbyManager : MonoBehaviourPunCallbacks {
     }
 
     public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps) {
-        Debug.Log(">>> LobbyManager.OnPlayerPropertiesUpdate");
         UpdateList();
     }
 
@@ -94,12 +96,16 @@ public class PhotonLobbyManager : MonoBehaviourPunCallbacks {
             remotePlayerIcon.sprite = icons[(int)player.CustomProperties["playerIconId"]];
             remotePlayerIcon.color = instanceColorHolder.colors[(int)player.CustomProperties["playerColorIndex"]];
 
-            if (player.IsMasterClient && player.IsLocal) {
+            remotePlayerButton.onClick.AddListener(() => {
+                PhotonNetwork.CloseConnection(player);
+            });
+
+            if (!PhotonNetwork.IsMasterClient || (PhotonNetwork.IsMasterClient && player.IsLocal)) {
                 remotePlayerButton.gameObject.SetActive(false);
-            } else if (player.IsMasterClient && !player.IsLocal) {
-                remotePlayerButton.gameObject.SetActive(false);
-            } else if (player.IsLocal) {
-                remotePlayerButton.gameObject.SetActive(false);
+            }
+
+            if (PhotonNetwork.IsMasterClient) {
+                startButton.gameObject.SetActive(true);
             }
 
             spawnIndex++;
