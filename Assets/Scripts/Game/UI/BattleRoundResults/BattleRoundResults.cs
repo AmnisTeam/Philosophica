@@ -233,7 +233,7 @@ public class BattleRoundResults : MonoBehaviour
         if (opponentAnswerId >= 0)
         {
             answer = battle.questions[battle.currentQuestion].answer[opponentAnswerId];
-            time = GameplayManager.GetTimeStr(opponent.playerAnswerData[opponentLastAnswerData].timeToAnswer);
+            time = GlobalVariables.GetTimeStr(opponent.playerAnswerData[opponentLastAnswerData].timeToAnswer);
         }          
 
         playerRow.Init(

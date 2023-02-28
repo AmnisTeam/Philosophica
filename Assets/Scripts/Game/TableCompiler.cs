@@ -39,6 +39,12 @@ public class TableCompiler : MonoBehaviour
         for(int x = 0; x < questionManager.playersManager.players.count; x++)
         {
             PlayerAnswerData answerData = playersManager.playerAnswerData.find(table[x].id);
+            
+            // REMOVE ÊÎÑÒÛËÜ
+            if (answerData.answerId == -1)
+                answerData.answerId = 0;
+
+
             nickname[x].text = table[x].nickname;
             answer[x].text = questionManager.activeQuestion.answer[answerData.answerId];
             if (answerData.answerId == questionManager.rightAnswer)

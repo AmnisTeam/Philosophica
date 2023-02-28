@@ -22,6 +22,21 @@ public class Transition
         this.from = from;
         this.to = to;
     }
+
+    public Transition(Condition condition, State from, State to, StateMachine stateMachine)
+    {
+        this.condition = condition;
+        this.from = FindStateId(stateMachine, from);
+        this.to = FindStateId(stateMachine, to);
+    }
+
+    private int FindStateId(StateMachine stateMachine, State state)
+    {
+        for (int s = 0; s < stateMachine.states.Count; s++)
+            if (state == stateMachine.states[s])
+                return s;
+        return -1;
+    }
 }
 
 public delegate void StateEvent();

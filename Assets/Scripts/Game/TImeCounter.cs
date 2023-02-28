@@ -18,7 +18,7 @@ public class TImeCounter : MonoBehaviour
     void Update()
     {
         time += Time.deltaTime;
-        timeText.text = GameplayManager.GetTimeStr(time);
+        timeText.text = GlobalVariables.GetTimeStr(time);
 
         //minutesText.text = "";
         //secundesText.text = "";

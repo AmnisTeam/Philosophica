@@ -221,25 +221,25 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
-    public void stageTwoAnnouncementStart()
-    {
-        stageTwoAnnoucment.SetActive(true);
-        stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
-        stageTwoAnnouncmentTimer = 0;
-        stageTwoAnnouncementIsEnded.state = false;
-    }
+    //public void stageTwoAnnouncementStart()
+    //{
+    //    stageTwoAnnoucment.SetActive(true);
+    //    stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+    //    stageTwoAnnouncmentTimer = 0;
+    //    stageTwoAnnouncementIsEnded.state = false;
+    //}
 
-    public void stageTwoAnnouncementUpdate()
-    {
-        stageTwoAnnouncmentTimer += Time.deltaTime;
+    //public void stageTwoAnnouncementUpdate()
+    //{
+    //    stageTwoAnnouncmentTimer += Time.deltaTime;
 
-        if (stageTwoAnnouncmentTimer >= stageTwoAnnouncmentTime)
-        {
-            stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
-            stageTwoAnnouncementIsEnded.state = true;
-            Wait(0.5f);
-        }
-    }
+    //    if (stageTwoAnnouncmentTimer >= stageTwoAnnouncmentTime)
+    //    {
+    //        stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
+    //        stageTwoAnnouncementIsEnded.state = true;
+    //        Wait(0.5f);
+    //    }
+    //}
 
     public void offensivePlayerSelectionStart()
     {
@@ -256,7 +256,7 @@ public class GameplayManager : MonoBehaviour
         else
             offenseAnnouncementText.text = offensePlayer.nickname + " выбирает на кого напасть.";
 
-        offenseAnnouncementTimerText.text = GetTimeStr(offensivePlayerSelectionTime);
+        offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime);
         battle = null;
         offensivePlayerSelectionIsEnded.state = false;
     }
@@ -267,7 +267,7 @@ public class GameplayManager : MonoBehaviour
         double maxPlayersHealth = 100;
         bool stateEnded = false;
         offensivePlayerSelectionTimer += Time.deltaTime;
-        offenseAnnouncementTimerText.text = GetTimeStr(offensivePlayerSelectionTime - offensivePlayerSelectionTimer);
+        offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime - offensivePlayerSelectionTimer);
 
         if (offensePlayer.id == 4575635)
             StartBattleByMouseClick(roundsCount, maxPlayersHealth);
@@ -384,7 +384,7 @@ public class GameplayManager : MonoBehaviour
     {
         AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
         askQuestionInBattleComponent.timer += Time.deltaTime;
-        askQuestionInBattleComponent.timerText.text = GetTimeStr(askQuestionInBattleTime - askQuestionInBattleComponent.timer);
+        askQuestionInBattleComponent.timerText.text = GlobalVariables.GetTimeStr(askQuestionInBattleTime - askQuestionInBattleComponent.timer);
 
         if (askQuestionInBattleComponent.timer >= askQuestionInBattleTime)
         {    
@@ -456,8 +456,10 @@ public class GameplayManager : MonoBehaviour
         gameStateMachine.states.Add(viewResultsState);
 
         askQuestionStateIsEnded = new BoolCondition();
-        Transition fromAskQuestionToViewResults = new Transition(askQuestionStateIsEnded, 0, 1);
-        gameStateMachine.transitions.Add(fromAskQuestionToViewResults);
+        gameStateMachine.transitions.Add(new Transition(askQuestionStateIsEnded, 
+                                                        askQuestionState, 
+                                                        viewResultsState, 
+                                                        gameStateMachine));
 
         State regionSelectionState = new State(); // 2
         regionSelectionState.startEvents += RegionSelectionStart;
@@ -465,8 +467,10 @@ public class GameplayManager : MonoBehaviour
         gameStateMachine.states.Add(regionSelectionState);
 
         viewResultsStateIsEnded = new BoolCondition();
-        Transition fromViewResultsToRegionSelection = new Transition(viewResultsStateIsEnded, 1, 2);
-        gameStateMachine.transitions.Add(fromViewResultsToRegionSelection);
+        gameStateMachine.transitions.Add(new Transition(viewResultsStateIsEnded, 
+                                                        viewResultsState, 
+                                                        regionSelectionState,
+                                                        gameStateMachine));
 
         State preparationState = new State(); // 3
         preparationState.startEvents += PreparationStart;
@@ -474,30 +478,44 @@ public class GameplayManager : MonoBehaviour
         gameStateMachine.states.Add(preparationState);
 
         regionSelectionStateIsEnded = new BoolCondition();
-        Transition fromRegionSelectionToPreparation = new Transition(regionSelectionStateIsEnded, 2, 3);
-        gameStateMachine.transitions.Add(fromRegionSelectionToPreparation);
+        gameStateMachine.transitions.Add(new Transition(regionSelectionStateIsEnded, 
+                                                        regionSelectionState, 
+                                                        preparationState, 
+                                                        gameStateMachine));
 
         preparationStateIsEnded = new BoolCondition();
-        Transition fromPreparationToAskQuestion = new Transition(preparationStateIsEnded, 3, 0);
-        gameStateMachine.transitions.Add(fromPreparationToAskQuestion);
+        gameStateMachine.transitions.Add(new Transition(preparationStateIsEnded, 
+                                                        preparationState, 
+                                                        askQuestionState, 
+                                                        gameStateMachine));
 
-        State stageTwoAnnouncementState = new State(); // 4
-        stageTwoAnnouncementState.startEvents += stageTwoAnnouncementStart;
-        stageTwoAnnouncementState.updateEvents += stageTwoAnnouncementUpdate;
+        //State stageTwoAnnouncementState = new State(); // 4
+        //stageTwoAnnouncementState.startEvents += stageTwoAnnouncementStart;
+        //stageTwoAnnouncementState.updateEvents += stageTwoAnnouncementUpdate;
+        //gameStateMachine.states.Add(stageTwoAnnouncementState);
+
+        StageTwoAnnouncementState stageTwoAnnouncementState = new StageTwoAnnouncementState(
+                                                                        stageTwoAnnoucment,
+                                                                        stageTwoAnnouncmentTimer,
+                                                                        stageTwoAnnouncmentTime);
         gameStateMachine.states.Add(stageTwoAnnouncementState);
 
         firstStageIsEnded = new BoolCondition();
-        Transition fromRegionSelectionToStageTwoAnnouncement = new Transition(firstStageIsEnded, 2, 4);
-        gameStateMachine.transitions.Add(fromRegionSelectionToStageTwoAnnouncement);
+        gameStateMachine.transitions.Add(new Transition(firstStageIsEnded, 
+                                                        regionSelectionState, 
+                                                        stageTwoAnnouncementState, 
+                                                        gameStateMachine));
 
         State offensivePlayerSelectionState = new State(); // 5
         offensivePlayerSelectionState.startEvents += offensivePlayerSelectionStart;
         offensivePlayerSelectionState.updateEvents += offensivePlayerSelectionUpdate;
         gameStateMachine.states.Add(offensivePlayerSelectionState);
 
-        stageTwoAnnouncementIsEnded = new BoolCondition();
-        Transition fromStageTwoAnnouncementToOffensivePlayerSelection = new Transition(stageTwoAnnouncementIsEnded, 4, 5);
-        gameStateMachine.transitions.Add(fromStageTwoAnnouncementToOffensivePlayerSelection);
+        //stageTwoAnnouncementIsEnded = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(stageTwoAnnouncementState.stageTwoAnnouncementIsEnded, 
+                                                        stageTwoAnnouncementState, 
+                                                        offensivePlayerSelectionState, 
+                                                        gameStateMachine));
 
         State attackAnnouncementState = new State(); // 6
         attackAnnouncementState.startEvents += AttackAnnouncementStart;
@@ -505,8 +523,10 @@ public class GameplayManager : MonoBehaviour
         gameStateMachine.states.Add(attackAnnouncementState);
 
         offensivePlayerSelectionIsEnded = new BoolCondition();
-        Transition fromOffensivePlayerSelectionToAttackAnnouncement = new Transition(offensivePlayerSelectionIsEnded, 5, 6);
-        gameStateMachine.transitions.Add(fromOffensivePlayerSelectionToAttackAnnouncement);
+        gameStateMachine.transitions.Add(new Transition(offensivePlayerSelectionIsEnded, 
+                                                        offensivePlayerSelectionState, 
+                                                        attackAnnouncementState, 
+                                                        gameStateMachine));
 
         State opponentsAnnouncementState = new State(); // 7
         opponentsAnnouncementState.startEvents += OpponentsAnnouncementStart;
@@ -514,8 +534,10 @@ public class GameplayManager : MonoBehaviour
         gameStateMachine.states.Add(opponentsAnnouncementState);
 
         attackAnnouncementIsEnded = new BoolCondition();
-        Transition fromAttackAnnouncementToOpponentsAnnouncement = new Transition(attackAnnouncementIsEnded, 6, 7);
-        gameStateMachine.transitions.Add(fromAttackAnnouncementToOpponentsAnnouncement);
+        gameStateMachine.transitions.Add(new Transition(attackAnnouncementIsEnded, 
+                                                        attackAnnouncementState,
+                                                        opponentsAnnouncementState,
+                                                        gameStateMachine));
 
         State questionNumberAnnouncementState = new State(); // 8
         questionNumberAnnouncementState.startEvents += QuestionNumberAnnouncementStart;
@@ -523,8 +545,10 @@ public class GameplayManager : MonoBehaviour
         gameStateMachine.states.Add(questionNumberAnnouncementState);
 
         opponentsAnnouncementIsEnded = new BoolCondition();
-        Transition fromopponentsAnnouncementToquestionNumberAnnouncement = new Transition(opponentsAnnouncementIsEnded, 7, 8);
-        gameStateMachine.transitions.Add(fromopponentsAnnouncementToquestionNumberAnnouncement);
+        gameStateMachine.transitions.Add(new Transition(opponentsAnnouncementIsEnded, 
+                                                        opponentsAnnouncementState, 
+                                                        questionNumberAnnouncementState, 
+                                                        gameStateMachine));
 
         State askQuestionInBattleState = new State(); // 9
         askQuestionInBattleState.startEvents += AskQuestionInBattleStart;
@@ -532,8 +556,10 @@ public class GameplayManager : MonoBehaviour
         gameStateMachine.states.Add(askQuestionInBattleState);
 
         questionNumberAnnouncementIsEnded = new BoolCondition();
-        Transition fromQuestionNumberAnnouncementToAskQuestionInBattle = new Transition(questionNumberAnnouncementIsEnded, 8, 9);
-        gameStateMachine.transitions.Add(fromQuestionNumberAnnouncementToAskQuestionInBattle);
+        gameStateMachine.transitions.Add(new Transition(questionNumberAnnouncementIsEnded, 
+                                                        questionNumberAnnouncementState, 
+                                                        askQuestionInBattleState,
+                                                        gameStateMachine));
 
         State correctAnsewerRevealingInBattleState = new State(); // 10
         correctAnsewerRevealingInBattleState.startEvents += CorrectAnsewerRevealingInBattleStart;
@@ -541,8 +567,10 @@ public class GameplayManager : MonoBehaviour
         gameStateMachine.states.Add(correctAnsewerRevealingInBattleState);
 
         askQuestionInBattleIsEnded = new BoolCondition();
-        Transition fromAskQuestionInBattleToCorrectAnsewerRevealingInBattle = new Transition(askQuestionInBattleIsEnded, 9, 10);
-        gameStateMachine.transitions.Add(fromAskQuestionInBattleToCorrectAnsewerRevealingInBattle);
+        gameStateMachine.transitions.Add(new Transition(askQuestionInBattleIsEnded, 
+                                                        askQuestionInBattleState, 
+                                                        correctAnsewerRevealingInBattleState,
+                                                        gameStateMachine));
 
         State battleRoundResultsState = new State(); // 11
         battleRoundResultsState.startEvents += BattleRoundResultsStart;
@@ -550,12 +578,16 @@ public class GameplayManager : MonoBehaviour
         gameStateMachine.states.Add(battleRoundResultsState);
 
         correctAnsewerRevealingInBattleIsEnded = new BoolCondition();
-        Transition fromCorrectAnsewerRevealingInBattleToBattleRoundResults = new Transition(correctAnsewerRevealingInBattleIsEnded, 10, 11);
-        gameStateMachine.transitions.Add(fromCorrectAnsewerRevealingInBattleToBattleRoundResults);
+        gameStateMachine.transitions.Add(new Transition(correctAnsewerRevealingInBattleIsEnded, 
+                                                        correctAnsewerRevealingInBattleState, 
+                                                        battleRoundResultsState, 
+                                                        gameStateMachine));
 
         roundIsEnded = new BoolCondition();
-        Transition fromCorrectAnsewerRevealingToQuestionNumberAnounce = new Transition(roundIsEnded, 11, 8);
-        gameStateMachine.transitions.Add(fromCorrectAnsewerRevealingToQuestionNumberAnounce);
+        gameStateMachine.transitions.Add(new Transition(roundIsEnded, 
+                                                        battleRoundResultsState, 
+                                                        questionNumberAnnouncementState, 
+                                                        gameStateMachine));
     }
 
     public void Start()
@@ -567,7 +599,7 @@ public class GameplayManager : MonoBehaviour
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(5);
+        gameStateMachine.Start(4);
     }
 
     public void Update()
@@ -621,21 +653,7 @@ public class GameplayManager : MonoBehaviour
         nextQuestionTimeText.text = minutesNonsignificantZero + minutes + ":" + secondsNonsignificantZero + restOfSeconds;
     }
 
-    public static string GetTimeStr(double seconds)
-    {
-        int minutes = (int)seconds / 60;
-        int restOfSeconds = (int)seconds % 60;
 
-        string minutesNonsignificantZero = "";
-        string secondsNonsignificantZero = "";
-
-        if (Math.Abs(minutes) < 10)
-            minutesNonsignificantZero = "0";
-        if (Math.Abs(restOfSeconds) < 10)
-            secondsNonsignificantZero = "0";
-
-        return minutesNonsignificantZero + minutes + ":" + secondsNonsignificantZero + restOfSeconds;
-    }
 
     public void Wait(double seconds)
     {
