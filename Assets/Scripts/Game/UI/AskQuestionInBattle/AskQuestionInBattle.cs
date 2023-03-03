@@ -90,6 +90,8 @@ public class AskQuestionInBattle : MonoBehaviour
 
     public void SelectAnswer(int buttonId)
     {
+        Debug.Log("SelectAnswer");
+
         int clientNumber = -1;
         bool isClient = false;
         for (int i = 0; i < opponents.Length; i++)

@@ -28,6 +28,11 @@ public class Player : BaseRaw
     {
         claimedRegions.Add(region);
     }
+
+    public void LoseRegion(Region region)
+    {
+        claimedRegions.Remove(region);
+    }
 }
 
 public class PlayerAnswerData : BaseRaw

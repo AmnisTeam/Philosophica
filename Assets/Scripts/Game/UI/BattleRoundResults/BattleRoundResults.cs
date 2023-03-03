@@ -129,7 +129,7 @@ public class BattleRoundResults : MonoBehaviour
         opponent2Name.color = battle.opponents[1].player.color;
 
         opponent2HealthBar.value = (float)(battle.opponents[1].health / battle.opponents[1].maxHealh);
-        opponent2HealthPointsText.text = "<color=#FF4F4F>" + battle.opponents[0].health + "</color> / " + battle.opponents[0].maxHealh;
+        opponent2HealthPointsText.text = "<color=#FF4F4F>" + battle.opponents[1].health + "</color> / " + battle.opponents[1].maxHealh;
     }
 
     public void InitNotification()
@@ -192,7 +192,8 @@ public class BattleRoundResults : MonoBehaviour
     public void InflictDamageOnLoser()
     {
         int loserId = 1 - battle.winnerId;
-        battle.opponents[loserId].health -= GetWinnersDamage();
+        double resultingHealth = battle.opponents[loserId].health - GetWinnersDamage();
+        battle.opponents[loserId].health = resultingHealth < 0 ? 0 : resultingHealth;
     }
 
     public void UpdateOpponentsHealthGradudally(float time)

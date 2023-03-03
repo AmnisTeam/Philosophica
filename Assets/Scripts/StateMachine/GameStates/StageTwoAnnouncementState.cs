@@ -39,7 +39,10 @@ public class StageTwoAnnouncementState : GameState
 
         if (stageTwoAnnouncmentTimer >= stageTwoAnnouncmentTime)
         {
-            stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine();
+            stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() => 
+            { 
+                stageTwoAnnoucment.SetActive(false); 
+            });
 
             GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
             {
