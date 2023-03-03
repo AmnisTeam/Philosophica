@@ -254,6 +254,8 @@ public class GameplayManager : MonoBehaviour
 
     public void OffensivePlayerSelectionStart()
     {
+        Debug.Log("OffensivePlayerSelectionStart");
+
         offensivePlayerSelectionTimer = 0;
         offenseAnnouncement.SetActive(true);
         offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
