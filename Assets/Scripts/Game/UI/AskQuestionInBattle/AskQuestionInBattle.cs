@@ -13,6 +13,8 @@ public class AskQuestionInBattle : MonoBehaviour
     public Color answerColor;
     public Color correctAnswerColor;
 
+    public float buttonsChangeTime = 0.3f;
+
     public IconsContent iconsContent;
     public Image opponent1Avatar;
     public TextMeshProUGUI opponent1Name;
@@ -102,10 +104,10 @@ public class AskQuestionInBattle : MonoBehaviour
         {
             for (int i = 0; i < answersBorders.Length; i++)
                 if (answersBorders[i].GetComponent<CanvasGroup>().alpha > 0)
-                    answersBorders[i].GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f);
+                    answersBorders[i].GetComponent<CanvasGroup>().LeanAlpha(0, buttonsChangeTime).setEaseOutSine();
                     
 
-            answersBorders[buttonId].GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f);
+            answersBorders[buttonId].GetComponent<CanvasGroup>().LeanAlpha(1, buttonsChangeTime).setEaseOutSine();
             //MarkAnswerAsCorrect(buttonId);
 
             Debug.Log("buttonId: " + buttonId + ", " + "timeToAnsnwer: " + timer);
@@ -144,12 +146,12 @@ public class AskQuestionInBattle : MonoBehaviour
 
     public void MarkAnswerAsCorrect(int answerId)
     {
-        LeanTween.color(answersBackgrounds[answerId].rectTransform, correctAnswerColor, 0.3f);
+        LeanTween.color(answersBackgrounds[answerId].rectTransform, correctAnswerColor, buttonsChangeTime);
     }
 
     public void MarkAnswerAsDefault(int answerId)
     {
-        LeanTween.color(answersBackgrounds[answerId].rectTransform, answerColor, 0.3f);
+        LeanTween.color(answersBackgrounds[answerId].rectTransform, answerColor, buttonsChangeTime);
     }
 
     public static string GetHealthStr(double health, double maxHealth, Color healthColor)

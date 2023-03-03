@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
+using static GlobalVariables;
 
 public class GlobalVariables : MonoBehaviour
 {
@@ -38,15 +40,45 @@ public class GlobalVariables : MonoBehaviour
     public delegate void DelayFunction();
 
     static private Dictionary<DelayFunction, DelayClock> delays = new Dictionary<DelayFunction, DelayClock>();
-    
+
+    //public static bool Delay(double seconds, DelayFunction delayFunction)
+    //{
+    //    if (!delays.ContainsKey(delayFunction))
+    //        delays.Add(delayFunction, new DelayClock(seconds, 0));
+    //    else
+    //    {
+    //        DelayClock delayClock;
+    //        delays.TryGetValue(delayFunction, out delayClock);
+
+    //        if (delayClock != null)
+    //        {
+    //            delayClock.timer += Time.deltaTime;
+
+    //            if (delayClock.timer >= delayClock.time)
+    //            {
+    //                delayFunction();
+    //                delays.Remove(delayFunction);
+    //                delayClock.timer = double.NaN;
+    //            }
+    //            if (delayClock.timer == double.NaN)
+    //                return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+
     public static void Delay(double seconds, DelayFunction delayFunction)
     {
         if (!delays.ContainsKey(delayFunction))
             delays.Add(delayFunction, new DelayClock(seconds, 0));
-        else
+    }
+
+    public void Update()
+    {
+        foreach(var d in delays)
         {
-            DelayClock delayClock;
-            delays.TryGetValue(delayFunction, out delayClock);
+            DelayFunction delayFunction = (DelayFunction)d.Key;
+            DelayClock delayClock = (DelayClock)d.Value;         
 
             if (delayClock != null)
             {
@@ -56,8 +88,9 @@ public class GlobalVariables : MonoBehaviour
                 {
                     delayFunction();
                     delays.Remove(delayFunction);
+                    break;
                 }
             }
-        }     
+        }
     }
 }

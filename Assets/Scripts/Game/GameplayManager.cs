@@ -13,6 +13,12 @@ using UnityEngine.UIElements;
 public class BoolCondition : Condition
 {
     public bool state = false;
+
+    public void Set(bool state)
+    {
+        this.state = state;
+    }
+
     public override bool CheckCondition()
     {
         return state;
@@ -56,6 +62,9 @@ public class GameplayManager : MonoBehaviour
 
     public int steps = 0;
     public int maxSteps = 25;
+
+    public float menusTransitionTime = 0.3f;
+    public float menusTransitionDelayTime = 0.2f;
 
     public double timeToNextQuestion = 10;
     public double timeToChooseTerretory = 10;
@@ -101,6 +110,8 @@ public class GameplayManager : MonoBehaviour
 
     private double waitTimer = 0;
     private double waiteTime = 0;
+
+    
 
     private int winnerRegionsCountAtStartOfSelection;
     private Player winner;
@@ -241,11 +252,11 @@ public class GameplayManager : MonoBehaviour
     //    }
     //}
 
-    public void offensivePlayerSelectionStart()
+    public void OffensivePlayerSelectionStart()
     {
         offensivePlayerSelectionTimer = 0;
         offenseAnnouncement.SetActive(true);
-        offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+        offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         offensePlayer = playersManager.players.get(0);
         offenseAnnouncementAvatar.GetComponent<UnityEngine.UI.Image>().sprite = iconsContent.icons[offensePlayer.iconId].sprite;
@@ -261,7 +272,7 @@ public class GameplayManager : MonoBehaviour
         offensivePlayerSelectionIsEnded.state = false;
     }
 
-    public void offensivePlayerSelectionUpdate()
+    public void OffensivePlayerSelectionUpdate()
     {
         int roundsCount = 3;
         double maxPlayersHealth = 100;
@@ -283,16 +294,19 @@ public class GameplayManager : MonoBehaviour
         
         if (stateEnded)
         {
-            offensivePlayerSelectionIsEnded.state = true;
-            offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
-            Wait(0.5f);
+            offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine();
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () => 
+            {
+                offensivePlayerSelectionIsEnded.state = true;
+            });
+            //Wait(0.5f);
         }
     }
 
     public void AttackAnnouncementStart()
     {
         attackAnnouncement.SetActive(true);
-        attackAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+        attackAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
         attackAnnouncementText.text = battle.opponents[0].player.nickname + " напал на " + battle.opponents[1].player.nickname + ".";
         attackAnnouncementTimer = 0;
         attackAnnouncementIsEnded.state = false;
@@ -304,9 +318,12 @@ public class GameplayManager : MonoBehaviour
 
         if (attackAnnouncementTimer >= attackAnnouncementTime)
         {
-            attackAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
-            attackAnnouncementIsEnded.state = true;
-            Wait(0.5f);
+            attackAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine();
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                attackAnnouncementIsEnded.state = true;
+            });          
+            //Wait(0.5f);
         }
     }
 
@@ -314,7 +331,7 @@ public class GameplayManager : MonoBehaviour
     {
         OpponentsAnnouncementTimer = 0;
         opponentsAnnouncement.SetActive(true);
-        opponentsAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+        opponentsAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         Player player1 = battle.opponents[0].player;
         Player player2 = battle.opponents[1].player;
@@ -342,9 +359,12 @@ public class GameplayManager : MonoBehaviour
 
         if (OpponentsAnnouncementTimer >= OpponentsAnnouncementTime)
         {
-            opponentsAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
-            opponentsAnnouncementIsEnded.state = true;
-            Wait(0.5);
+            opponentsAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine();
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                opponentsAnnouncementIsEnded.state = true;
+            });
+            //Wait(0.5);
         }
     }
 
@@ -353,7 +373,7 @@ public class GameplayManager : MonoBehaviour
     {
         questionNumberAnnouncementTimer = 0;
         QuestionNumberAnnouncement.SetActive(true);
-        QuestionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+        QuestionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         questionNumberAnnouncementIsEnded.state = false;
     }
@@ -364,9 +384,12 @@ public class GameplayManager : MonoBehaviour
 
         if (questionNumberAnnouncementTimer >= questionNumberAnnouncementTime)
         {     
-            QuestionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
-            questionNumberAnnouncementIsEnded.state = true;
-            Wait(0.5f);
+            QuestionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine();
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                questionNumberAnnouncementIsEnded.state = true;
+            });
+            //Wait(0.5f);
         }
     }
 
@@ -375,7 +398,7 @@ public class GameplayManager : MonoBehaviour
         askQuestionInBattle.SetActive(true);
         askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], 
             battle.questions[battle.currentQuestion]);
-        askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+        askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         askQuestionInBattleIsEnded.state = false;
     }
@@ -406,9 +429,12 @@ public class GameplayManager : MonoBehaviour
 
         if (correctAnsewerRevealingTimer >= correctAnsewerRevealingTime)
         {
-            askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
-            correctAnsewerRevealingInBattleIsEnded.state = true;
-            Wait(0.3f);
+            askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine();         
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                correctAnsewerRevealingInBattleIsEnded.state = true;
+            });
+            //Wait(menusTransitionTime);
         }
     }
 
@@ -417,9 +443,9 @@ public class GameplayManager : MonoBehaviour
         damageDealingDelayTimer = 0;
         battleRoundResults.GetComponent<BattleRoundResults>().Init(battle);
         battleRoundResults.SetActive(true);
-        battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+        battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
         battleRoundResults.GetComponent<BattleRoundResults>().notification.GetComponent<CanvasGroup>().
-            LeanAlpha(1, 0.3f).setEaseLinear().setDelay((float)battleRoundResultsNotificationDelay);
+            LeanAlpha(1, menusTransitionTime).setEaseOutSine().setDelay((float)battleRoundResultsNotificationDelay);
 
         roundIsEnded.state = false;
     }
@@ -429,16 +455,32 @@ public class GameplayManager : MonoBehaviour
         BattleRoundResultsTimer += Time.deltaTime;
         damageDealingDelayTimer += Time.deltaTime;
 
-        if (damageDealingDelayTimer >= damageDealingDelay + battleRoundResultsNotificationDelay)
+        GlobalVariables.Delay(damageDealingDelay + battleRoundResultsNotificationDelay, () =>
         {
             battleRoundResults.GetComponent<BattleRoundResults>().InflictDamageOnLoser();
             battleRoundResults.GetComponent<BattleRoundResults>().UpdateOpponentsHealthGradudally(0.4f);
-            battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear().setDelay(1.5f);
+            battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setDelay(1.5f);
             battle.currentQuestion++;
-            roundIsEnded.state = true;
-            Wait(1.8f);
-            damageDealingDelayTimer = double.NaN;
-        }
+
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                roundIsEnded.state = true;
+            });
+        });
+
+        //if (damageDealingDelayTimer >= damageDealingDelay + battleRoundResultsNotificationDelay)
+        //{
+        //    battleRoundResults.GetComponent<BattleRoundResults>().InflictDamageOnLoser();
+        //    battleRoundResults.GetComponent<BattleRoundResults>().UpdateOpponentsHealthGradudally(0.4f);
+        //    battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setDelay(1.5f);
+        //    battle.currentQuestion++;
+            
+        //    GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+        //    {
+        //        roundIsEnded.state = true;
+        //    });
+        //    damageDealingDelayTimer = double.NaN;
+        //}
     }
 
     public void Awake()
@@ -497,7 +539,9 @@ public class GameplayManager : MonoBehaviour
         StageTwoAnnouncementState stageTwoAnnouncementState = new StageTwoAnnouncementState(
                                                                         stageTwoAnnoucment,
                                                                         stageTwoAnnouncmentTimer,
-                                                                        stageTwoAnnouncmentTime);
+                                                                        stageTwoAnnouncmentTime,
+                                                                        menusTransitionTime,
+                                                                        menusTransitionDelayTime);
         gameStateMachine.states.Add(stageTwoAnnouncementState);
 
         firstStageIsEnded = new BoolCondition();
@@ -507,12 +551,12 @@ public class GameplayManager : MonoBehaviour
                                                         gameStateMachine));
 
         State offensivePlayerSelectionState = new State(); // 5
-        offensivePlayerSelectionState.startEvents += offensivePlayerSelectionStart;
-        offensivePlayerSelectionState.updateEvents += offensivePlayerSelectionUpdate;
+        offensivePlayerSelectionState.startEvents += OffensivePlayerSelectionStart;
+        offensivePlayerSelectionState.updateEvents += OffensivePlayerSelectionUpdate;
         gameStateMachine.states.Add(offensivePlayerSelectionState);
 
         //stageTwoAnnouncementIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(stageTwoAnnouncementState.stageTwoAnnouncementIsEnded, 
+        gameStateMachine.transitions.Add(new Transition(stageTwoAnnouncementState.offensivePlayerSelectionCond, 
                                                         stageTwoAnnouncementState, 
                                                         offensivePlayerSelectionState, 
                                                         gameStateMachine));

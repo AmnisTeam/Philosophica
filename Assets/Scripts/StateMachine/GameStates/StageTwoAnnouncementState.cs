@@ -8,22 +8,29 @@ public class StageTwoAnnouncementState : GameState
     private GameObject stageTwoAnnoucment;
     private double stageTwoAnnouncmentTimer;
     private double stageTwoAnnouncmentTime;
-    public BoolCondition stageTwoAnnouncementIsEnded;
-    public StageTwoAnnouncementState(GameObject stageTwoAnnoucment, double stageTwoAnnouncmentTimer,
-                                                                    double stageTwoAnnouncmentTime)
+    public BoolCondition offensivePlayerSelectionCond;
+    public float menusTransitionTime;
+    public float menusTransitionDelayTime;
+    public StageTwoAnnouncementState(GameObject stageTwoAnnoucment, 
+                                    double stageTwoAnnouncmentTimer, 
+                                    double stageTwoAnnouncmentTime,
+                                    float menusTransitionTime,
+                                    float menusTransitionDelayTime)
     {
         this.stageTwoAnnoucment = stageTwoAnnoucment;
         this.stageTwoAnnouncmentTime = stageTwoAnnouncmentTime;
         this.stageTwoAnnouncmentTimer = stageTwoAnnouncmentTimer;
-        stageTwoAnnouncementIsEnded = new BoolCondition();
+        this.menusTransitionTime = menusTransitionTime;
+        this.menusTransitionDelayTime = menusTransitionDelayTime;
+        offensivePlayerSelectionCond = new BoolCondition();
     }
 
     public override void Start()
     {
         stageTwoAnnoucment.SetActive(true);
-        stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(1, 0.3f).setEaseLinear();
+        stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
         stageTwoAnnouncmentTimer = 0;
-        stageTwoAnnouncementIsEnded.state = false;
+        offensivePlayerSelectionCond.Set(false);
     }
 
     public override void Update()
@@ -32,20 +39,12 @@ public class StageTwoAnnouncementState : GameState
 
         if (stageTwoAnnouncmentTimer >= stageTwoAnnouncmentTime)
         {
-            stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(0, 0.3f).setEaseLinear();
+            stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine();
 
-            GlobalVariables.Delay(0.5, () =>
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
             {
-                stageTwoAnnouncementIsEnded.state = true;
+                offensivePlayerSelectionCond.Set(true);
             });
         }
     }
-
-    public void kek()
-    {
-
-    }
-
-
-
 }
