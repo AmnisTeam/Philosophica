@@ -9,12 +9,17 @@ public class BattleResultsVictory : MonoBehaviour
 {
     public IconsContent iconsContent;
     public Image winnersAvatar;
+    
     public TextMeshProUGUI winnersNameText;
 
     public TextMeshProUGUI notification;
 
-    public void Init(Player winner, Player loser)
+    public Image houseIcon;
+    public Image shieldIcon;
+    
+    public void Init(Player winner, Player loser, string type = "offence")
     {
+
         winnersAvatar.sprite = iconsContent.icons[winner.iconId].sprite;
         winnersAvatar.color = winner.color;
 
@@ -24,6 +29,20 @@ public class BattleResultsVictory : MonoBehaviour
         string winnerName = "<color=#" + winner.color.ToHexString() + ">" + winner.nickname + "</color>";
         string loserName = "<color=#" + loser.color.ToHexString() + ">" + loser.nickname + "</color>";
 
-        notification.text = "Поэтому " + winnerName + " получает территорию " + loserName + " ";
+
+        houseIcon.gameObject.SetActive(false);
+        shieldIcon.gameObject.SetActive(false);
+        if (type == "offence")
+        {
+            notification.text = "Поэтому " + winnerName + " получает территорию " + loserName + " ";
+            houseIcon.gameObject.SetActive(true);
+        }
+        else if (type == "defense")
+        {
+            notification.text = "Игрок " + winnerName + " успешно защитил свои территории от нападения";
+            shieldIcon.gameObject.SetActive(true);
+        }
+
+        
     }
 }

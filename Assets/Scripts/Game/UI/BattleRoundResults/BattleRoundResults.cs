@@ -29,14 +29,19 @@ public class BattleRoundResults : MonoBehaviour
     public GameObject tableContent;
 
     private Battle battle;
+
+    private bool someoneAnsweredCorrectly = false;
     //private Opponent[] opponents;
     public void Init(Battle battle)
     {
+        someoneAnsweredCorrectly = false;
         this.battle = battle;
         InitOpponents();
         InitNotification();
-        for (int i = 0; i < battle.opponents.Count(); i++)
-            AddPlayerRow(battle.opponents[i]);
+        ClearContent();
+        
+        AddPlayerRow(battle.opponents[battle.winnerId]);
+        AddPlayerRow(battle.opponents[1 - battle.winnerId]);
     }
 
     private void InitOpponents()
@@ -147,6 +152,7 @@ public class BattleRoundResults : MonoBehaviour
             {
                 correctAnswersCount++;
                 isCorrectAnswer = true;
+                someoneAnsweredCorrectly = true;
             }                
         }
 
@@ -155,35 +161,39 @@ public class BattleRoundResults : MonoBehaviour
 
         if (!isCorrectAnswer)
             notification.text = "Никто из игроков не дал правильный ответ, поэтому никто не получает урон.";
-
-        Opponent opponent0 = battle.opponents[battle.winnerId];
-        Opponent opponent1 = battle.opponents[1 - battle.winnerId];
-
-        string hex0 = "#" + opponent0.player.color.ToHexString();
-        string hex1 = "#" + opponent1.player.color.ToHexString();
-
-        string winningOpponentName = "<color=" + hex0 + ">" + opponent0.player.nickname + "</color>";
-        string losingOpponentName = "<color=" + hex1 + ">" + opponent1.player.nickname + "</color>";
-
-        string hex = GlobalVariables.healthColor.ToHexString();
-        string damageSeverity = "урон в размере <color=#" + hex + ">" + (int)GetWinnersDamage() + " единиц.</color>";
-
-        if (everyoneAnsweredCorrectly)
-        {
-            notification.text = "Игрок " + losingOpponentName + " ответил медленнее, чем игрок " + winningOpponentName +
-                ", поэтому он получает " + damageSeverity;
-        }
         else
         {
-            notification.text = "Игрок " + losingOpponentName + " ответил не правильно, поэтому он получает " + damageSeverity;
-        }
-            
+            Opponent opponent0 = battle.opponents[battle.winnerId];
+            Opponent opponent1 = battle.opponents[1 - battle.winnerId];
+
+            string hex0 = "#" + opponent0.player.color.ToHexString();
+            string hex1 = "#" + opponent1.player.color.ToHexString();
+
+            string winningOpponentName = "<color=" + hex0 + ">" + opponent0.player.nickname + "</color>";
+            string losingOpponentName = "<color=" + hex1 + ">" + opponent1.player.nickname + "</color>";
+
+            string hex = GlobalVariables.healthColor.ToHexString();
+            string damageSeverity = "урон в размере <color=#" + hex + ">" + (int)GetWinnersDamage() + " единиц.</color>";
+
+            if (everyoneAnsweredCorrectly)
+            {
+                notification.text = "Игрок " + losingOpponentName + " ответил медленнее, чем игрок " + winningOpponentName +
+                    ", поэтому он получает " + damageSeverity;
+            }
+            else
+            {
+                notification.text = "Игрок " + losingOpponentName + " ответил не правильно, поэтому он получает " + damageSeverity;
+            }
+        }       
     }
 
     public double GetWinnersDamage()
     {
-        int lastRoundId = battle.opponents[0].playerAnswerData.Count - 1;
-        double damage = (int)((10 - battle.opponents[0].playerAnswerData[lastRoundId].timeToAnswer) * 10);
+        int winnerId = battle.winnerId;
+        int lastRoundId = battle.opponents[winnerId].playerAnswerData.Count - 1;
+        double damage = 0;
+        if (battle.opponents[winnerId].playerAnswerData[lastRoundId].timeToAnswer > 0)
+            damage = (int)((10 - battle.opponents[winnerId].playerAnswerData[lastRoundId].timeToAnswer) * 10);
         if (damage < 0)
             damage = 10;
         return damage;
@@ -194,6 +204,11 @@ public class BattleRoundResults : MonoBehaviour
         int loserId = 1 - battle.winnerId;
         double resultingHealth = battle.opponents[loserId].health - GetWinnersDamage();
         battle.opponents[loserId].health = resultingHealth < 0 ? 0 : resultingHealth;
+    }
+
+    public bool SomeoneAnsweredCorrectly()
+    {
+        return someoneAnsweredCorrectly;
     }
 
     public void UpdateOpponentsHealthGradudally(float time)
@@ -246,5 +261,13 @@ public class BattleRoundResults : MonoBehaviour
 
         if (opponentAnswerId == battle.questions[battle.currentQuestion].idRightAnswer)
             playerRow.answerText.color = correctAnswerColor;
+    }
+
+    public void ClearContent()
+    {
+        foreach (Transform t in tableContent.transform)
+        {
+            Destroy(t.gameObject);
+        }
     }
 }

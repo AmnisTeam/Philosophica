@@ -30,6 +30,19 @@ public class Battle
         return null;
     }
 
+    public Opponent GetDefender()
+    {
+        foreach (var o in opponents)
+        {
+            foreach (var cr in o.player.claimedRegions)
+            {
+                if (cr == region)
+                    return o;
+            }
+        }
+        return null;
+    }
+
     public int GetDeadCount()
     {
         int count = 0;

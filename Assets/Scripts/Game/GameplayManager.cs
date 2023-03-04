@@ -391,7 +391,6 @@ public class GameplayManager : MonoBehaviour
             {
                 opponentsAnnouncementIsEnded.state = true;
             });
-            //Wait(0.5);
         }
     }
 
@@ -419,7 +418,6 @@ public class GameplayManager : MonoBehaviour
             {
                 questionNumberAnnouncementIsEnded.state = true;
             });
-            //Wait(0.5f);
         }
     }
 
@@ -452,6 +450,7 @@ public class GameplayManager : MonoBehaviour
         askQuestionInBattleComponent.ShowCorrectAnswer();
 
         correctAnsewerRevealingInBattleIsEnded.state = false;
+        correctAnsewerRevealingTimer = 0;
     }
 
     public void CorrectAnsewerRevealingInBattleUpdate()
@@ -468,19 +467,19 @@ public class GameplayManager : MonoBehaviour
             {
                 correctAnsewerRevealingInBattleIsEnded.state = true;
             });
-            //Wait(menusTransitionTime);
         }
     }
 
     public void BattleRoundResultsStart()
     {
         damageDealingDelayTimer = 0;
-        battleRoundResults.GetComponent<BattleRoundResults>().Init(battle);
+        BattleRoundResults roundResults = battleRoundResults.GetComponent<BattleRoundResults>();
+        roundResults.Init(battle);
         battleRoundResults.SetActive(true);
         battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
-        battleRoundResults.GetComponent<BattleRoundResults>().notification.GetComponent<CanvasGroup>().
-            LeanAlpha(1, menusTransitionTime).setEaseOutSine().setDelay((float)battleRoundResultsNotificationDelay);
-
+        roundResults.notification.GetComponent<CanvasGroup>().alpha = 0;
+        roundResults.notification.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime)
+            .setEaseOutSine().setDelay((float)battleRoundResultsNotificationDelay);
         roundIsEnded.state = false;
         battleCond.Set(false);
     }
@@ -492,7 +491,8 @@ public class GameplayManager : MonoBehaviour
 
         if (damageDealingDelayTimer >= damageDealingDelay + battleRoundResultsNotificationDelay)
         {
-            battleRoundResults.GetComponent<BattleRoundResults>().InflictDamageOnLoser();
+            if (battleRoundResults.GetComponent<BattleRoundResults>().SomeoneAnsweredCorrectly())
+                battleRoundResults.GetComponent<BattleRoundResults>().InflictDamageOnLoser();
             battleRoundResults.GetComponent<BattleRoundResults>().UpdateOpponentsHealthGradudally(opponentsHealthUpdatingTime);
             battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setDelay(battleRoundResultsDisappearingTime).
                 setOnComplete(() => 
@@ -504,11 +504,15 @@ public class GameplayManager : MonoBehaviour
 
             GlobalVariables.Delay(battleRoundResultsDisappearingTime + menusTransitionDelayTime, () =>
             {
-                if (battle.currentQuestion < battle.questions.Count)
-                    roundIsEnded.Set(true);
-                else
+                bool runOutOfQuestions = battle.currentQuestion >= battle.questions.Count;
+                bool someoneDied = battle.GetDeadCount() > 0;
+                if (runOutOfQuestions || someoneDied)
                     battleCond.Set(true);
+                else
+                    roundIsEnded.Set(true);
             });
+
+            
             damageDealingDelayTimer = double.NaN;
         }
     }
@@ -519,7 +523,12 @@ public class GameplayManager : MonoBehaviour
         {
             battleResultsVictory.SetActive(true);
             battleResultsVictory.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
-            battleResultsVictory.GetComponent<BattleResultsVictory>().Init(battle.GetWinner().player, battle.GetLoser().player);
+            Player winner = battle.GetWinner().player;
+            Player defender = battle.GetDefender().player;
+            if (winner == defender)
+                battleResultsVictory.GetComponent<BattleResultsVictory>().Init(winner, battle.GetLoser().player, "defense");
+            else
+                battleResultsVictory.GetComponent<BattleResultsVictory>().Init(winner, battle.GetLoser().player, "offence");
         }
         else
         {
@@ -544,6 +553,8 @@ public class GameplayManager : MonoBehaviour
                 battleResultsVictory.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                 {
                     battleResultsVictory.SetActive(false);
+                    if (battle.GetLoser().player.claimedRegions[0] == battle.region)
+                        Debug.Log("They are identical");
                     battle.GetLoser().player.LoseRegion(battle.region);
                     battle.GetWinner().player.ClaimRegion(battle.region);
                 });
@@ -742,8 +753,8 @@ public class GameplayManager : MonoBehaviour
 
     public void Start()
     {
-        playersManager.connected(playersManager.config.me);
         playersManager.connected(new Player(0, 0, new UnityEngine.Color(1f, 0.3725f, 0.396f), "SpectreSpect"));
+        playersManager.connected(playersManager.config.me);
         playersManager.connected(new Player(1, 1, new UnityEngine.Color(0.372f, 0.4745f, 1f), "DotaKot"));
         playersManager.connected(new Player(2, 2, new UnityEngine.Color(0.549f, 1f, 0.372f), "ThEnd"));
 
@@ -1030,7 +1041,10 @@ public class GameplayManager : MonoBehaviour
                 idsCount--;
             }
         }
-        
+
+        randomPlayer = playersManager.players.get(1); // TODO: remove
+
+
 
         int randomRegionId = rnd.Next(0, randomPlayer.claimedRegions.Count - 1);
         Region randomPlayerRegion = randomPlayer.claimedRegions[randomRegionId];
