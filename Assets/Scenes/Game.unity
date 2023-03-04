@@ -523,7 +523,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &32189309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12516,6 +12516,8 @@ MonoBehaviour:
   winnersAvatar: {fileID: 1193049074}
   winnersNameText: {fileID: 1588372847}
   notification: {fileID: 1629696369}
+  houseIcon: {fileID: 0}
+  shieldIcon: {fileID: 0}
 --- !u!1 &1264058342
 GameObject:
   m_ObjectHideFlags: 0
@@ -14633,6 +14635,8 @@ MonoBehaviour:
   winnersAvatar: {fileID: 0}
   winnersNameText: {fileID: 0}
   notification: {fileID: 1476375948}
+  houseIcon: {fileID: 0}
+  shieldIcon: {fileID: 0}
 --- !u!225 &1511525369
 CanvasGroup:
   m_ObjectHideFlags: 0
