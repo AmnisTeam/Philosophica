@@ -749,10 +749,6 @@ public class GameplayManager : MonoBehaviour
                                                 offensivePlayerSelectionState,
                                                 gameStateMachine));
 
-    }
-
-    public void Start()
-    {
         playersManager.connected(playersManager.config.me);
         playersManager.connected(new Player(0, 0, new UnityEngine.Color(1f, 0.3725f, 0.396f), "SpectreSpect"));
         playersManager.connected(new Player(1, 1, new UnityEngine.Color(0.372f, 0.4745f, 1f), "DotaKot"));
@@ -761,6 +757,11 @@ public class GameplayManager : MonoBehaviour
         GrantPlayersStartingRegions();
 
         gameStateMachine.Start(4);
+    }
+
+    public void Start()
+    {
+
     }
 
     public void Update()

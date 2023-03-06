@@ -10,6 +10,7 @@ public class Player : BaseRaw
     public UnityEngine.Color color;
     public string nickname;
     public List<Region> claimedRegions = new List<Region>();
+    public int scores = 0;
 
     public Player()
     {
@@ -58,7 +59,7 @@ public class PlayersManager : MonoBehaviour
     public BaseTable<Player> players = new BaseTable<Player>();
     public BaseTable<PlayerAnswerData> playerAnswerData;
     public ConfigTemp config;
-    private TabMenuManager tabMenuManager;
+    public ScoreTableManager scoreTableManager;
     public ToastShower toastShower;
     
     public void connected(Player player)
@@ -67,7 +68,7 @@ public class PlayersManager : MonoBehaviour
         players.add(player);
         playerAnswerData.addwid(new PlayerAnswerData(), player);
         //Debug.Log("Player " + player.nickname + " has been connected!");
-        tabMenuManager.updateTabMenu();
+        //tabMenuManager.updateTabMenu();
     }
 
     public void disconnect(Player player)
@@ -81,19 +82,21 @@ public class PlayersManager : MonoBehaviour
             }
         toastShower.showText("Игрок " + player.nickname + " покинул игру.");
         players.list.RemoveAt(id);
-        tabMenuManager.disconnectPlayer(id);
+        scoreTableManager.RemovePlayer(id);
+        //tabMenuManager.disconnectPlayer(id);
     }
 
     public void disconnect(int id)
     {
         toastShower.showText("Игрок " + players.get(id).nickname + " покинул игру.");
         players.list.RemoveAt(id);
-        tabMenuManager.disconnectPlayer(id);
+        scoreTableManager.RemovePlayer(id);
+        //tabMenuManager.disconnectPlayer(id);
     }
 
     private void Awake()
     {
-        tabMenuManager = GetComponent<TabMenuManager>();
+        //tabMenuManager = GetComponent<TabMenuManager>();
         playerAnswerData = new BaseTable<PlayerAnswerData>();
     }
 
