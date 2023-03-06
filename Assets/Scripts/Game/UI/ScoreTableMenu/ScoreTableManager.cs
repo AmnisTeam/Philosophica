@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class ScoreTableManager : MonoBehaviour
+public class ScoreTableManager : MonoBehaviourPunCallbacks
 {
 
     public class RowMoveableContainer
@@ -20,7 +21,8 @@ public class ScoreTableManager : MonoBehaviour
     public List<RowMoveableContainer> rows;
     public PlayersManager playersManager;
     public GameplayManager gameplayManager;
-    public IconsContent iconsContent;
+    public IconsContentHolder iconsContent;
+    public ColorsHolder colorsHolder;
 
     public float offset;
     public float distanceToLerp;
@@ -101,19 +103,39 @@ public class ScoreTableManager : MonoBehaviour
         rows.RemoveAt(id);
     }
 
+    public void RecreateTable() {
+        for (int i = 0; i < rows.Count; i++) {
+            PhotonNetwork.Destroy(rows[i].row);
+            rows.RemoveAt(i);
+            i--;
+        }
+
+        for(int x = 0; x < PhotonNetwork.CurrentRoom.PlayerCount; x++)
+        {
+            GameObject rowObject = PhotonNetwork.Instantiate(scoreTableRowPrifab.name, new Vector3(), Quaternion.identity);
+            rowObject.transform.SetParent(transform, false);
+            rowObject.GetComponent<ScoreTableRow>().scoreTableManager = this;
+            rowObject.transform.localPosition = new Vector2(0, -(rowObject.GetComponent<RectTransform>().rect.height + offset) * x);
+
+            RowMoveableContainer rowMovableContainer = new RowMoveableContainer(rowObject);
+            rows.Add(rowMovableContainer);
+        }
+    }
+
     public void UpdateTable()
     {
+        Photon.Realtime.Player[] players = PhotonNetwork.PlayerList;
         for(int x = 0; x < rows.Count; x++)
         {
             ScoreTableRow scoreTableRow = rows[x].row.GetComponent<ScoreTableRow>();
             Player player = playersManager.players.get(x);
             scoreTableRow.FillRow(
-                iconsContent.icons[player.iconId].sprite, 
-                player.nickname, 
+                iconsContent.lobbyIcons[(int)players[x].CustomProperties["playerIconId"]], 
+                players[x].NickName, 
                 player.claimedRegions.Count, 
                 gameplayManager.regionSystem.regionSerds.Count, 
                 player.scores, 
-                player.color);
+                colorsHolder.colors[(int)players[x].CustomProperties["playerColorIndex"]]);
         }
     }
 
@@ -124,8 +146,9 @@ public class ScoreTableManager : MonoBehaviour
 
     void Start()
     {
-        iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContent>();
-        for(int x = 0; x < playersManager.players.count; x++)
+        iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
+        colorsHolder = GameObject.FindGameObjectWithTag("COLOR_CONTENT_TAG").GetComponent<ColorsHolder>();
+/*        for(int x = 0; x < playersManager.players.count; x++)
         {
             GameObject rowObject = Instantiate(scoreTableRowPrifab, transform);
             rowObject.GetComponent<ScoreTableRow>().scoreTableManager = this;
@@ -133,8 +156,9 @@ public class ScoreTableManager : MonoBehaviour
 
             RowMoveableContainer rowMovableContainer = new RowMoveableContainer(rowObject);
             rows.Add(rowMovableContainer);
-        }
+        }*/
 
+        RecreateTable();
         UpdateTable();
     }
 
