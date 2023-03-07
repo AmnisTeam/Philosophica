@@ -2614,7 +2614,8 @@ MonoBehaviour:
   scoreTableRowPrifab: {fileID: 1458655452449511978, guid: aaa5dc348fcbb724ea1ec834dc39c095, type: 3}
   playersManager: {fileID: 267347261}
   gameplayManager: {fileID: 267347264}
-  iconsContent: {fileID: 375754359}
+  iconsContent: {fileID: 0}
+  colorsHolder: {fileID: 0}
   offset: 10
   distanceToLerp: 50
   delayToOpenOrClose: 0.1
@@ -2806,7 +2807,8 @@ MonoBehaviour:
   stepsText: {fileID: 2146722985}
   toast: {fileID: 1895131572}
   cam: {fileID: 1926198289}
-  iconsContent: {fileID: 375754359}
+  iconsContent: {fileID: 0}
+  colorsHolderInstance: {fileID: 0}
   stageTwoAnnoucment: {fileID: 2141023604}
   offenseAnnouncement: {fileID: 1493667746}
   offenseAnnouncementAvatar: {fileID: 1311414497}
@@ -6722,7 +6724,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   correctAnswerColor: {r: 0, g: 0.8235294, b: 0.29411766, a: 1}
-  iconsContent: {fileID: 375754359}
+  iconsContent: {fileID: 0}
   opponent1Avatar: {fileID: 783660360}
   opponent1Name: {fileID: 677961033}
   opponent1HealthBar: {fileID: 542334340}
@@ -9978,7 +9980,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1055811597
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11284,6 +11286,7 @@ RectTransform:
   - {fileID: 1629696368}
   - {fileID: 1512009869}
   - {fileID: 1712141761}
+  - {fileID: 1604113998}
   m_Father: {fileID: 32189312}
   m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -11354,12 +11357,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 550a293fba7f1374c8dd4fa16aae2d9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iconsContent: {fileID: 375754359}
+  iconsContent: {fileID: 0}
   winnersAvatar: {fileID: 1193049074}
   winnersNameText: {fileID: 1588372847}
   notification: {fileID: 1629696369}
-  houseIcon: {fileID: 0}
-  shieldIcon: {fileID: 0}
+  houseIcon: {fileID: 1512009870}
+  shieldIcon: {fileID: 1604113999}
 --- !u!1 &1264058342
 GameObject:
   m_ObjectHideFlags: 0
@@ -12183,6 +12186,7 @@ MonoBehaviour:
     nickname: NeBot
     claimedRegions: []
     scores: 0
+    isLocalClient: 0
 --- !u!4 &1411831729
 Transform:
   m_ObjectHideFlags: 0
@@ -12385,7 +12389,7 @@ MonoBehaviour:
   answerColor: {r: 0, g: 0, b: 0, a: 1}
   correctAnswerColor: {r: 0, g: 0.8235294, b: 0.29411766, a: 1}
   buttonsChangeTime: 0.3
-  iconsContent: {fileID: 375754359}
+  iconsContent: {fileID: 0}
   opponent1Avatar: {fileID: 1691337092}
   opponent1Name: {fileID: 1583973095}
   opponent1HealthBar: {fileID: 1227343623}
@@ -13207,7 +13211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 550a293fba7f1374c8dd4fa16aae2d9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iconsContent: {fileID: 375754359}
+  iconsContent: {fileID: 0}
   winnersAvatar: {fileID: 0}
   winnersNameText: {fileID: 0}
   notification: {fileID: 1476375948}
@@ -13280,7 +13284,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1512009869
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13923,6 +13927,82 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1588372845}
+  m_CullTransparentMesh: 1
+--- !u!1 &1604113997
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1604113998}
+  - component: {fileID: 1604114000}
+  - component: {fileID: 1604113999}
+  m_Layer: 5
+  m_Name: ShieldIcon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1604113998
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604113997}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1248369422}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -309.78}
+  m_SizeDelta: {x: 161.08, y: 187.2}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1604113999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604113997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 7329a39c3008fea4f86b0d5ca6125fcd, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1604114000
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604113997}
   m_CullTransparentMesh: 1
 --- !u!1 &1605965600
 GameObject:
@@ -19870,6 +19950,7 @@ MonoBehaviour:
     nickname: 
     claimedRegions: []
     scores: 0
+    isLocalClient: 0
 --- !u!224 &2104777010
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20211,7 +20292,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0/25
+  m_text: 25/25
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
@@ -20274,7 +20355,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 10, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

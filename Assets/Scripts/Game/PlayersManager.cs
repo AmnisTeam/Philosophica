@@ -11,18 +11,20 @@ public class Player : BaseRaw
     public string nickname;
     public List<Region> claimedRegions = new List<Region>();
     public int scores = 0;
+    public bool isLocalClient;
 
     public Player()
     {
 
     }
 
-    public Player(int id, int iconId, UnityEngine.Color color, string nickname)
+    public Player(int id, int iconId, UnityEngine.Color color, string nickname, bool isLocalPlayer)
     {
         this.id = id;
         this.iconId = iconId;
         this.color = color;
         this.nickname = nickname;
+        this.isLocalClient = isLocalPlayer;
     }
 
     public void ClaimRegion(Region region)

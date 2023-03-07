@@ -15,7 +15,7 @@ public class AskQuestionInBattle : MonoBehaviour
 
     public float buttonsChangeTime = 0.3f;
 
-    public IconsContent iconsContent;
+    public IconsContentHolder iconsContent;
     public Image opponent1Avatar;
     public TextMeshProUGUI opponent1Name;
     public Slider opponent1HealthBar;
@@ -43,6 +43,8 @@ public class AskQuestionInBattle : MonoBehaviour
 
     public void Init(Opponent opponent1, Opponent opponent2, QuestionManager.Question question)
     {
+        iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
+
         opponentsAnswersData = new PlayerAnswerData[2];
         for (int i = 0; i < opponentsAnswersData.Length; i++)
         {
@@ -61,7 +63,7 @@ public class AskQuestionInBattle : MonoBehaviour
         opponent1Name.text = opponent1.player.nickname;
         opponent1Name.color = opponent1.player.color;
 
-        opponent1Avatar.sprite = iconsContent.icons[opponent1.player.iconId].sprite;
+        opponent1Avatar.sprite = iconsContent.lobbyIcons[opponent1.player.iconId];
         opponent1Avatar.color = opponent1.player.color;
 
         opponent1HealthBar.value = (float)(opponent1.health / opponent1.maxHealh);
@@ -72,7 +74,7 @@ public class AskQuestionInBattle : MonoBehaviour
         opponent2Name.text = opponent2.player.nickname;
         opponent2Name.color = opponent2.player.color;
 
-        opponent2Avatar.sprite = iconsContent.icons[opponent2.player.iconId].sprite;
+        opponent2Avatar.sprite = iconsContent.lobbyIcons[opponent2.player.iconId];
         opponent2Avatar.color = opponent2.player.color;
 
         opponent2HealthBar.value = (float)(opponent2.health / opponent2.maxHealh);
@@ -95,7 +97,7 @@ public class AskQuestionInBattle : MonoBehaviour
         int clientNumber = -1;
         bool isClient = false;
         for (int i = 0; i < opponents.Length; i++)
-            if (opponents[i].player.id == 4575635)
+            if (opponents[i].player.isLocalClient)
             {
                 clientNumber = i;
                 isClient = true;

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class BattleResultsVictory : MonoBehaviour
 {
-    public IconsContent iconsContent;
+    public IconsContentHolder iconsContent;
     public Image winnersAvatar;
     
     public TextMeshProUGUI winnersNameText;
@@ -19,8 +19,9 @@ public class BattleResultsVictory : MonoBehaviour
     
     public void Init(Player winner, Player loser, string type = "offence")
     {
+        iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
 
-        winnersAvatar.sprite = iconsContent.icons[winner.iconId].sprite;
+        winnersAvatar.sprite = iconsContent.lobbyIcons[winner.iconId];
         winnersAvatar.color = winner.color;
 
         winnersNameText.text = winner.nickname;

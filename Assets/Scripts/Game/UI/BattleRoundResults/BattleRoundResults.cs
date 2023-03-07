@@ -11,7 +11,7 @@ public class BattleRoundResults : MonoBehaviour
 {
     public Color correctAnswerColor;
 
-    public IconsContent iconsContent;
+    public IconsContentHolder iconsContent;
 
     public Image opponent1Avatar;
     public TextMeshProUGUI opponent1Name;
@@ -34,6 +34,8 @@ public class BattleRoundResults : MonoBehaviour
     //private Opponent[] opponents;
     public void Init(Battle battle)
     {
+        iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
+
         someoneAnsweredCorrectly = false;
         this.battle = battle;
         InitOpponents();
@@ -117,7 +119,7 @@ public class BattleRoundResults : MonoBehaviour
         //        return 0; // If second opponent answerd faster
         //});
 
-        opponent1Avatar.sprite = iconsContent.icons[battle.opponents[0].player.iconId].sprite;
+        opponent1Avatar.sprite = iconsContent.lobbyIcons[battle.opponents[0].player.iconId];
         opponent1Avatar.color = battle.opponents[0].player.color;
 
         opponent1Name.text = battle.opponents[0].player.nickname;
@@ -127,7 +129,7 @@ public class BattleRoundResults : MonoBehaviour
         opponent1HealthPointsText.text = "<color=#FF4F4F>" + battle.opponents[0].health + "</color> / " + battle.opponents[0].maxHealh;
 
 
-        opponent2Avatar.sprite = iconsContent.icons[battle.opponents[1].player.iconId].sprite;
+        opponent2Avatar.sprite = iconsContent.lobbyIcons[battle.opponents[1].player.iconId];
         opponent2Avatar.color = battle.opponents[1].player.color;
 
         opponent2Name.text = battle.opponents[1].player.nickname;
@@ -253,7 +255,7 @@ public class BattleRoundResults : MonoBehaviour
         }          
 
         playerRow.Init(
-            iconsContent.icons[opponent.player.iconId].sprite,
+            iconsContent.lobbyIcons[opponent.player.iconId],
             opponent.player.nickname,
             answer,
             time);

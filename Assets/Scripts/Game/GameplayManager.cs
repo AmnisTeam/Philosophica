@@ -9,6 +9,7 @@ using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Photon.Pun;
 
 public class BoolCondition : Condition
 {
@@ -25,7 +26,7 @@ public class BoolCondition : Condition
     }
 }
 
-public class GameplayManager : MonoBehaviour
+public class GameplayManager : MonoBehaviourPunCallbacks
 {
     private PlayersManager playersManager;
     public QuestionManager questionManager;
@@ -35,7 +36,8 @@ public class GameplayManager : MonoBehaviour
     public ToastShower toast;
     public Camera cam;
 
-    public IconsContent iconsContent;
+    public IconsContentHolder iconsContent;
+    public ColorsHolder colorsHolderInstance;
 
     public GameObject stageTwoAnnoucment;
 
@@ -277,7 +279,7 @@ public class GameplayManager : MonoBehaviour
         offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         offensePlayer = playersManager.players.get(currentOffensivePlayer);
-        offenseAnnouncementAvatar.GetComponent<UnityEngine.UI.Image>().sprite = iconsContent.icons[offensePlayer.iconId].sprite;
+        offenseAnnouncementAvatar.GetComponent<UnityEngine.UI.Image>().sprite = iconsContent.lobbyIcons[offensePlayer.iconId];
         offenseAnnouncementAvatar.GetComponent<UnityEngine.UI.Image>().color = offensePlayer.color;
 
         if (offensePlayer.id == 4575635)
@@ -298,7 +300,7 @@ public class GameplayManager : MonoBehaviour
         offensivePlayerSelectionTimer += Time.deltaTime;
         offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime - offensivePlayerSelectionTimer);
 
-        if (offensePlayer.id == 4575635)
+        if (offensePlayer.isLocalClient)
             StartBattleByMouseClick(roundsCount, maxPlayersHealth);
 
         if (battle != null)
@@ -361,14 +363,14 @@ public class GameplayManager : MonoBehaviour
         Player player2 = battle.opponents[1].player;
 
 
-        opponentsAnnouncementOpponent1Icon.sprite = iconsContent.icons[player1.iconId].sprite;
+        opponentsAnnouncementOpponent1Icon.sprite = iconsContent.lobbyIcons[player1.iconId];
         opponentsAnnouncementOpponent1Icon.color = player1.color;
 
         opponentsAnnouncementOpponent1Nickname.text = player1.nickname;
         opponentsAnnouncementOpponent1Nickname.color = player1.color;
 
 
-        opponentsAnnouncementOpponent2Icon.sprite = iconsContent.icons[player2.iconId].sprite;
+        opponentsAnnouncementOpponent2Icon.sprite = iconsContent.lobbyIcons[player2.iconId];
         opponentsAnnouncementOpponent2Icon.color = player2.color;
 
         opponentsAnnouncementOpponent2Nickname.text = player2.nickname;
@@ -583,6 +585,8 @@ public class GameplayManager : MonoBehaviour
     public void Awake()
     {
         playersManager = GetComponent<PlayersManager>();
+        colorsHolderInstance = GameObject.FindGameObjectWithTag("COLOR_CONTENT_TAG").GetComponent<ColorsHolder>();
+        iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
 
         State askQuestionState = new State(); // 0
         askQuestionState.startEvents += AskQuestionStart;
@@ -749,10 +753,18 @@ public class GameplayManager : MonoBehaviour
                                                 offensivePlayerSelectionState,
                                                 gameStateMachine));
 
-        playersManager.connected(playersManager.config.me);
+        
+        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
+            playersManager.connected(new Player(player.ActorNumber,
+                                                (int)player.CustomProperties["playerIconId"],
+                                                colorsHolderInstance.colors[(int)player.CustomProperties["playerColorIndex"]],
+                                                player.NickName,
+                                                player.IsLocal));
+        }
+        /*playersManager.connected(playersManager.config.me);
         playersManager.connected(new Player(0, 0, new UnityEngine.Color(1f, 0.3725f, 0.396f), "SpectreSpect"));
         playersManager.connected(new Player(1, 1, new UnityEngine.Color(0.372f, 0.4745f, 1f), "DotaKot"));
-        playersManager.connected(new Player(2, 2, new UnityEngine.Color(0.549f, 1f, 0.372f), "ThEnd"));
+        playersManager.connected(new Player(2, 2, new UnityEngine.Color(0.549f, 1f, 0.372f), "ThEnd"));*/
 
         GrantPlayersStartingRegions();
 
@@ -761,7 +773,7 @@ public class GameplayManager : MonoBehaviour
 
     public void Start()
     {
-
+        
     }
 
     public void Update()
