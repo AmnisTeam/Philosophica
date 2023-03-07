@@ -93,9 +93,9 @@ Shader "Unlit/SpaceBackground"
                 float4 color = _BackgroundColor;
                 float2 uv = float2(1 - i.uv.x, 1 - i.uv.y);
 
-                //color += DrawLayer(uv, 1 , 0.01);
-                //color += (DrawLayer(uv, 5, 0.003) * 0.5f);
-                //color += (DrawLayer(uv, 5, 0.001) * 0.2f);
+                color += DrawLayer(uv, 1 , 0.01);
+                color += (DrawLayer(uv, 5, 0.003) * 0.5f);
+                color += (DrawLayer(uv, 5, 0.001) * 0.2f);
 
                 float cellsCount = 1 / _GridSize;
                 float2 gridPos = float2(floor(uv.x / _GridSize),floor(uv.y / _GridSize) );
@@ -143,7 +143,7 @@ Shader "Unlit/SpaceBackground"
                 float resultT = localPos.y;
                 float resultValue = lerp(bottomValue, topValue, resultT);
                 
-                return resultValue;
+                return color;
             }         
             ENDCG
         }

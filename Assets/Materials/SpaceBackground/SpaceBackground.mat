@@ -73,7 +73,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _StarsRadius: 0.047
+    - _StarsRadius: 0.0004
     - _StarsSize: 2.5
     - _UVSec: 0
     - _ZWrite: 1
