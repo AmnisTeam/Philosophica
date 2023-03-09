@@ -4,7 +4,7 @@ Shader "Unlit/SpaceBackground"
     {
         _BackgroundColor ("Background color", Color) = (0,0,0,1)
         _Offset ("Offset", Vector) = (0,0,0,1)
-        _GridSize ("Grid size", Range(0,0.3)) = 0.2
+        _GridSize ("Grid size", Range(0,1)) = 0.2
         _StarsRadius ("Stars radius", Range(0,0.3)) = 0.02
     }
     SubShader
@@ -36,6 +36,8 @@ Shader "Unlit/SpaceBackground"
                 float4 color : COLOR;
             };
 
+            
+
             float4 _BackgroundColor;
             float4 _Offset;
             float _StarsRadius;
@@ -56,8 +58,6 @@ Shader "Unlit/SpaceBackground"
                 o.color = v.color;
                 return o;
             }
-
-
 
 
             float4 DrawLayer(float2 uv, float seed, float speed) 
@@ -87,6 +87,67 @@ Shader "Unlit/SpaceBackground"
                 return (x - centerX) * a + (y - centerY) * b + c;
             }
 
+            float2 get_vec_by_angle(float angle)
+            {
+                return float2(cos(angle), sin(angle));
+            }
+
+            float rand1(float2 p)
+            {
+                return sin(p.x * p.y);
+            }
+
+            float4 perlin_noise(v2f i)
+            {
+                float4 color = 0;
+                float2 uv = float2(1 - i.uv.x, 1 - i.uv.y);
+                //float2 uv = float2(1, 1);
+                float PI = 3.14159265359f;
+
+                int2 cell_pos_in_grid = int2((int)(uv.x / _GridSize), (int)(uv.y / _GridSize));
+                float2 cell_pos = cell_pos_in_grid * _GridSize;
+                float2 local_pos_in_cell = (uv - cell_pos) / _GridSize;
+                
+
+                int2 left_top_in_grid = cell_pos_in_grid + int2(0, 1);
+                int2 right_top_in_grid = cell_pos_in_grid + int2(1, 1);
+                int2 left_bottom_in_grid = cell_pos_in_grid + int2(0, 0);
+                int2 right_bottom_in_grid = cell_pos_in_grid + int2(1, 0);
+                
+
+                float2 left_top = left_top_in_grid * _GridSize;
+                float2 right_top = right_top_in_grid * _GridSize;
+                float2 left_bottom = left_bottom_in_grid * _GridSize;
+                float2 right_bottom = right_bottom_in_grid * _GridSize;
+                
+                // float2 left_top_vec = get_vec_by_angle(PI / 4);
+                // float2 right_top_vec = get_vec_by_angle((5 * PI) / 4);
+                // float2 left_bottom_vec = get_vec_by_angle((2 * PI) / 3);
+                // float2 right_bottom_vec = get_vec_by_angle((3 * PI) / 2);
+
+                float2 left_top_vec = get_vec_by_angle(n22(left_top_in_grid) * 2 * PI);
+                float2 right_top_vec = get_vec_by_angle(n22(right_top_in_grid) * 2 * PI);
+                float2 left_bottom_vec = get_vec_by_angle(n22(left_bottom_in_grid) * 2 * PI);
+                float2 right_bottom_vec = get_vec_by_angle(n22(right_bottom_in_grid) * 2 * PI);
+
+                float2 left_top_delta = (uv - left_top) / _GridSize;
+                float2 right_top_delta = (uv - right_top) / _GridSize;
+                float2 left_bottom_delta = (uv - left_bottom) / _GridSize;
+                float2 right_bottom_delta = (uv - right_bottom) / _GridSize;
+
+                float left_top_dot = dot(left_top_vec, left_top_delta);
+                float right_top_dot = dot(right_top_vec, right_top_delta);
+                float left_bottom_dot = dot(left_bottom_vec, left_bottom_delta);
+                float right_bottom_dot = dot(right_bottom_vec, right_bottom_delta);
+
+                float top_dot = lerp(left_top_dot, right_top_dot, local_pos_in_cell.x);
+                float bottom_dot = lerp(left_bottom_dot, right_bottom_dot, local_pos_in_cell.x);
+                float total_dot = lerp(bottom_dot, top_dot, local_pos_in_cell.y);
+
+                //return total_dot; 
+                return total_dot + float4(1, 0, 0, 0) * local_pos_in_cell.x * 0.2 + float4(1, 0, 0, 0) * local_pos_in_cell.y * 0.2; 
+            }
+
             fixed4 frag (v2f i) : SV_Target
             {
                 float m = n22(i.uv).x;
@@ -111,7 +172,7 @@ Shader "Unlit/SpaceBackground"
                 float2 rightbottom = (gridPos + float2(1, 0)) * _GridSize;
                 float2 leftbottom = (gridPos + float2(0, 0)) * _GridSize;
 
-                float PI = 3.14;
+                float PI = 3.14f;
 
                 float lefttopRandom = n22(lefttop) * 2 * PI;
                 float righttopRandom = n22(righttop) * 2 * PI;
@@ -143,7 +204,7 @@ Shader "Unlit/SpaceBackground"
                 float resultT = localPos.y;
                 float resultValue = lerp(bottomValue, topValue, resultT);
                 
-                return color;
+                return perlin_noise(i);
             }         
             ENDCG
         }
