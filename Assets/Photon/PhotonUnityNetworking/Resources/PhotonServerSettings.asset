@@ -39,6 +39,33 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
+  - RevealAnswerToOpponent
+  - RevealAnswerOfOpponent
+  - RPC_RevealAnswerOfOpponent
+  - RPC_OffensivePlayerSelectionStart
+  - RPC_OffensivePlayerSelectionUpdate
+  - RPC_AskQuestionInBattleStart
+  - RPC_AskQuestionInBattleUpdate
+  - RPC_AskQuestionStart
+  - RPC_AskQuestionUpdate
+  - RPC_AttackAnnouncementStart
+  - RPC_AttackAnnouncementUpdate
+  - RPC_BattleResultsStart
+  - RPC_BattleResultsUpdate
+  - RPC_BattleRoundResultsStart
+  - RPC_BattleRoundResultsUpdate
+  - RPC_CorrectAnsewerRevealingInBattleStart
+  - RPC_CorrectAnsewerRevealingInBattleUpdate
+  - RPC_OpponentsAnnouncementStart
+  - RPC_OpponentsAnnouncementUpdate
+  - RPC_PreparationStart
+  - RPC_PreparationUpdate
+  - RPC_QuestionNumberAnnouncementStart
+  - RPC_QuestionNumberAnnouncementUpdate
+  - RPC_RegionSelectionStart
+  - RPC_RegionSelectionUpdate
+  - RPC_ViewResultsStart
+  - RPC_ViewResultsUpdate
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -7,8 +7,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Color = UnityEngine.Color;
+using Photon.Pun;
 
-public class AskQuestionInBattle : MonoBehaviour
+public class AskQuestionInBattle : MonoBehaviourPunCallbacks
 {
     public Color answerColor;
     public Color correctAnswerColor;
@@ -41,9 +42,12 @@ public class AskQuestionInBattle : MonoBehaviour
 
     public double timer = 0;
 
+    public PhotonView pv;
+
     public void Init(Opponent opponent1, Opponent opponent2, QuestionManager.Question question)
     {
         iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
+        pv = GetComponent<PhotonView>();
 
         opponentsAnswersData = new PlayerAnswerData[2];
         for (int i = 0; i < opponentsAnswersData.Length; i++)
@@ -130,7 +134,26 @@ public class AskQuestionInBattle : MonoBehaviour
         //for (int i = 0; i < question.answer.Length; i++)
         //    if (i != question.idRightAnswer)
         //        MarkAnswerAsDefault(i);
+        int idx = 0;
+
+        foreach (var opponent in opponents) {
+            if (opponent.player.isLocalClient) {
+                pv.RPC("RPC_RevealAnswerOfOpponent", RpcTarget.Others, idx, opponent.playerAnswerData[opponents[idx].playerAnswerData.Count-1].answerId,
+                                                                        opponent.playerAnswerData[opponents[idx].playerAnswerData.Count-1].timeToAnswer);
+            }
+
+            idx++;
+        }
+
         MarkAnswerAsCorrect(question.idRightAnswer);
+    }
+
+    [PunRPC]
+    public void RPC_RevealAnswerOfOpponent(int playerIdx, int answerId, float answerTime) {
+        opponentsAnswersData[playerIdx].answerId = answerId;
+        opponentsAnswersData[playerIdx].timeToAnswer = answerTime;
+        opponents[playerIdx].playerAnswerData[opponents[playerIdx].playerAnswerData.Count-1].answerId = answerId;
+        opponents[playerIdx].playerAnswerData[opponents[playerIdx].playerAnswerData.Count-1].timeToAnswer = answerTime;
     }
 
     public void HideCorrectAnswer()
