@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Triangulator : MonoBehaviour
 {
@@ -47,6 +48,35 @@ public class Triangulator : MonoBehaviour
     }
 
     
+    public static Vector2[] GetUv(Vector3[] vertices)
+    {
+        Vector2[] uv = new Vector2[vertices.Length];
+        Vector3 min = vertices[0];
+        Vector3 max = vertices[0];
+
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            if (vertices[i].x < min.x)
+                min.x = vertices[i].x;
+
+            if (vertices[i].y < min.y)
+                min.y = vertices[i].y;
+
+            if (vertices[i].x > max.x)
+                max.x = vertices[i].x;
+
+            if (vertices[i].y > max.y)
+                max.y = vertices[i].y;
+        }
+
+        Vector2 size = new Vector2(max.x - min.x, max.y - min.y);
+
+        for (int i = 0; i < vertices.Length; i++)
+            uv[i] = (vertices[i] - min) / size;
+
+        return uv;
+    }
+
     // It will throw you an error if you try to pass points in a counterclock-wise order
     public static void Triangulate(List<Vector3> points, Mesh mesh)
     {
@@ -113,6 +143,7 @@ public class Triangulator : MonoBehaviour
             indices[currentIndicesCount++] = indexList[2];
 
             mesh.vertices = vertices;
+            mesh.uv = GetUv(vertices);
             mesh.triangles = indices;
             mesh.RecalculateNormals();
         }
