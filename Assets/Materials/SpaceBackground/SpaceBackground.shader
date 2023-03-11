@@ -43,13 +43,6 @@ Shader "Unlit/SpaceBackground"
             float _StarsRadius;
             float _CellsCount;
 
-            float2 n22 (float2 p)
-            {
-                float3 a = frac(p.xyx * float3(123.34, 234.34, 345.65));
-                a += dot(a, a + 34.45);
-                return frac(float2(a.x * a.y, a.y * a.z));
-            }
-
             v2f vert (appdata v)
             {
                 v2f o;
@@ -59,29 +52,29 @@ Shader "Unlit/SpaceBackground"
                 return o;
             }
 
-
-            float4 DrawLayer(float2 uv, float seed, float speed) 
+            float2 n22 (float2 p)
             {
-                uv += _Offset * speed;
-                float grid_size = 1 / _CellsCount;
+                float3 a = frac(p.xyx * float3(123.34, 234.34, 345.65));
+                a += dot(a, a + 34.45);
+                return frac(float2(a.x * a.y, a.y * a.z));
+            }
 
+            float4 draw_stars_layer(float2 uv, float2 offset, float speed, float cells_count, float stars_radius, float seed) 
+            {
+                uv += offset * speed;
                 float4 color = 0;
-                float cellsCount = 1 / grid_size;
-
-                float2 gridPos = float2((int)(uv.x / grid_size),(int)(uv.y / grid_size) );
-
-                float2 localPos = n22(float2(gridPos.x + seed, gridPos.y + seed));
-
-                float areaSize = grid_size - _StarsRadius * 2;
-
-                float2 pointPos = float2(gridPos.x, gridPos.y) * grid_size + _StarsRadius + areaSize * localPos;
-
-                float dist = distance(pointPos, uv);
-
-                if (dist < _StarsRadius)
-                    color = 1;
+                float2 cell_pos_in_grid = floor(uv * cells_count);
+                float2 pos_in_grid = uv * cells_count;
+                float2 local_pos_in_cell = pos_in_grid - cell_pos_in_grid;
+                float2 star_local_pos_in_cell = n22(cell_pos_in_grid + seed);
+                float area_for_star_in_cell = (1 - stars_radius * 2);
+                float2 star_pos_in_grid = cell_pos_in_grid + stars_radius + star_local_pos_in_cell * area_for_star_in_cell;
+                float dist = distance(pos_in_grid, star_pos_in_grid);
+                if (dist <= stars_radius)
+                    color = float4(1, 1, 1, 1);
                 return color;
             }
+
 
             float2 get_gradient(float2 pos)
             {
@@ -128,23 +121,13 @@ Shader "Unlit/SpaceBackground"
                 float4 color = _BackgroundColor;
                 float2 uv = float2(1 - i.uv.x, 1 - i.uv.y);
 
-                color += DrawLayer(uv, 1 , 0.01);
-                color += (DrawLayer(uv + 100, 5, 0.003) * 0.5f);
-                color += (DrawLayer(uv + 200, 5, 0.001) * 0.2f);
-                //color += perlin_noise_extended(uv, _Offset, 0.001, 10) * perlin_noise_extended(uv, _Offset, 0.001, 7) * float4(1, 1, 1, 1) * 0.1f;
-                color += perlin_noise_extended(uv, _Offset, 0.003, 10) * perlin_noise_extended(uv, _Offset, 0.003, 7, 5) * float4(0.5, 0.5, 1, 1) * 0.3f;
-                // float perlin_noise_val = perlin_noise(uv + _Offset * 0.003, 10);
-                // float perlin_noise_val2 = perlin_noise(uv + float2(5, 5) + _Offset * 0.003, 7);
-                // float4 val = 0;
-                // if (perlin_noise_val >= 0.2)
-                // {
-                //     val += perlin_noise_val * float4(0.5, 0.5, 1, 1) * perlin_noise_val2;
-                // }
-
-                // color += perlin_noise_val * float4(0.5, 0.5, 1, 1) * 0.3f * pow(perlin_noise_val2, 5);
-                    
+                color += draw_stars_layer(uv, _Offset, 0.01, _CellsCount, _StarsRadius, 0);
+                color += draw_stars_layer(uv, _Offset, 0.003, _CellsCount, _StarsRadius, 1) * 0.5f;
+                color += draw_stars_layer(uv, _Offset, 0.001, _CellsCount, _StarsRadius, 2) * 0.2f;
                 
-
+                color += perlin_noise_extended(uv, _Offset, 0.003, 10) * 
+                         perlin_noise_extended(uv, _Offset, 0.003, 7, 5) * 
+                         float4(0.5, 0.5, 1, 1) * 0.3f;
                 return color;
             }         
             ENDCG
