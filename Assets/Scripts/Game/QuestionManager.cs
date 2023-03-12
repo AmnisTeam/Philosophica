@@ -14,7 +14,7 @@ public class QuestionManager : MonoBehaviour
         public float timeToQuestion;
     }
 
-    public Question[] questions;
+    public QuestionLoader questionLoader;
     public GameObject questionsMenu;
     public SelectionQuestions selectionQuestions;
     public PlayersManager playersManager;
@@ -66,7 +66,7 @@ public class QuestionManager : MonoBehaviour
 
     public void setQuestion(int id)
     {
-        setQuestion(questions[id % questions.Count()]);
+        setQuestion(questionLoader.questions[id % questionLoader.questions.Count()]);
     }
 
     public void ShowTable(bool toShowTable)
@@ -88,26 +88,28 @@ public class QuestionManager : MonoBehaviour
     public void loadQuestions()
     {
         //Загрузка вопросов с диска
-        questions = new Question[2];
-        questions[0] = new Question();
-        questions[0].question = "Именем какого философа история философии делится на до и после?";
-        questions[0].answer = new string[4];
-        questions[0].answer[0] = "Сократ";
-        questions[0].answer[1] = "Герадот";
-        questions[0].answer[2] = "Архимед";
-        questions[0].answer[3] = "Кант";
-        questions[0].timeToQuestion = 5;
-        questions[0].idRightAnswer = 3;
+        questionLoader.LoadQuestions();
 
-        questions[1] = new Question();
-        questions[1].question = "Как называются белые летающие пушистые штуки высоко в верху на улице?";
-        questions[1].answer = new string[4];
-        questions[1].answer[0] = "Коты";
-        questions[1].answer[1] = "Облока";
-        questions[1].answer[2] = "Мед";
-        questions[1].answer[3] = "Зелёнка";
-        questions[1].timeToQuestion = 10;
-        questions[1].idRightAnswer = 1;
+        //questions = new Question[2];
+        //questions[0] = new Question();
+        //questions[0].question = "Именем какого философа история философии делится на до и после?";
+        //questions[0].answer = new string[4];
+        //questions[0].answer[0] = "Сократ";
+        //questions[0].answer[1] = "Герадот";
+        //questions[0].answer[2] = "Архимед";
+        //questions[0].answer[3] = "Кант";
+        //questions[0].timeToQuestion = 5;
+        //questions[0].idRightAnswer = 3;
+
+        //questions[1] = new Question();
+        //questions[1].question = "Как называются белые летающие пушистые штуки высоко в верху на улице?";
+        //questions[1].answer = new string[4];
+        //questions[1].answer[0] = "Коты";
+        //questions[1].answer[1] = "Облока";
+        //questions[1].answer[2] = "Мед";
+        //questions[1].answer[3] = "Зелёнка";
+        //questions[1].timeToQuestion = 10;
+        //questions[1].idRightAnswer = 1;
     }
 
     public void checkSelectAnswer()
@@ -123,11 +125,13 @@ public class QuestionManager : MonoBehaviour
 
     private void Awake()
     {
+        questionLoader = new QuestionLoader();
         loadQuestions();
     }
 
     void Start()
     {   
+
     }
 
     void Update()

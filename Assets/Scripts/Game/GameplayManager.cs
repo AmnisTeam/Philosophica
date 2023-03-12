@@ -246,7 +246,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (preparationTimer >= preparationTime)
         {
             preparationStateIsEnded.state = true;
-            currentQuestion = (currentQuestion + 1) % questionManager.questions.Count();
+            currentQuestion = (currentQuestion + 1) % questionManager.questionLoader.questions.Count();
         }
     }
 
@@ -768,7 +768,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(4);
+        gameStateMachine.Start(0);
     }
 
     public void Start()
@@ -916,10 +916,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Opponent opponent2 = new Opponent(player2, playersMaxHealth, playersMaxHealth, 0);
         Battle newBattle = new Battle(opponent1, opponent2, region);
 
-        if (roundsCount > questionManager.questions.Count())
-            roundsCount = questionManager.questions.Count();
+        if (roundsCount > questionManager.questionLoader.questions.Count())
+            roundsCount = questionManager.questionLoader.questions.Count();
 
-        int idsCount = questionManager.questions.Count();
+        int idsCount = questionManager.questionLoader.questions.Count();
         int[] ids = new int[idsCount];
         for (int i = 0; i < idsCount; i++)
             ids[i] = i;
@@ -928,7 +928,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < roundsCount; i++)
         {
             int randInt = rnd.Next(0, idsCount - 1);
-            QuestionManager.Question randQuestion = questionManager.questions[ids[randInt]];
+            QuestionManager.Question randQuestion = questionManager.questionLoader.questions[ids[randInt]];
 
             ids[randInt] = ids[idsCount - 1];
             idsCount--;
