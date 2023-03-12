@@ -38,6 +38,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public IconsContentHolder iconsContent;
     public ColorsHolder colorsHolderInstance;
+    public PhotonView pv;
 
     public GameObject stageTwoAnnoucment;
 
@@ -160,16 +161,31 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionManager.setQuestion(currentQuestion);
     }
 
+    [PunRPC]
+    public void RPC_AskQuestionStart() {
+        AskQuestionStart();
+    }
+
     public void AskQuestionUpdate()
     {
         if (questionManager.timerToQuestion <= 0)
             askQuestionStateIsEnded.state = true;
     }
 
+    [PunRPC]
+    public void RPC_AskQuestionUpdate() {
+        AskQuestionUpdate();
+    }
+
     public void ViewResultsStart()
     {
         viewResultsTimer = 0;
         viewResultsStateIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_ViewResultsStart() {
+        ViewResultsStart();
     }
 
     public void ViewResultsUpdate()
@@ -182,6 +198,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_ViewResultsUpdate() {
+        ViewResultsUpdate();
+    }
+
     public void RegionSelectionStart()
     {
         winner = questionManager.tableCompiler.table[0];
@@ -192,6 +213,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         regionSelectionTimer = 0;
         regionSelectionStateIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_RegionSelectionStart() {
+        RegionSelectionStart();
     }
 
     public void RegionSelectionUpdate()
@@ -226,12 +252,22 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_RegionSelectionUpdate() {
+        RegionSelectionStart();
+    }
+
     public void PreparationStart()
     {
         preparationToast = new BoolToastMessage("Подготовка к следующему вопросу");
         toast.showText(preparationToast);
         preparationTimer = 0;
         preparationStateIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_PreparationStart() {
+        PreparationStart();
     }
 
     public void PreparationUpdate()
@@ -246,8 +282,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (preparationTimer >= preparationTime)
         {
             preparationStateIsEnded.state = true;
-            currentQuestion = (currentQuestion + 1) % questionManager.questions.Count();
+            currentQuestion = (currentQuestion + 1) % questionManager.questionLoader.questions.Count();
         }
+    }
+
+    [PunRPC]
+    public void RPC_PreparationUpdate() {
+        PreparationUpdate();
     }
 
     //public void stageTwoAnnouncementStart()
@@ -282,7 +323,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         offenseAnnouncementAvatar.GetComponent<UnityEngine.UI.Image>().sprite = iconsContent.lobbyIcons[offensePlayer.iconId];
         offenseAnnouncementAvatar.GetComponent<UnityEngine.UI.Image>().color = offensePlayer.color;
 
-        if (offensePlayer.id == 4575635)
+        if (offensePlayer.isLocalClient)
             offenseAnnouncementText.text = "Ваша очередь нападать. Выберете, на кого хотите напасть.";
         else
             offenseAnnouncementText.text = offensePlayer.nickname + " выбирает на кого напасть.";
@@ -290,6 +331,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime);
         battle = null;
         offensivePlayerSelectionIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_OffensivePlayerSelectionStart() {
+        OffensivePlayerSelectionStart();
     }
 
     public void OffensivePlayerSelectionUpdate()
@@ -303,8 +349,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (offensePlayer.isLocalClient)
             StartBattleByMouseClick(roundsCount, maxPlayersHealth);
 
-        if (battle != null)
+        if (battle != null) {
             stateEnded = true;
+        }
 
         if (offensivePlayerSelectionTimer >= offensivePlayerSelectionTime)
         {
@@ -314,6 +361,19 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         
         if (stateEnded)
         {
+            if (offensePlayer.isLocalClient) {
+                int regionId = 0;
+
+                for (int i = 0; i < regionSystem.regionSerds.Count; i++) {
+                    if (regionSystem.regionSerds[i].region == battle.region) {
+                        regionId = i;
+                        break;
+                    };
+                }
+
+                pv.RPC("RPC_AttackAnnouncementStart", RpcTarget.All, battle.opponents[0].player.id, battle.opponents[1].player.id, regionId, battle.questions.Count, battle.opponents[0].maxHealh);
+            }
+
             offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() => 
             { 
                 offenseAnnouncement.SetActive(false); 
@@ -326,6 +386,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_OffensivePlayerSelectionUpdate() {
+        OffensivePlayerSelectionUpdate();
+    }
+
     public void AttackAnnouncementStart()
     {
         attackAnnouncement.SetActive(true);
@@ -333,6 +398,26 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         attackAnnouncementText.text = battle.opponents[0].player.nickname + " напал на " + battle.opponents[1].player.nickname + ".";
         attackAnnouncementTimer = 0;
         attackAnnouncementIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_AttackAnnouncementStart(int firstPlayerId, int secondPlayerId, int regionId, int roundsCount, double playersMaxHealth) {
+        Player firstPlayer = null, secondPlayer = null;
+        Region region = regionSystem.regionSerds[regionId].region;
+        
+        for (int i = 0; i < playersManager.players.count; i++) {
+            if (playersManager.players.get(i).id == firstPlayerId) {
+                firstPlayer = playersManager.players.get(i);
+            }
+
+            if (playersManager.players.get(i).id == secondPlayerId) {
+                secondPlayer = playersManager.players.get(i);
+            }
+        }
+
+        battle = StartBattle(firstPlayer, secondPlayer, region, roundsCount, playersMaxHealth);
+
+        //AttackAnnouncementStart();
     }
 
     public void AttackAnnouncementUpdate()
@@ -351,6 +436,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             });          
             //Wait(0.5f);
         }
+    }
+
+    [PunRPC]
+    public void RPC_AttackAnnouncementUpdate() {
+        AttackAnnouncementUpdate();
     }
 
     public void OpponentsAnnouncementStart()
@@ -379,6 +469,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         opponentsAnnouncementIsEnded.state = false;
     }
 
+    [PunRPC]
+    public void RPC_OpponentsAnnouncementStart() {
+        OpponentsAnnouncementStart();
+    }
+
     public void OpponentsAnnouncementUpdate()
     {
         OpponentsAnnouncementTimer += Time.deltaTime;
@@ -396,6 +491,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_OpponentsAnnouncementUpdate() {
+        OpponentsAnnouncementUpdate();
+    }
+
 
     public void QuestionNumberAnnouncementStart()
     {
@@ -404,6 +504,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
         questionNumberAnnouncementText.text = "Вопрос " + (battle.currentQuestion + 1);
         questionNumberAnnouncementIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_QuestionNumberAnnouncementStart() {
+        QuestionNumberAnnouncementStart();
     }
 
     public void QuestionNumberAnnouncementUpdate()
@@ -423,6 +528,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_QuestionNumberAnnouncementUpdate() {
+        QuestionNumberAnnouncementUpdate();
+    }
+
     public void AskQuestionInBattleStart()
     {
         askQuestionInBattle.SetActive(true);
@@ -432,6 +542,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         askQuestionInBattleIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_AskQuestionInBattleStart() {
+        AskQuestionInBattleStart();
     }
 
     public void AskQuestionInBattleUpdate()
@@ -446,6 +561,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_AskQuestionInBattleUpdate() {
+        AskQuestionInBattleUpdate();
+    }
+
     public void CorrectAnsewerRevealingInBattleStart()
     {
         AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
@@ -453,6 +573,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         correctAnsewerRevealingInBattleIsEnded.state = false;
         correctAnsewerRevealingTimer = 0;
+    }
+
+    [PunRPC]
+    public void RPC_CorrectAnsewerRevealingInBattleStart() {
+        CorrectAnsewerRevealingInBattleStart();
     }
 
     public void CorrectAnsewerRevealingInBattleUpdate()
@@ -472,6 +597,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_CorrectAnsewerRevealingInBattleUpdate() {
+        CorrectAnsewerRevealingInBattleUpdate();
+    }
+
     public void BattleRoundResultsStart()
     {
         damageDealingDelayTimer = 0;
@@ -484,6 +614,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             .setEaseOutSine().setDelay((float)battleRoundResultsNotificationDelay);
         roundIsEnded.state = false;
         battleCond.Set(false);
+    }
+
+    [PunRPC]
+    public void RPC_BattleRoundResultsStart() {
+        BattleRoundResultsStart();
     }
 
     public void BattleRoundResultsUpdate()
@@ -519,6 +654,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_BattleRoundResultsUpdate() {
+        BattleRoundResultsUpdate();
+    }
+
     public void BattleResultsStart()
     {
         if (battle.GetDeadCount() > 0)
@@ -540,6 +680,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         closeBattleResultsTimer = 0;
         battleResultsTimer = 0;
         fromBattleResultsToOffensive.Set(false);
+    }
+
+    [PunRPC]
+    public void RPC_BattleResultsStart() {
+        BattleResultsStart();
     }
 
     public void BattleResultsUpdate()
@@ -582,11 +727,17 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_BattleResultsUpdate() {
+        BattleResultsUpdate();
+    }
+
     public void Awake()
     {
         playersManager = GetComponent<PlayersManager>();
         colorsHolderInstance = GameObject.FindGameObjectWithTag("COLOR_CONTENT_TAG").GetComponent<ColorsHolder>();
         iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
+        pv = GetComponent<PhotonView>();
 
         State askQuestionState = new State(); // 0
         askQuestionState.startEvents += AskQuestionStart;
@@ -916,10 +1067,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Opponent opponent2 = new Opponent(player2, playersMaxHealth, playersMaxHealth, 0);
         Battle newBattle = new Battle(opponent1, opponent2, region);
 
-        if (roundsCount > questionManager.questions.Count())
-            roundsCount = questionManager.questions.Count();
+        if (roundsCount > questionManager.questionLoader.questions.Count())
+            roundsCount = questionManager.questionLoader.questions.Count();
 
-        int idsCount = questionManager.questions.Count();
+        int idsCount = questionManager.questionLoader.questions.Count();
         int[] ids = new int[idsCount];
         for (int i = 0; i < idsCount; i++)
             ids[i] = i;
@@ -928,7 +1079,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < roundsCount; i++)
         {
             int randInt = rnd.Next(0, idsCount - 1);
-            QuestionManager.Question randQuestion = questionManager.questions[ids[randInt]];
+            QuestionManager.Question randQuestion = questionManager.questionLoader.questions[ids[randInt]];
 
             ids[randInt] = ids[idsCount - 1];
             idsCount--;
