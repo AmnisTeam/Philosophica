@@ -227,7 +227,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         regionSelectionToast.message = winner.nickname + " выбирает территорию: " +
             ((int)(regionSelectionMaxTime - regionSelectionTimer));
 
-        if (winner.id == 4575635)
+        if (winner.isLocalClient)
             GrantRegionToWinnerByMouseClick();
 
         bool stateEnded = false;
@@ -242,7 +242,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         if (stateEnded)
         {
+            Debug.Log(">>> RPC Invoked at RegionSelectionUpdate()");
             steps++;
+            pv.RPC("RPC_StepsUpdate", RpcTarget.Others, steps);
             regionSelectionToast.isDone = true;
             if (GetFreeRegionsCount() > 0)
                 regionSelectionStateIsEnded.state = true;
@@ -250,6 +252,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 firstStageIsEnded.state = true;
             Wait(0.8);
         }
+    }
+
+    [PunRPC]
+    public void RPC_StepsUpdate(int newSteps) {
+        Debug.Log(">>> RPC Received at RPC_StepsUpdate()");
+        SetStepsText(newSteps, maxSteps);
     }
 
     [PunRPC]
@@ -310,6 +318,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     //        Wait(0.5f);
     //    }
     //}
+
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) {
+        GameObject.FindGameObjectWithTag("SCORE_TABLE_TAG").GetComponent<ScoreTableManager>().RemovePlayer(otherPlayer.ActorNumber-1);
+    }
 
     public void OffensivePlayerSelectionStart()
     {
@@ -537,8 +549,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         askQuestionInBattle.SetActive(true);
 
-        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], 
-            battle.questions[battle.currentQuestion]);
+        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], battle.questions[battle.currentQuestion]);
         askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         askQuestionInBattleIsEnded.state = false;

@@ -66,6 +66,7 @@ MonoBehaviour:
   - RPC_RegionSelectionUpdate
   - RPC_ViewResultsStart
   - RPC_ViewResultsUpdate
+  - RPC_StepsUpdate
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

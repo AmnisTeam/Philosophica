@@ -9,7 +9,7 @@ public class QuestionManager : MonoBehaviour
     public class Question
     {
         public string question;
-        public string[] answer;
+        public string[] answer = new string[4];
         public int idRightAnswer;
         public float timeToQuestion;
     }

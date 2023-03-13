@@ -99,7 +99,7 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
 
     public void RemovePlayer(int id)
     {
-        Destroy(rows[id].row);
+        PhotonNetwork.Destroy(rows[id].row);
         rows.RemoveAt(id);
     }
 

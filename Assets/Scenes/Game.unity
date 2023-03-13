@@ -2602,7 +2602,7 @@ GameObject:
   - component: {fileID: 264982820}
   m_Layer: 5
   m_Name: ScoreTable
-  m_TagString: Untagged
+  m_TagString: SCORE_TABLE_TAG
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
