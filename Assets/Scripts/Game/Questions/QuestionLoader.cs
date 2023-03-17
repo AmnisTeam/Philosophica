@@ -24,7 +24,24 @@ public class QuestionLoader
     public void LoadQuestions()
     {
         //StreamReader reader = new StreamReader("StreamingData/questions.txt");
-        StreamReader reader = new StreamReader("Assets/StreamingAssets/questions.txt");
+        StreamReader reader = null;
+        
+        if (Application.platform == RuntimePlatform.WindowsEditor) {
+            reader = new StreamReader("Assets/StreamingAssets/questions.txt");
+        } else if (Application.platform == RuntimePlatform.WindowsPlayer) {
+            reader = new StreamReader(Application.streamingAssetsPath + "/questions.txt");
+        } else if (Application.platform == RuntimePlatform.Android) {
+            string path = "jar:file://" + Application.dataPath + "!/assets/questions.txt";
+            WWW wwwfile = new WWW(path);
+
+            while (!wwwfile.isDone) { }
+
+            var filepath = string.Format("{0}/{1}", Application.persistentDataPath, "questions.txt");
+            File.WriteAllBytes(filepath, wwwfile.bytes);
+
+            reader = new StreamReader(filepath);
+        }
+        
         string line = reader.ReadLine();
         int id = 0;
         QuestionManager.Question question = null;

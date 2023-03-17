@@ -19,7 +19,7 @@ public sealed class RegionsOutlinesAndMistRenderer : PostProcessEffectRenderer<R
 {
     public override void Render(PostProcessRenderContext context)
     {
-        var sheet = context.propertySheets.Get(Shader.Find("Custom/RegionsOutlinesAndMistShader"));
+        var sheet = context.propertySheets.Get(Shader.Find("Custom/RegionsOutlinesAndMistShader"));;
 
         Camera camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         RenderTexture noShaderTexture = camera.GetComponent<NoRegionShaderTextureScript>().noShaderTexture;
