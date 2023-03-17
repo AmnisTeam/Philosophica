@@ -208,6 +208,7 @@ public class RegionEditor2 : Editor
     public RegionSerd CreateRegionSerd()
     {
         Region region = InstantiateNewRegion();
+        region.gameObject.layer = LayerMask.NameToLayer("Regions");
         region.SetColor(regionsSystem.nextRegionColor);
         RegionSerd regionSerd = new RegionSerd(region);
 

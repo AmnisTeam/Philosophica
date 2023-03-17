@@ -9,7 +9,7 @@ public class QuestionManager : MonoBehaviour
     public class Question
     {
         public string question;
-        public string[] answer;
+        public string[] answer = new string[4];
         public int idRightAnswer;
         public float timeToQuestion;
     }
@@ -47,21 +47,32 @@ public class QuestionManager : MonoBehaviour
     {
         ShowTable(false);
         OpenQuestionMenu();
+
         timeToQuestion = question.timeToQuestion;
         timerToQuestion = question.timeToQuestion;
         questionText.text = question.question;
-        for (int x = 0; x < 4; x++)
+
+        for (int x = 0; x < 4; x++) {
             answerText[x].text = question.answer[x];
+        }
+        
         rightAnswer = question.idRightAnswer;
         selectedAnswer = 0;
-        playersManager.playerAnswerData.find(config.me.id).answerId = 0;
-        playersManager.playerAnswerData.find(config.me.id).timeToAnswer = timeToQuestion;
+
+        foreach (Player player in playersManager.players.list) {
+            if (player.isLocalClient) {
+                playersManager.playerAnswerData.find(player.id).answerId = 0;
+                playersManager.playerAnswerData.find(player.id).timeToAnswer = timeToQuestion;
+                break;
+            }
+        }
+        
         haveAnswer = false;
         activeQuestion = question;
         haveQuestion = true;
         endQuestion = false;
+        
         selectionQuestions.setVisibleButtons();
-
     }
 
     public void setQuestion(int id)
@@ -117,12 +128,18 @@ public class QuestionManager : MonoBehaviour
         {
             selectedAnswer = selectionQuestions.activeSelection;
             haveAnswer = true;
-            playersManager.playerAnswerData.find(config.me.id).answerId = selectedAnswer;
-            playersManager.playerAnswerData.find(config.me.id).timeToAnswer = timeToQuestion - timerToQuestion;
+
+            foreach (Player player in playersManager.players.list) {
+                if (player.isLocalClient) {
+                    playersManager.playerAnswerData.find(player.id).answerId = selectedAnswer;
+                    playersManager.playerAnswerData.find(player.id).timeToAnswer = timeToQuestion - timerToQuestion;
+                    break;
+                }
+            }
         }
     }
 
-    private void Awake()
+    public void Awake()
     {
         questionLoader = new QuestionLoader();
         loadQuestions();
@@ -151,10 +168,16 @@ public class QuestionManager : MonoBehaviour
             {
                 endQuestion = true;
                 haveAnswer = true;
-                selectedAnswer = selectionQuestions.activeSelection;
-                playersManager.playerAnswerData.find(config.me.id).answerId = selectionQuestions.activeSelection;
-                timerToShowTable = timeToShowTable;
                 showTable = true;
+                selectedAnswer = selectionQuestions.activeSelection;
+                timerToShowTable = timeToShowTable;
+
+                foreach (Player player in playersManager.players.list) {
+                    if (player.isLocalClient) {
+                        playersManager.playerAnswerData.find(player.id).answerId = selectionQuestions.activeSelection;
+                        break;
+                    }
+                }
             }
 
             if (timerToShowTable == 0 && showTable)

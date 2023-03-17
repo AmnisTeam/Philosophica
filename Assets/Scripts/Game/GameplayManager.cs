@@ -68,7 +68,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public double sessionElapsedTime = 0;
 
     public int steps = 0;
-    public int maxSteps = 1;
+    public int maxSteps = 25;
 
     public float menusTransitionTime = 0.3f;
     public float menusTransitionDelayTime = 0.2f;
@@ -154,7 +154,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolCondition roundIsEnded;
     public BoolCondition battleCond;
     public BoolCondition fromBattleResultsToOffensive;
-    public BoolCondition fromBattleResultToEndGameMenu;
 
     public void AskQuestionStart()
     {
@@ -228,7 +227,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         regionSelectionToast.message = winner.nickname + " выбирает территорию: " +
             ((int)(regionSelectionMaxTime - regionSelectionTimer));
 
-        if (winner.id == 4575635)
+        if (winner.isLocalClient)
             GrantRegionToWinnerByMouseClick();
 
         bool stateEnded = false;
@@ -243,7 +242,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         if (stateEnded)
         {
+            Debug.Log(">>> RPC Invoked at RegionSelectionUpdate()");
             steps++;
+            pv.RPC("RPC_StepsUpdate", RpcTarget.Others, steps);
             regionSelectionToast.isDone = true;
             if (GetFreeRegionsCount() > 0)
                 regionSelectionStateIsEnded.state = true;
@@ -251,6 +252,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 firstStageIsEnded.state = true;
             Wait(0.8);
         }
+    }
+
+    [PunRPC]
+    public void RPC_StepsUpdate(int newSteps) {
+        Debug.Log(">>> RPC Received at RPC_StepsUpdate()");
+        SetStepsText(newSteps, maxSteps);
     }
 
     [PunRPC]
@@ -311,6 +318,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     //        Wait(0.5f);
     //    }
     //}
+
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) {
+        GameObject.FindGameObjectWithTag("SCORE_TABLE_TAG").GetComponent<ScoreTableManager>().RemovePlayer(otherPlayer.ActorNumber-1);
+    }
 
     public void OffensivePlayerSelectionStart()
     {
@@ -538,8 +549,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         askQuestionInBattle.SetActive(true);
 
-        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], 
-            battle.questions[battle.currentQuestion]);
+        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], battle.questions[battle.currentQuestion]);
         askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         askQuestionInBattleIsEnded.state = false;
@@ -723,11 +733,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             GlobalVariables.Delay(menusTransitionDelayTime, () =>
             {
                 currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
-
-                if (steps >= maxSteps)
-                    fromBattleResultToEndGameMenu.Set(true);
-                else
-                    fromBattleResultsToOffensive.Set(true);
+                fromBattleResultsToOffensive.Set(true);
             });         
         }
     }
@@ -737,16 +743,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         BattleResultsUpdate();
     }
 
-    public void EndGameStart()
-    {
-        toast.showText("Игра закончена");
-    }
-
-    public void EndGameUpdate()
-    {
-
-    }
-
     public void Awake()
     {
         playersManager = GetComponent<PlayersManager>();
@@ -754,6 +750,17 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
         pv = GetComponent<PhotonView>();
 
+        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
+            playersManager.connected(new Player(player.ActorNumber,
+                                                (int)player.CustomProperties["playerIconId"],
+                                                colorsHolderInstance.colors[(int)player.CustomProperties["playerColorIndex"]],
+                                                player.NickName,
+                                                player.IsLocal));
+        }
+    }
+
+    public void Start()
+    {
         State askQuestionState = new State(); // 0
         askQuestionState.startEvents += AskQuestionStart;
         askQuestionState.updateEvents += AskQuestionUpdate;
@@ -765,10 +772,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(viewResultsState);
 
         askQuestionStateIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(askQuestionStateIsEnded, 
-                                                        askQuestionState, 
-                                                        viewResultsState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(askQuestionStateIsEnded, askQuestionState, viewResultsState, gameStateMachine));
 
         State regionSelectionState = new State(); // 2
         regionSelectionState.startEvents += RegionSelectionStart;
@@ -776,10 +780,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(regionSelectionState);
 
         viewResultsStateIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(viewResultsStateIsEnded, 
-                                                        viewResultsState, 
-                                                        regionSelectionState,
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(viewResultsStateIsEnded, viewResultsState, regionSelectionState, gameStateMachine));
 
         State preparationState = new State(); // 3
         preparationState.startEvents += PreparationStart;
@@ -787,24 +788,17 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(preparationState);
 
         regionSelectionStateIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(regionSelectionStateIsEnded, 
-                                                        regionSelectionState, 
-                                                        preparationState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(regionSelectionStateIsEnded, regionSelectionState, preparationState, gameStateMachine));
 
         preparationStateIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(preparationStateIsEnded, 
-                                                        preparationState, 
-                                                        askQuestionState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(preparationStateIsEnded, preparationState, askQuestionState, gameStateMachine));
 
         //State stageTwoAnnouncementState = new State(); // 4
         //stageTwoAnnouncementState.startEvents += stageTwoAnnouncementStart;
         //stageTwoAnnouncementState.updateEvents += stageTwoAnnouncementUpdate;
         //gameStateMachine.states.Add(stageTwoAnnouncementState);
 
-        StageTwoAnnouncementState stageTwoAnnouncementState = new StageTwoAnnouncementState(
-                                                                        stageTwoAnnoucment,
+        StageTwoAnnouncementState stageTwoAnnouncementState = new StageTwoAnnouncementState(stageTwoAnnoucment,
                                                                         stageTwoAnnouncmentTimer,
                                                                         stageTwoAnnouncmentTime,
                                                                         menusTransitionTime,
@@ -812,10 +806,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(stageTwoAnnouncementState);
 
         firstStageIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(firstStageIsEnded, 
-                                                        regionSelectionState, 
-                                                        stageTwoAnnouncementState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(firstStageIsEnded, regionSelectionState, stageTwoAnnouncementState, gameStateMachine));
 
         State offensivePlayerSelectionState = new State(); // 5
         offensivePlayerSelectionState.startEvents += OffensivePlayerSelectionStart;
@@ -834,10 +825,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(attackAnnouncementState);
 
         offensivePlayerSelectionIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(offensivePlayerSelectionIsEnded, 
-                                                        offensivePlayerSelectionState, 
-                                                        attackAnnouncementState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(offensivePlayerSelectionIsEnded, offensivePlayerSelectionState, attackAnnouncementState, gameStateMachine));
 
         State opponentsAnnouncementState = new State(); // 7
         opponentsAnnouncementState.startEvents += OpponentsAnnouncementStart;
@@ -845,10 +833,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(opponentsAnnouncementState);
 
         attackAnnouncementIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(attackAnnouncementIsEnded, 
-                                                        attackAnnouncementState,
-                                                        opponentsAnnouncementState,
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(attackAnnouncementIsEnded, attackAnnouncementState, opponentsAnnouncementState, gameStateMachine));
 
         State questionNumberAnnouncementState = new State(); // 8
         questionNumberAnnouncementState.startEvents += QuestionNumberAnnouncementStart;
@@ -856,10 +841,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(questionNumberAnnouncementState);
 
         opponentsAnnouncementIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(opponentsAnnouncementIsEnded, 
-                                                        opponentsAnnouncementState, 
-                                                        questionNumberAnnouncementState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(opponentsAnnouncementIsEnded, opponentsAnnouncementState, questionNumberAnnouncementState, gameStateMachine));
 
         State askQuestionInBattleState = new State(); // 9
         askQuestionInBattleState.startEvents += AskQuestionInBattleStart;
@@ -867,10 +849,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(askQuestionInBattleState);
 
         questionNumberAnnouncementIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(questionNumberAnnouncementIsEnded, 
-                                                        questionNumberAnnouncementState, 
-                                                        askQuestionInBattleState,
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(questionNumberAnnouncementIsEnded, questionNumberAnnouncementState, askQuestionInBattleState, gameStateMachine));
 
         State correctAnsewerRevealingInBattleState = new State(); // 10
         correctAnsewerRevealingInBattleState.startEvents += CorrectAnsewerRevealingInBattleStart;
@@ -878,10 +857,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(correctAnsewerRevealingInBattleState);
 
         askQuestionInBattleIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(askQuestionInBattleIsEnded, 
-                                                        askQuestionInBattleState, 
-                                                        correctAnsewerRevealingInBattleState,
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(askQuestionInBattleIsEnded, askQuestionInBattleState, correctAnsewerRevealingInBattleState, gameStateMachine));
 
         State battleRoundResultsState = new State(); // 11
         battleRoundResultsState.startEvents += BattleRoundResultsStart;
@@ -895,10 +871,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                                                         gameStateMachine));
 
         roundIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(roundIsEnded, 
-                                                        battleRoundResultsState, 
-                                                        questionNumberAnnouncementState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(roundIsEnded, battleRoundResultsState, questionNumberAnnouncementState, gameStateMachine));
 
         //BattleResultsState battleResultsState = new BattleResultsState(BattleResultsVictory, battle);
 
@@ -908,48 +881,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(battleResultsState);
 
         battleCond = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(battleCond,
-                                                        battleRoundResultsState,
-                                                        battleResultsState,
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(battleCond, battleRoundResultsState, battleResultsState, gameStateMachine));
 
         fromBattleResultsToOffensive = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(fromBattleResultsToOffensive,
-                                                battleResultsState,
-                                                offensivePlayerSelectionState,
-                                                gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(fromBattleResultsToOffensive, battleResultsState, offensivePlayerSelectionState, gameStateMachine));
 
-
-        State endGameState = new State();
-        endGameState.startEvents += EndGameStart;
-        endGameState.updateEvents += BattleResultsUpdate;
-        gameStateMachine.states.Add(endGameState);
-
-        fromBattleResultToEndGameMenu = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(fromBattleResultToEndGameMenu, battleResultsState, endGameState, gameStateMachine));
-
-
-
-        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
-            playersManager.connected(new Player(player.ActorNumber,
-                                                (int)player.CustomProperties["playerIconId"],
-                                                colorsHolderInstance.colors[(int)player.CustomProperties["playerColorIndex"]],
-                                                player.NickName,
-                                                player.IsLocal));
-        }
-        /*playersManager.connected(playersManager.config.me);
-        playersManager.connected(new Player(0, 0, new UnityEngine.Color(1f, 0.3725f, 0.396f), "SpectreSpect"));
-        playersManager.connected(new Player(1, 1, new UnityEngine.Color(0.372f, 0.4745f, 1f), "DotaKot"));
-        playersManager.connected(new Player(2, 2, new UnityEngine.Color(0.549f, 1f, 0.372f), "ThEnd"));*/
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(4);
-    }
-
-    public void Start()
-    {
-        
+        gameStateMachine.Start(0);
     }
 
     public void Update()

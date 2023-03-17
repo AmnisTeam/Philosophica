@@ -23,7 +23,8 @@ public class QuestionLoader
      */ 
     public void LoadQuestions()
     {
-        StreamReader reader = new StreamReader("StreamingData/questions.txt");
+        //StreamReader reader = new StreamReader("StreamingData/questions.txt");
+        StreamReader reader = new StreamReader("Assets/StreamingAssets/questions.txt");
         string line = reader.ReadLine();
         int id = 0;
         QuestionManager.Question question = null;
