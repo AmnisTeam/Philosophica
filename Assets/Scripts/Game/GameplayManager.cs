@@ -68,7 +68,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public double sessionElapsedTime = 0;
 
     public int steps = 0;
-    public int maxSteps = 25;
+    public int maxSteps = 1;
 
     public float menusTransitionTime = 0.3f;
     public float menusTransitionDelayTime = 0.2f;
@@ -154,6 +154,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolCondition roundIsEnded;
     public BoolCondition battleCond;
     public BoolCondition fromBattleResultsToOffensive;
+    public BoolCondition fromBattleResultToEndGameMenu;
 
     public void AskQuestionStart()
     {
@@ -722,7 +723,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             GlobalVariables.Delay(menusTransitionDelayTime, () =>
             {
                 currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
-                fromBattleResultsToOffensive.Set(true);
+
+                if (steps >= maxSteps)
+                    fromBattleResultToEndGameMenu.Set(true);
+                else
+                    fromBattleResultsToOffensive.Set(true);
             });         
         }
     }
@@ -730,6 +735,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_BattleResultsUpdate() {
         BattleResultsUpdate();
+    }
+
+    public void EndGameStart()
+    {
+        toast.showText("Игра закончена");
+    }
+
+    public void EndGameUpdate()
+    {
+
     }
 
     public void Awake()
@@ -904,7 +919,17 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                                                 offensivePlayerSelectionState,
                                                 gameStateMachine));
 
-        
+
+        State endGameState = new State();
+        endGameState.startEvents += EndGameStart;
+        endGameState.updateEvents += BattleResultsUpdate;
+        gameStateMachine.states.Add(endGameState);
+
+        fromBattleResultToEndGameMenu = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromBattleResultToEndGameMenu, battleResultsState, endGameState, gameStateMachine));
+
+
+
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
             playersManager.connected(new Player(player.ActorNumber,
                                                 (int)player.CustomProperties["playerIconId"],
