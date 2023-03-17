@@ -59,7 +59,8 @@ Shader "Custom/RegionsOutlinesAndMistShader"
 
 
                 //return color + regionsOnlyColor * 0.25f + get_outlines(i.texcoord, 1);
-                return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _RegionsColorsTexture, 2);
+                //return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _RegionsColorsTexture, 2);
+                return color;
             }
             ENDHLSL
         }
