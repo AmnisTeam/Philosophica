@@ -14,6 +14,8 @@ TagManager:
   - settingsMusicVolumeTag
   - COLOR_CONTENT_TAG
   - a
+  - SCORE_TABLE_TAG
+  - TOAST_MANAGER_TAG
   layers:
   - Default
   - TransparentFX

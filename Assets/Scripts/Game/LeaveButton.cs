@@ -4,30 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
-public class LeaveButton : MonoBehaviour {
-    void Start() {
-
+public class LeaveButton : MonoBehaviourPunCallbacks {
+    public void LeaveGame() {
+        PhotonNetwork.LeaveRoom();
     }
 
-    void Update() {
-        
-    }
-
-    private void Awake() {
-        Button btn = GameObject.FindGameObjectWithTag("GAME_LEAVE_TO_LOBBY").GetComponent<Button>();
-
-        /*btn.onClick.AddListener(() => {            
-            if (NetworkServer.active && NetworkClient.isConnected) {
-                NetworkManager.singleton.StopHost();
-            } else if (NetworkClient.isConnected) {
-                NetworkManager.singleton.StopClient();
-            } else if (NetworkServer.active) {
-                NetworkManager.singleton.StopServer();
-            }
-
-            //RoomManager.instance.ServerChangeScene("MainScene(Stars)");
-        });*/
-
-
+    public override void OnLeftRoom() {
+        PhotonNetwork.LoadLevel("MainScene(Stars)");
     }
 }

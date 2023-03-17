@@ -130,6 +130,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 32189312}
     m_Modifications:
+    - target: {fileID: 6055252339625946784, guid: d80fed403881fd44296eb146337daff5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6055252339625946784, guid: d80fed403881fd44296eb146337daff5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6055252339625946784, guid: d80fed403881fd44296eb146337daff5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1155623408}
+    - target: {fileID: 6055252339625946784, guid: d80fed403881fd44296eb146337daff5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6055252339625946784, guid: d80fed403881fd44296eb146337daff5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LeaveGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 6055252339625946784, guid: d80fed403881fd44296eb146337daff5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: LeaveButton, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6055252339625946784, guid: d80fed403881fd44296eb146337daff5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 6055252339625946786, guid: d80fed403881fd44296eb146337daff5, type: 3}
       propertyPath: m_Name
       value: Button
@@ -610,7 +638,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &70951172
 GameObject:
@@ -1480,7 +1508,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &158544387
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2574,7 +2602,7 @@ GameObject:
   - component: {fileID: 264982820}
   m_Layer: 5
   m_Name: ScoreTable
-  m_TagString: Untagged
+  m_TagString: SCORE_TABLE_TAG
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2751,6 +2779,7 @@ GameObject:
   - component: {fileID: 267347262}
   - component: {fileID: 267347261}
   - component: {fileID: 267347264}
+  - component: {fileID: 267347265}
   m_Layer: 0
   m_Name: ManagerObject
   m_TagString: Untagged
@@ -2809,6 +2838,7 @@ MonoBehaviour:
   cam: {fileID: 1926198289}
   iconsContent: {fileID: 0}
   colorsHolderInstance: {fileID: 0}
+  pv: {fileID: 0}
   stageTwoAnnoucment: {fileID: 2141023604}
   offenseAnnouncement: {fileID: 1493667746}
   offenseAnnouncementAvatar: {fileID: 1311414497}
@@ -2853,6 +2883,28 @@ MonoBehaviour:
   battleRoundResultsDisappearingTime: 4
   battleResultsTime: 8
   closeBattleResultsTime: 5
+--- !u!114 &267347265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 267347260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 2
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &268063264
 GameObject:
   m_ObjectHideFlags: 0
@@ -10896,6 +10948,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1144892794}
   m_CullTransparentMesh: 1
+--- !u!1 &1155623407
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1155623409}
+  - component: {fileID: 1155623408}
+  m_Layer: 0
+  m_Name: LeaveButtonManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1155623408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155623407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04843ed8e82d6ad4c85e9fe7d05fb6dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1155623409
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155623407}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.85901207, y: -0.20446962, z: -8.844026}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1158136662
 GameObject:
   m_ObjectHideFlags: 0
@@ -12403,6 +12499,7 @@ GameObject:
   - component: {fileID: 1425877031}
   - component: {fileID: 1425877034}
   - component: {fileID: 1425877033}
+  - component: {fileID: 1425877035}
   m_Layer: 5
   m_Name: AskQuestionInBattle
   m_TagString: Untagged
@@ -12528,6 +12625,29 @@ MonoBehaviour:
   - {fileID: 15854329}
   - {fileID: 680980132}
   timer: 0
+  pv: {fileID: 0}
+--- !u!114 &1425877035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425877029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1437877082
 GameObject:
   m_ObjectHideFlags: 0
@@ -17306,7 +17426,7 @@ GameObject:
   - component: {fileID: 1895131572}
   m_Layer: 5
   m_Name: Toast
-  m_TagString: Untagged
+  m_TagString: TOAST_MANAGER_TAG
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
