@@ -101,6 +101,7 @@ Shader "Unlit/RegionShader"
     {
         [HDR]
         _RegionColor ("Region color", Color) = (1,0,0,1)
+        _DrawOnlyColor ("Draw only color", Range(0,1)) = 0
     }
     SubShader
     {
@@ -139,6 +140,7 @@ Shader "Unlit/RegionShader"
             };
        
             float4 _RegionColor;
+            float _DrawOnlyColor;
 
             v2f vert (appdata v)
             {
@@ -217,25 +219,29 @@ Shader "Unlit/RegionShader"
             {
                 float2 uv = float2(1 - i.uv.x, 1 - i.uv.y);
                 float4 color = 0;
-                float val = perlin_noise_extended(uv, 0, 0.003, 10, 1);
-                if (val > 0.5f)
-                    val *= 20;
+
+                if (_DrawOnlyColor >= 0.5)
+                {
+                    color = _RegionColor;
+                }
                 else
-                    val = 0;
+                {
+                    float val = perlin_noise_extended(uv, 0, 0.003, 10, 1);
+                    if (val > 0.5f)
+                        val *= 20;
+                    else
+                        val = 0;
 
-                color += draw_stars_layer(uv, 0, 0.005, 4, 0.02, 0);
-                color += draw_stars_layer(uv, 0, 0.005, 5, 0.02, 1) * 0.8;
-                color += draw_stars_layer(uv, 0, 0.005, 5, 0.02, 2) * 0.5;
+                    color += draw_stars_layer(uv, 0, 0.005, 4, 0.02, 0);
+                    color += draw_stars_layer(uv, 0, 0.005, 5, 0.02, 1) * 0.8;
+                    color += draw_stars_layer(uv, 0, 0.005, 5, 0.02, 2) * 0.5;
 
-                // color += draw_stars_layer(uv, 0, 0.005, 4, 0.05, 0) * 10;
-                // color += draw_stars_layer(uv, 0, 0.005, 5, 0.03, 1) * 10;
-                // color += draw_stars_layer(uv, 0, 0.005, 5, 0.02, 2) * 10;
+                    color *= _RegionColor * 4;
+                }
 
-                // color += draw_stars_layer(uv, 0, 0.005, 4, 0.01, 0) * 50;
-                // color += draw_stars_layer(uv, 0, 0.005, 5, 0.02, 1) * 0.5f * 20;
-                // color += draw_stars_layer(uv, 0, 0.005, 5, 0.02, 2) * 0.2f * 20;
                 
-                return color * _RegionColor * 4;
+                
+                return color;
                 //return _RegionColor;
             }
             ENDCG
