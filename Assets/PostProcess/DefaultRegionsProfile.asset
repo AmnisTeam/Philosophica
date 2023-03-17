@@ -57,7 +57,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bbc280469300bb44a2d076a7327d8e8, type: 3}
   m_Name: RegionsOutlinesAndMist
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1
