@@ -102,6 +102,8 @@ Shader "Unlit/RegionShader"
         [HDR]
         _RegionColor ("Region color", Color) = (1,0,0,1)
         _DrawOnlyColor ("Draw only color", Range(0,1)) = 0
+        _Aspect ("Aspect", Range(0,1)) = 0
+        _Width ("Width", Range(0, 10000)) = 1
     }
     SubShader
     {
@@ -141,6 +143,8 @@ Shader "Unlit/RegionShader"
        
             float4 _RegionColor;
             float _DrawOnlyColor;
+            float _Aspect;
+            float _Width;
 
             v2f vert (appdata v)
             {
@@ -208,7 +212,10 @@ Shader "Unlit/RegionShader"
                 float area_for_star_in_cell = (1 - stars_radius * 2);
                 float2 star_pos_in_grid = cell_pos_in_grid + stars_radius + star_local_pos_in_cell * area_for_star_in_cell;
                 float dist = distance(pos_in_grid, star_pos_in_grid);
-                if (dist <= stars_radius)
+
+                float some_value = 1 / _Width;
+
+                if (dist <= stars_radius * some_value)
                     color = float4(1, 1, 1, 1);
 
                 //color = float4(1, 1, 1, 1) / (dist / stars_radius);
@@ -217,7 +224,8 @@ Shader "Unlit/RegionShader"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float2 uv = float2(1 - i.uv.x, 1 - i.uv.y);
+                //float aspect = _ScreenParams.x / _ScreenParams.y;
+                float2 uv = float2(1 - i.uv.x, (1 - i.uv.y) * _Aspect);
                 float4 color = 0;
 
                 if (_DrawOnlyColor >= 0.5)
@@ -232,17 +240,14 @@ Shader "Unlit/RegionShader"
                     else
                         val = 0;
 
-                    color += draw_stars_layer(uv, 0, 0.005, 4, 0.02, 0);
-                    color += draw_stars_layer(uv, 0, 0.005, 5, 0.02, 1) * 0.8;
-                    color += draw_stars_layer(uv, 0, 0.005, 5, 0.02, 2) * 0.5;
+                    color += draw_stars_layer(uv, 0, 0.005, 4, 0.1, 0);
+                    color += draw_stars_layer(uv, 0, 0.005, 5, 0.1, 1) * 0.8;
+                    color += draw_stars_layer(uv, 0, 0.005, 5, 0.1, 2) * 0.5;
 
                     color *= _RegionColor * 4;
                 }
-
-                
-                
+        
                 return color;
-                //return _RegionColor;
             }
             ENDCG
         }
