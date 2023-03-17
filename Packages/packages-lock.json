@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.fluid.simple-spellcheck": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://registry.npmjs.org"
+    },
     "com.unity.2d.animation": {
       "version": "10.0.0-pre.2",
       "depth": 1,

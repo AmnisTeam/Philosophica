@@ -47,6 +47,10 @@ public class PhotonLobbyManager : MonoBehaviourPunCallbacks {
         if (!PhotonNetwork.IsMasterClient) {
             startButton.gameObject.SetActive(false);
         }
+
+        if (PhotonNetwork.CurrentRoom.PlayerCount < 2) {
+            startButton.gameObject.SetActive(false);
+        }
     }
 
     void Update() {
@@ -110,6 +114,10 @@ public class PhotonLobbyManager : MonoBehaviourPunCallbacks {
 
             if (PhotonNetwork.IsMasterClient) {
                 startButton.gameObject.SetActive(true);
+            }
+
+            if (PhotonNetwork.CurrentRoom.PlayerCount < 2) {
+                startButton.gameObject.SetActive(false);
             }
 
             spawnIndex++;

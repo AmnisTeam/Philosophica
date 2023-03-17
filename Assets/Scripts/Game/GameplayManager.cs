@@ -38,6 +38,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public IconsContentHolder iconsContent;
     public ColorsHolder colorsHolderInstance;
+    public PhotonView pv;
 
     public GameObject stageTwoAnnoucment;
 
@@ -160,16 +161,31 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionManager.setQuestion(currentQuestion);
     }
 
+    [PunRPC]
+    public void RPC_AskQuestionStart() {
+        AskQuestionStart();
+    }
+
     public void AskQuestionUpdate()
     {
         if (questionManager.timerToQuestion <= 0)
             askQuestionStateIsEnded.state = true;
     }
 
+    [PunRPC]
+    public void RPC_AskQuestionUpdate() {
+        AskQuestionUpdate();
+    }
+
     public void ViewResultsStart()
     {
         viewResultsTimer = 0;
         viewResultsStateIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_ViewResultsStart() {
+        ViewResultsStart();
     }
 
     public void ViewResultsUpdate()
@@ -180,6 +196,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             viewResultsStateIsEnded.state = true;
             questionManager.CloseQuestionMenu();
         }
+    }
+
+    [PunRPC]
+    public void RPC_ViewResultsUpdate() {
+        ViewResultsUpdate();
     }
 
     public void RegionSelectionStart()
@@ -194,6 +215,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         regionSelectionStateIsEnded.state = false;
     }
 
+    [PunRPC]
+    public void RPC_RegionSelectionStart() {
+        RegionSelectionStart();
+    }
+
     public void RegionSelectionUpdate()
     {
         regionSelectionTimer += Time.deltaTime;
@@ -201,7 +227,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         regionSelectionToast.message = winner.nickname + " выбирает территорию: " +
             ((int)(regionSelectionMaxTime - regionSelectionTimer));
 
-        if (winner.id == 4575635)
+        if (winner.isLocalClient)
             GrantRegionToWinnerByMouseClick();
 
         bool stateEnded = false;
@@ -216,7 +242,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         if (stateEnded)
         {
+            Debug.Log(">>> RPC Invoked at RegionSelectionUpdate()");
             steps++;
+            pv.RPC("RPC_StepsUpdate", RpcTarget.Others, steps);
             regionSelectionToast.isDone = true;
             if (GetFreeRegionsCount() > 0)
                 regionSelectionStateIsEnded.state = true;
@@ -226,12 +254,28 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_StepsUpdate(int newSteps) {
+        Debug.Log(">>> RPC Received at RPC_StepsUpdate()");
+        SetStepsText(newSteps, maxSteps);
+    }
+
+    [PunRPC]
+    public void RPC_RegionSelectionUpdate() {
+        RegionSelectionStart();
+    }
+
     public void PreparationStart()
     {
         preparationToast = new BoolToastMessage("Подготовка к следующему вопросу");
         toast.showText(preparationToast);
         preparationTimer = 0;
         preparationStateIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_PreparationStart() {
+        PreparationStart();
     }
 
     public void PreparationUpdate()
@@ -246,8 +290,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (preparationTimer >= preparationTime)
         {
             preparationStateIsEnded.state = true;
-            currentQuestion = (currentQuestion + 1) % questionManager.questions.Count();
+            currentQuestion = (currentQuestion + 1) % questionManager.questionLoader.questions.Count();
         }
+    }
+
+    [PunRPC]
+    public void RPC_PreparationUpdate() {
+        PreparationUpdate();
     }
 
     //public void stageTwoAnnouncementStart()
@@ -270,6 +319,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     //    }
     //}
 
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) {
+        GameObject.FindGameObjectWithTag("SCORE_TABLE_TAG").GetComponent<ScoreTableManager>().RemovePlayer(otherPlayer.ActorNumber-1);
+    }
+
     public void OffensivePlayerSelectionStart()
     {
         Debug.Log("OffensivePlayerSelectionStart");
@@ -282,7 +335,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         offenseAnnouncementAvatar.GetComponent<UnityEngine.UI.Image>().sprite = iconsContent.lobbyIcons[offensePlayer.iconId];
         offenseAnnouncementAvatar.GetComponent<UnityEngine.UI.Image>().color = offensePlayer.color;
 
-        if (offensePlayer.id == 4575635)
+        if (offensePlayer.isLocalClient)
             offenseAnnouncementText.text = "Ваша очередь нападать. Выберете, на кого хотите напасть.";
         else
             offenseAnnouncementText.text = offensePlayer.nickname + " выбирает на кого напасть.";
@@ -290,6 +343,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime);
         battle = null;
         offensivePlayerSelectionIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_OffensivePlayerSelectionStart() {
+        OffensivePlayerSelectionStart();
     }
 
     public void OffensivePlayerSelectionUpdate()
@@ -303,8 +361,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (offensePlayer.isLocalClient)
             StartBattleByMouseClick(roundsCount, maxPlayersHealth);
 
-        if (battle != null)
+        if (battle != null) {
             stateEnded = true;
+        }
 
         if (offensivePlayerSelectionTimer >= offensivePlayerSelectionTime)
         {
@@ -314,6 +373,19 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         
         if (stateEnded)
         {
+            if (offensePlayer.isLocalClient) {
+                int regionId = 0;
+
+                for (int i = 0; i < regionSystem.regionSerds.Count; i++) {
+                    if (regionSystem.regionSerds[i].region == battle.region) {
+                        regionId = i;
+                        break;
+                    };
+                }
+
+                pv.RPC("RPC_AttackAnnouncementStart", RpcTarget.All, battle.opponents[0].player.id, battle.opponents[1].player.id, regionId, battle.questions.Count, battle.opponents[0].maxHealh);
+            }
+
             offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() => 
             { 
                 offenseAnnouncement.SetActive(false); 
@@ -326,6 +398,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_OffensivePlayerSelectionUpdate() {
+        OffensivePlayerSelectionUpdate();
+    }
+
     public void AttackAnnouncementStart()
     {
         attackAnnouncement.SetActive(true);
@@ -333,6 +410,26 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         attackAnnouncementText.text = battle.opponents[0].player.nickname + " напал на " + battle.opponents[1].player.nickname + ".";
         attackAnnouncementTimer = 0;
         attackAnnouncementIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_AttackAnnouncementStart(int firstPlayerId, int secondPlayerId, int regionId, int roundsCount, double playersMaxHealth) {
+        Player firstPlayer = null, secondPlayer = null;
+        Region region = regionSystem.regionSerds[regionId].region;
+        
+        for (int i = 0; i < playersManager.players.count; i++) {
+            if (playersManager.players.get(i).id == firstPlayerId) {
+                firstPlayer = playersManager.players.get(i);
+            }
+
+            if (playersManager.players.get(i).id == secondPlayerId) {
+                secondPlayer = playersManager.players.get(i);
+            }
+        }
+
+        battle = StartBattle(firstPlayer, secondPlayer, region, roundsCount, playersMaxHealth);
+
+        //AttackAnnouncementStart();
     }
 
     public void AttackAnnouncementUpdate()
@@ -351,6 +448,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             });          
             //Wait(0.5f);
         }
+    }
+
+    [PunRPC]
+    public void RPC_AttackAnnouncementUpdate() {
+        AttackAnnouncementUpdate();
     }
 
     public void OpponentsAnnouncementStart()
@@ -379,6 +481,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         opponentsAnnouncementIsEnded.state = false;
     }
 
+    [PunRPC]
+    public void RPC_OpponentsAnnouncementStart() {
+        OpponentsAnnouncementStart();
+    }
+
     public void OpponentsAnnouncementUpdate()
     {
         OpponentsAnnouncementTimer += Time.deltaTime;
@@ -396,6 +503,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_OpponentsAnnouncementUpdate() {
+        OpponentsAnnouncementUpdate();
+    }
+
 
     public void QuestionNumberAnnouncementStart()
     {
@@ -404,6 +516,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
         questionNumberAnnouncementText.text = "Вопрос " + (battle.currentQuestion + 1);
         questionNumberAnnouncementIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_QuestionNumberAnnouncementStart() {
+        QuestionNumberAnnouncementStart();
     }
 
     public void QuestionNumberAnnouncementUpdate()
@@ -423,15 +540,24 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_QuestionNumberAnnouncementUpdate() {
+        QuestionNumberAnnouncementUpdate();
+    }
+
     public void AskQuestionInBattleStart()
     {
         askQuestionInBattle.SetActive(true);
 
-        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], 
-            battle.questions[battle.currentQuestion]);
+        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], battle.questions[battle.currentQuestion]);
         askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         askQuestionInBattleIsEnded.state = false;
+    }
+
+    [PunRPC]
+    public void RPC_AskQuestionInBattleStart() {
+        AskQuestionInBattleStart();
     }
 
     public void AskQuestionInBattleUpdate()
@@ -446,6 +572,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_AskQuestionInBattleUpdate() {
+        AskQuestionInBattleUpdate();
+    }
+
     public void CorrectAnsewerRevealingInBattleStart()
     {
         AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
@@ -453,6 +584,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         correctAnsewerRevealingInBattleIsEnded.state = false;
         correctAnsewerRevealingTimer = 0;
+    }
+
+    [PunRPC]
+    public void RPC_CorrectAnsewerRevealingInBattleStart() {
+        CorrectAnsewerRevealingInBattleStart();
     }
 
     public void CorrectAnsewerRevealingInBattleUpdate()
@@ -472,6 +608,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_CorrectAnsewerRevealingInBattleUpdate() {
+        CorrectAnsewerRevealingInBattleUpdate();
+    }
+
     public void BattleRoundResultsStart()
     {
         damageDealingDelayTimer = 0;
@@ -484,6 +625,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             .setEaseOutSine().setDelay((float)battleRoundResultsNotificationDelay);
         roundIsEnded.state = false;
         battleCond.Set(false);
+    }
+
+    [PunRPC]
+    public void RPC_BattleRoundResultsStart() {
+        BattleRoundResultsStart();
     }
 
     public void BattleRoundResultsUpdate()
@@ -519,6 +665,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_BattleRoundResultsUpdate() {
+        BattleRoundResultsUpdate();
+    }
+
     public void BattleResultsStart()
     {
         if (battle.GetDeadCount() > 0)
@@ -540,6 +691,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         closeBattleResultsTimer = 0;
         battleResultsTimer = 0;
         fromBattleResultsToOffensive.Set(false);
+    }
+
+    [PunRPC]
+    public void RPC_BattleResultsStart() {
+        BattleResultsStart();
     }
 
     public void BattleResultsUpdate()
@@ -582,12 +738,29 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_BattleResultsUpdate() {
+        BattleResultsUpdate();
+    }
+
     public void Awake()
     {
         playersManager = GetComponent<PlayersManager>();
         colorsHolderInstance = GameObject.FindGameObjectWithTag("COLOR_CONTENT_TAG").GetComponent<ColorsHolder>();
         iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
+        pv = GetComponent<PhotonView>();
 
+        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
+            playersManager.connected(new Player(player.ActorNumber,
+                                                (int)player.CustomProperties["playerIconId"],
+                                                colorsHolderInstance.colors[(int)player.CustomProperties["playerColorIndex"]],
+                                                player.NickName,
+                                                player.IsLocal));
+        }
+    }
+
+    public void Start()
+    {
         State askQuestionState = new State(); // 0
         askQuestionState.startEvents += AskQuestionStart;
         askQuestionState.updateEvents += AskQuestionUpdate;
@@ -599,10 +772,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(viewResultsState);
 
         askQuestionStateIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(askQuestionStateIsEnded, 
-                                                        askQuestionState, 
-                                                        viewResultsState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(askQuestionStateIsEnded, askQuestionState, viewResultsState, gameStateMachine));
 
         State regionSelectionState = new State(); // 2
         regionSelectionState.startEvents += RegionSelectionStart;
@@ -610,10 +780,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(regionSelectionState);
 
         viewResultsStateIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(viewResultsStateIsEnded, 
-                                                        viewResultsState, 
-                                                        regionSelectionState,
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(viewResultsStateIsEnded, viewResultsState, regionSelectionState, gameStateMachine));
 
         State preparationState = new State(); // 3
         preparationState.startEvents += PreparationStart;
@@ -621,24 +788,17 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(preparationState);
 
         regionSelectionStateIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(regionSelectionStateIsEnded, 
-                                                        regionSelectionState, 
-                                                        preparationState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(regionSelectionStateIsEnded, regionSelectionState, preparationState, gameStateMachine));
 
         preparationStateIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(preparationStateIsEnded, 
-                                                        preparationState, 
-                                                        askQuestionState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(preparationStateIsEnded, preparationState, askQuestionState, gameStateMachine));
 
         //State stageTwoAnnouncementState = new State(); // 4
         //stageTwoAnnouncementState.startEvents += stageTwoAnnouncementStart;
         //stageTwoAnnouncementState.updateEvents += stageTwoAnnouncementUpdate;
         //gameStateMachine.states.Add(stageTwoAnnouncementState);
 
-        StageTwoAnnouncementState stageTwoAnnouncementState = new StageTwoAnnouncementState(
-                                                                        stageTwoAnnoucment,
+        StageTwoAnnouncementState stageTwoAnnouncementState = new StageTwoAnnouncementState(stageTwoAnnoucment,
                                                                         stageTwoAnnouncmentTimer,
                                                                         stageTwoAnnouncmentTime,
                                                                         menusTransitionTime,
@@ -646,10 +806,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(stageTwoAnnouncementState);
 
         firstStageIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(firstStageIsEnded, 
-                                                        regionSelectionState, 
-                                                        stageTwoAnnouncementState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(firstStageIsEnded, regionSelectionState, stageTwoAnnouncementState, gameStateMachine));
 
         State offensivePlayerSelectionState = new State(); // 5
         offensivePlayerSelectionState.startEvents += OffensivePlayerSelectionStart;
@@ -668,10 +825,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(attackAnnouncementState);
 
         offensivePlayerSelectionIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(offensivePlayerSelectionIsEnded, 
-                                                        offensivePlayerSelectionState, 
-                                                        attackAnnouncementState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(offensivePlayerSelectionIsEnded, offensivePlayerSelectionState, attackAnnouncementState, gameStateMachine));
 
         State opponentsAnnouncementState = new State(); // 7
         opponentsAnnouncementState.startEvents += OpponentsAnnouncementStart;
@@ -679,10 +833,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(opponentsAnnouncementState);
 
         attackAnnouncementIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(attackAnnouncementIsEnded, 
-                                                        attackAnnouncementState,
-                                                        opponentsAnnouncementState,
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(attackAnnouncementIsEnded, attackAnnouncementState, opponentsAnnouncementState, gameStateMachine));
 
         State questionNumberAnnouncementState = new State(); // 8
         questionNumberAnnouncementState.startEvents += QuestionNumberAnnouncementStart;
@@ -690,10 +841,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(questionNumberAnnouncementState);
 
         opponentsAnnouncementIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(opponentsAnnouncementIsEnded, 
-                                                        opponentsAnnouncementState, 
-                                                        questionNumberAnnouncementState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(opponentsAnnouncementIsEnded, opponentsAnnouncementState, questionNumberAnnouncementState, gameStateMachine));
 
         State askQuestionInBattleState = new State(); // 9
         askQuestionInBattleState.startEvents += AskQuestionInBattleStart;
@@ -701,10 +849,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(askQuestionInBattleState);
 
         questionNumberAnnouncementIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(questionNumberAnnouncementIsEnded, 
-                                                        questionNumberAnnouncementState, 
-                                                        askQuestionInBattleState,
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(questionNumberAnnouncementIsEnded, questionNumberAnnouncementState, askQuestionInBattleState, gameStateMachine));
 
         State correctAnsewerRevealingInBattleState = new State(); // 10
         correctAnsewerRevealingInBattleState.startEvents += CorrectAnsewerRevealingInBattleStart;
@@ -712,10 +857,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(correctAnsewerRevealingInBattleState);
 
         askQuestionInBattleIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(askQuestionInBattleIsEnded, 
-                                                        askQuestionInBattleState, 
-                                                        correctAnsewerRevealingInBattleState,
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(askQuestionInBattleIsEnded, askQuestionInBattleState, correctAnsewerRevealingInBattleState, gameStateMachine));
 
         State battleRoundResultsState = new State(); // 11
         battleRoundResultsState.startEvents += BattleRoundResultsStart;
@@ -729,10 +871,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                                                         gameStateMachine));
 
         roundIsEnded = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(roundIsEnded, 
-                                                        battleRoundResultsState, 
-                                                        questionNumberAnnouncementState, 
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(roundIsEnded, battleRoundResultsState, questionNumberAnnouncementState, gameStateMachine));
 
         //BattleResultsState battleResultsState = new BattleResultsState(BattleResultsVictory, battle);
 
@@ -742,38 +881,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(battleResultsState);
 
         battleCond = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(battleCond,
-                                                        battleRoundResultsState,
-                                                        battleResultsState,
-                                                        gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(battleCond, battleRoundResultsState, battleResultsState, gameStateMachine));
 
         fromBattleResultsToOffensive = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(fromBattleResultsToOffensive,
-                                                battleResultsState,
-                                                offensivePlayerSelectionState,
-                                                gameStateMachine));
+        gameStateMachine.transitions.Add(new Transition(fromBattleResultsToOffensive, battleResultsState, offensivePlayerSelectionState, gameStateMachine));
 
-        
-        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
-            playersManager.connected(new Player(player.ActorNumber,
-                                                (int)player.CustomProperties["playerIconId"],
-                                                colorsHolderInstance.colors[(int)player.CustomProperties["playerColorIndex"]],
-                                                player.NickName,
-                                                player.IsLocal));
-        }
-        /*playersManager.connected(playersManager.config.me);
-        playersManager.connected(new Player(0, 0, new UnityEngine.Color(1f, 0.3725f, 0.396f), "SpectreSpect"));
-        playersManager.connected(new Player(1, 1, new UnityEngine.Color(0.372f, 0.4745f, 1f), "DotaKot"));
-        playersManager.connected(new Player(2, 2, new UnityEngine.Color(0.549f, 1f, 0.372f), "ThEnd"));*/
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(4);
-    }
-
-    public void Start()
-    {
-        
+        gameStateMachine.Start(0);
     }
 
     public void Update()
@@ -916,10 +1032,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Opponent opponent2 = new Opponent(player2, playersMaxHealth, playersMaxHealth, 0);
         Battle newBattle = new Battle(opponent1, opponent2, region);
 
-        if (roundsCount > questionManager.questions.Count())
-            roundsCount = questionManager.questions.Count();
+        if (roundsCount > questionManager.questionLoader.questions.Count())
+            roundsCount = questionManager.questionLoader.questions.Count();
 
-        int idsCount = questionManager.questions.Count();
+        int idsCount = questionManager.questionLoader.questions.Count();
         int[] ids = new int[idsCount];
         for (int i = 0; i < idsCount; i++)
             ids[i] = i;
@@ -928,7 +1044,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < roundsCount; i++)
         {
             int randInt = rnd.Next(0, idsCount - 1);
-            QuestionManager.Question randQuestion = questionManager.questions[ids[randInt]];
+            QuestionManager.Question randQuestion = questionManager.questionLoader.questions[ids[randInt]];
 
             ids[randInt] = ids[idsCount - 1];
             idsCount--;

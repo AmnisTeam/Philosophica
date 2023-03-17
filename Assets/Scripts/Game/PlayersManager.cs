@@ -100,6 +100,8 @@ public class PlayersManager : MonoBehaviour
     {
         //tabMenuManager = GetComponent<TabMenuManager>();
         playerAnswerData = new BaseTable<PlayerAnswerData>();
+       /* scoreTableManager = GameObject.FindGameObjectWithTag("SCORE_TABLE_TAG").GetComponent<ScoreTableManager>();
+        toastShower = GameObject.FindGameObjectWithTag("TOAST_MANAGER_TAG").GetComponent<ToastShower>();*/
     }
 
     void Start()
