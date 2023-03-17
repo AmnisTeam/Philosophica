@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
-public class SelectionQuestions : MonoBehaviour
+public class SelectionQuestions : MonoBehaviourPunCallbacks
 {
     //public Image[] selection0;
     //public Image[] selection1;

@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static QuestionManager;
+using Photon.Pun;
 
-public class QuestionManager : MonoBehaviour
+public class QuestionManager : MonoBehaviourPunCallbacks
 {
     public class Question
     {
@@ -25,6 +25,8 @@ public class QuestionManager : MonoBehaviour
     public TMPro.TMP_Text secundes;
     public TableCompiler tableCompiler;
     public Question activeQuestion;
+
+    public PhotonView pv;
 
     public float timeToQuestion;
     public float timerToQuestion;
@@ -143,6 +145,8 @@ public class QuestionManager : MonoBehaviour
     {
         questionLoader = new QuestionLoader();
         loadQuestions();
+
+        pv = GetComponent<PhotonView>();
     }
 
     void Start()
@@ -175,7 +179,7 @@ public class QuestionManager : MonoBehaviour
                 foreach (Player player in playersManager.players.list) {
                     if (player.isLocalClient) {
                         playersManager.playerAnswerData.find(player.id).answerId = selectionQuestions.activeSelection;
-                        break;
+                        pv.RPC("RPC_RevealAnswerOfOpponentStageOne", RpcTarget.Others, player.id, selectionQuestions.activeSelection, timeToShowTable);
                     }
                 }
             }
@@ -198,5 +202,12 @@ public class QuestionManager : MonoBehaviour
                 secundes.text += '0';
             secundes.text += ((int)(timerToQuestion % 60)).ToString();
         }
+    }
+
+    [PunRPC]
+    public void RPC_RevealAnswerOfOpponentStageOne(int playerIdx, int answerId, float answerTime) {
+        Debug.Log(">>> RPC invoked at RPC_RevealAnswerOfOpponentStageOne()");
+        playersManager.playerAnswerData.find(playerIdx).answerId = answerId;
+        playersManager.playerAnswerData.find(playerIdx).timeToAnswer = answerTime;
     }
 }
