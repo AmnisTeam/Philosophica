@@ -10,7 +10,7 @@ public class EndGamePlayerRecord : MonoBehaviour
     public TMPro.TMP_Text nickname;
     public TMPro.TMP_Text points;
 
-    private IconsContent iconsContent;
+    private IconsContentHolder iconsContent;
 
     public void SetRecord(int number, Sprite iconSprite, Color iconColor, string nickname, int points)
     {
@@ -18,17 +18,19 @@ public class EndGamePlayerRecord : MonoBehaviour
         icon.sprite = iconSprite;
         icon.color = iconColor;
         this.nickname.text = nickname;
-        this.points.text = points.ToString() + " points";
+        this.points.text = points.ToString() + " очков";
+        iconsContent = GameObject.FindWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
     }
 
     public void SetRecord(int number, Player person)
     {
-        SetRecord(number, iconsContent.icons[person.iconId].sprite, person.color, person.nickname, (int)person.scores);
+        iconsContent = GameObject.FindWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
+        SetRecord(number, iconsContent.lobbyIcons[person.iconId], person.color, person.nickname, (int)person.scores);
     }
 
     private void Awake()
     {
-        iconsContent = GameObject.FindWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContent>();
+        iconsContent = GameObject.FindWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
     }
 
 }
