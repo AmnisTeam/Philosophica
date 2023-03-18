@@ -18,6 +18,8 @@ Shader "Custom/RegionsOutlinesAndMistShader"
 
             sampler2D _NoShaderTexture;
             sampler2D _RegionsColorsTexture;
+            sampler2D _OutlineTexture;
+            sampler2D _InnerGlowTexture;
             float2 _MainTex_TexelSize;
 
 
@@ -50,15 +52,22 @@ Shader "Custom/RegionsOutlinesAndMistShader"
                 float4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
                 float4 regionsOnlyColor = tex2D(_NoShaderTexture, i.texcoord);
                 float4 regionsColor = tex2D(_RegionsColorsTexture, i.texcoord);
+                float4 outlineColor = tex2D(_OutlineTexture, i.texcoord);
 
 
                 // float4 blurColor = (tex2D(_NoShaderTexture, i.texcoord) + 
                 //                    tex2D(_NoShaderTexture, i.texcoord + _MainTex_TexelSize.x) + 
                 //                    tex2D(_NoShaderTexture, i.texcoord + _MainTex_TexelSize.y) +
                 //                    tex2D(_NoShaderTexture, i.texcoord + _MainTex_TexelSize)) / 4;
+                
+                float4 whiteAndBlackColor = 0;
+                if (outlineColor.x >= 0.1 || outlineColor.y >= 0.1 || outlineColor.z >= 0.1)
+                    whiteAndBlackColor = 1;
 
+                
 
-                return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _RegionsColorsTexture, 2);
+                //return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _RegionsColorsTexture, 2);
+                return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _OutlineTexture, 2) + whiteAndBlackColor * tex2D(_InnerGlowTexture, i.texcoord);
             }
             ENDHLSL
         }

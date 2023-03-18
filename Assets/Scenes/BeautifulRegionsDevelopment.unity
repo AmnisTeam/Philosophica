@@ -67,6 +67,9 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
+    m_FinalGather: 0
+    m_FinalGatherFiltering: 1
+    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -101,7 +104,7 @@ NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 3
+    serializedVersion: 2
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -114,7 +117,7 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    buildHeightMesh: 0
+    accuratePlacement: 0
     maxJobWorkers: 0
     preserveTilesOutsideBounds: 0
     debug:
@@ -160,17 +163,9 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 160020559}
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
+  serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 1088809467}
@@ -237,7 +232,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1466471267}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!21 &182016343
 Material:
@@ -248,8 +243,6 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: RegionMaterial (Instance)
   m_Shader: {fileID: 4800000, guid: ef2eae225fc81d845ab810c0b79a15c1, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -258,7 +251,6 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -308,7 +300,10 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
+    - _DrawOutlineColor: 0
+    - _DrawSelectoinColor: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -326,7 +321,10 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 0, g: 0.14067984, b: 1, a: 1}
+    - _SelectionColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!21 &528896578
@@ -338,8 +336,6 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: RegionMaterial (Instance)
   m_Shader: {fileID: 4800000, guid: ef2eae225fc81d845ab810c0b79a15c1, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -348,7 +344,6 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -398,7 +393,10 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
+    - _DrawOutlineColor: 0
+    - _DrawSelectoinColor: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -416,7 +414,10 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 1, g: 0, b: 0, a: 1}
+    - _SelectionColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &601607559
@@ -569,17 +570,9 @@ Camera:
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 50
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -634,37 +627,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
-  m_RequiresOpaqueTextureOption: 2
-  m_CameraType: 0
-  m_Cameras: []
-  m_RendererIndex: -1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  m_VolumeTrigger: {fileID: 0}
-  m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 1
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_AllowXRRendering: 1
-  m_UseScreenCoordOverride: 0
-  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_Version: 2
-  m_TaaSettings:
-    quality: 3
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0
 --- !u!114 &601607567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -678,6 +640,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   noShaderTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
+  outlineTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
+  innerGlowTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
   regionsSystem: {fileID: 1466471266}
 --- !u!1 &687313016
 GameObject:
@@ -735,17 +699,9 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 687313016}
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
+  serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
@@ -826,18 +782,10 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 774942786}
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &774942788
 MeshRenderer:
@@ -913,8 +861,6 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: RegionMaterial (Instance)
   m_Shader: {fileID: 4800000, guid: ef2eae225fc81d845ab810c0b79a15c1, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -923,7 +869,6 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -973,7 +918,10 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
+    - _DrawOutlineColor: 0
+    - _DrawSelectoinColor: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -991,7 +939,10 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 1, g: 0, b: 0, a: 1}
+    - _SelectionColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &974026096
@@ -1034,17 +985,9 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 974026096}
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
+  serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 1194848257}
@@ -1111,7 +1054,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1466471267}
-  m_RootOrder: -1
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &986114511
 GameObject:
@@ -1153,17 +1096,9 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 986114511}
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
+  serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 1958486109}
@@ -1230,7 +1165,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1466471267}
-  m_RootOrder: -1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1088809467
 Mesh:
@@ -1239,7 +1174,7 @@ Mesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 
-  serializedVersion: 11
+  serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -1249,8 +1184,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 5
     localAABB:
-      m_Center: {x: -3.0325558, y: -0.18614674, z: 0}
-      m_Extent: {x: 5.0794325, y: 3.7718997, z: 0}
+      m_Center: {x: -2.6741679, y: 0.1311084, z: 0}
+      m_Extent: {x: 3.7488415, y: 3.3733273, z: 0}
   m_Shapes:
     vertices: []
     shapes: []
@@ -1329,7 +1264,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 160
-    _typelessdata: 10f6b3bfa2507dc0000000000000000000000000000080bf71fd283f00000000296b68c0739c09c0000000000000000000000000000080bfc3cfe13ed866753eb4ca01c1fa7c6540000000000000000000000000000080bf000000000000803fe98e893f40e73240000000000000000000000000000080bf3580673f942d653f0600034011bd56bf000000000000000000000000000080bf0000803fe4b3d33e
+    _typelessdata: 789d89bf84804fc0000000000000000000000000000080bf0799363f0000000058405ec0ad23cabf000000000000000000000000000080bfba78c93ebe687c3e4b89cdc0ad486040000000000000000000000000ffff7fbf000000000000803fe98e893f40e73240000000000000000000000000000080bf0000803f3018653fc6b5803f1406d2be000000000000000000000000000080bfc7a37d3f93ebd63e
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -1383,14 +1318,13 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: -3.0325558, y: -0.18614674, z: 0}
-    m_Extent: {x: 5.0794325, y: 3.7718997, z: 0}
+    m_Center: {x: -2.6741679, y: 0.1311084, z: 0}
+    m_Extent: {x: 3.7488415, y: 3.3733273, z: 0}
   m_MeshUsageFlags: 0
-  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  'm_MeshMetrics[0]': 1
-  'm_MeshMetrics[1]': 1
+  m_MeshMetrics[0]: 1
+  m_MeshMetrics[1]: 1
   m_MeshOptimizationFlags: 1
   m_StreamData:
     serializedVersion: 2
@@ -1404,7 +1338,7 @@ Mesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 
-  serializedVersion: 11
+  serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -1551,11 +1485,10 @@ Mesh:
     m_Center: {x: 5.9268064, y: -2.5286078, z: 0}
     m_Extent: {x: 3.8799298, y: 2.9056888, z: 0}
   m_MeshUsageFlags: 0
-  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  'm_MeshMetrics[0]': 1
-  'm_MeshMetrics[1]': 1
+  m_MeshMetrics[0]: 1
+  m_MeshMetrics[1]: 1
   m_MeshOptimizationFlags: 1
   m_StreamData:
     serializedVersion: 2
@@ -1597,11 +1530,11 @@ MonoBehaviour:
   regionSerds:
   - region: {fileID: 160020560}
     points:
-    - {x: -1.4059467, y: -3.9580464, z: 0}
-    - {x: -3.6315405, y: -2.150174, z: 0}
-    - {x: -8.111988, y: 3.585753, z: 0}
+    - {x: -1.0751181, y: -3.242219, z: 0}
+    - {x: -3.4726772, y: -1.5792137, z: 0}
+    - {x: -6.4230094, y: 3.5044358, z: 0}
     - {x: 1.0746738, y: 2.7953644, z: 0}
-    - {x: 2.0468764, y: -0.8388224, z: 0}
+    - {x: 1.0055473, y: -0.41020262, z: 0}
   - region: {fileID: 974026097}
     points:
     - {x: 5.5802794, y: -4.0871134, z: 0}
@@ -1625,8 +1558,9 @@ MonoBehaviour:
     - {x: -11.41668, y: 0.6846869, z: 0}
     - {x: -10.6094265, y: 2.5262332, z: 0}
     - {x: -8.111988, y: 3.585753, z: 0}
-    - {x: -3.7314398, y: -2.133004, z: 0}
-    - {x: -5.963232, y: -1.2606708, z: 0}
+    - {x: -6.604566, y: -0.504987, z: 0}
+    - {x: -6.8769045, y: -1.2463526, z: 0}
+    - {x: -7.981388, y: -1.9423283, z: 0}
 --- !u!4 &1466471267
 Transform:
   m_ObjectHideFlags: 0
@@ -1673,18 +1607,10 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1506183932}
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1506183934
 MeshRenderer:
@@ -1791,17 +1717,9 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1651762918}
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
+  serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 1878451190}
@@ -1868,7 +1786,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1466471267}
-  m_RootOrder: -1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1653144807
 GameObject:
@@ -1899,11 +1817,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsGlobal: 1
-  priority: 0
-  blendDistance: 0
-  weight: 1
-  sharedProfile: {fileID: 11400000, guid: ff4158dbee01dc148a5fcc67f3b7d315, type: 2}
 --- !u!4 &1653144809
 Transform:
   m_ObjectHideFlags: 0
@@ -1946,18 +1859,10 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1659138862}
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1659138864
 MeshRenderer:
@@ -2080,7 +1985,7 @@ Mesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 
-  serializedVersion: 11
+  serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -2227,11 +2132,10 @@ Mesh:
     m_Center: {x: -4.061326, y: -3.4598768, z: 0}
     m_Extent: {x: 2.6151202, y: 2.1064966, z: 0}
   m_MeshUsageFlags: 0
-  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  'm_MeshMetrics[0]': 1
-  'm_MeshMetrics[1]': 1
+  m_MeshMetrics[0]: 1
+  m_MeshMetrics[1]: 1
   m_MeshOptimizationFlags: 1
   m_StreamData:
     serializedVersion: 2
@@ -2245,18 +2149,18 @@ Mesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 
-  serializedVersion: 11
+  serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 12
+    indexCount: 15
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 6
+    vertexCount: 7
     localAABB:
-      m_Center: {x: -7.57406, y: 0.7263745, z: 0}
-      m_Extent: {x: 3.8426204, y: 2.8593783, z: 0}
+      m_Center: {x: -9.010623, y: 0.8217123, z: 0}
+      m_Extent: {x: 2.4060571, y: 2.7640407, z: 0}
   m_Shapes:
     vertices: []
     shapes: []
@@ -2273,10 +2177,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 050000000100050001000200050002000300030004000500
+  m_IndexBuffer: 060000000100060001000200060002000300060003000400040005000600
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 6
+    m_VertexCount: 7
     m_Channels:
     - stream: 0
       offset: 0
@@ -2334,8 +2238,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 192
-    _typelessdata: 83932cc1dafe26bf000000000000000000000000000080bf2810a83da490843eb9aa36c1a4472f3f000000000000000000000000000080bf000000008944fc3e36c029c1cead2140000000000000000000000000000080bff31ed73d1492503fb4ca01c1fa7c6540000000000000000000000000000080bf9f29dc3e0000803fe9cf6ec0238308c0000000000000000000000000000080bf0000803f00000000ccd2bec0a95da1bf000000000000000000000000000080bf5ca8353f2c331c3e
+    m_DataSize: 224
+    _typelessdata: 83932cc1dafe26bf000000000000000000000000000080bf1b34063e75f46e3eb9aa36c1a4472f3f000000000000000000000000000080bf00000000184ff33e36c029c1cead2140000000000000000000000000ffff7fbfd6c72b3e47ef4e3fb4ca01c1fa7c6540000000000000000000000000000080bf7ace2f3f0000803f9b58d3c0d44601bf000000000000000000000000000080bf0000803fac1f853e9a0fdcc07b889fbf000000000000000000000000000080bf0983713f79eb003e8867ffc0379ef8bf000000000000000000000000000080bf1dc1363f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -2389,14 +2293,13 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: -7.57406, y: 0.7263745, z: 0}
-    m_Extent: {x: 3.8426204, y: 2.8593783, z: 0}
+    m_Center: {x: -9.010623, y: 0.8217123, z: 0}
+    m_Extent: {x: 2.4060571, y: 2.7640407, z: 0}
   m_MeshUsageFlags: 0
-  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  'm_MeshMetrics[0]': 1
-  'm_MeshMetrics[1]': 1
+  m_MeshMetrics[0]: 1
+  m_MeshMetrics[1]: 1
   m_MeshOptimizationFlags: 1
   m_StreamData:
     serializedVersion: 2
@@ -2430,17 +2333,9 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2020867418}
   m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &2020867420
@@ -2517,8 +2412,6 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: RegionMaterial (Instance)
   m_Shader: {fileID: 4800000, guid: ef2eae225fc81d845ab810c0b79a15c1, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -2527,7 +2420,6 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -2577,7 +2469,10 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
+    - _DrawOutlineColor: 0
+    - _DrawSelectoinColor: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -2595,6 +2490,9 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 0.07735002, g: 1, b: 0, a: 1}
+    - _SelectionColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
