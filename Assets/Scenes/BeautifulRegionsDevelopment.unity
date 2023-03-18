@@ -300,6 +300,7 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
     - _DrawOutlineColor: 0
     - _DrawSelectoinColor: 0
@@ -320,6 +321,7 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 0, g: 0.14067984, b: 1, a: 1}
     - _SelectionColor: {r: 0.5, g: 0.5, b: 1, a: 1}
@@ -391,6 +393,7 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
     - _DrawOutlineColor: 0
     - _DrawSelectoinColor: 0
@@ -411,6 +414,7 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 1, g: 0, b: 0, a: 1}
     - _SelectionColor: {r: 0.5, g: 0.5, b: 1, a: 1}
@@ -637,6 +641,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   noShaderTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
   outlineTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
+  innerGlowTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
   regionsSystem: {fileID: 1466471266}
 --- !u!1 &687313016
 GameObject:
@@ -913,6 +918,7 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
     - _DrawOutlineColor: 0
     - _DrawSelectoinColor: 0
@@ -933,6 +939,7 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 1, g: 0, b: 0, a: 1}
     - _SelectionColor: {r: 0.5, g: 0.5, b: 1, a: 1}
@@ -1177,8 +1184,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 5
     localAABB:
-      m_Center: {x: -3.0325558, y: -0.18614674, z: 0}
-      m_Extent: {x: 5.0794325, y: 3.7718997, z: 0}
+      m_Center: {x: -2.6741679, y: 0.1311084, z: 0}
+      m_Extent: {x: 3.7488415, y: 3.3733273, z: 0}
   m_Shapes:
     vertices: []
     shapes: []
@@ -1257,7 +1264,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 160
-    _typelessdata: 10f6b3bfa2507dc0000000000000000000000000000080bf71fd283f00000000296b68c0739c09c0000000000000000000000000000080bfc3cfe13ed866753eb4ca01c1fa7c6540000000000000000000000000000080bf000000000000803fe98e893f40e73240000000000000000000000000000080bf3580673f942d653f0600034011bd56bf000000000000000000000000000080bf0000803fe4b3d33e
+    _typelessdata: 789d89bf84804fc0000000000000000000000000000080bf0799363f0000000058405ec0ad23cabf000000000000000000000000000080bfba78c93ebe687c3e4b89cdc0ad486040000000000000000000000000ffff7fbf000000000000803fe98e893f40e73240000000000000000000000000000080bf0000803f3018653fc6b5803f1406d2be000000000000000000000000000080bfc7a37d3f93ebd63e
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -1311,8 +1318,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: -3.0325558, y: -0.18614674, z: 0}
-    m_Extent: {x: 5.0794325, y: 3.7718997, z: 0}
+    m_Center: {x: -2.6741679, y: 0.1311084, z: 0}
+    m_Extent: {x: 3.7488415, y: 3.3733273, z: 0}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -1523,11 +1530,11 @@ MonoBehaviour:
   regionSerds:
   - region: {fileID: 160020560}
     points:
-    - {x: -1.4059467, y: -3.9580464, z: 0}
-    - {x: -3.6315405, y: -2.150174, z: 0}
-    - {x: -8.111988, y: 3.585753, z: 0}
+    - {x: -1.0751181, y: -3.242219, z: 0}
+    - {x: -3.4726772, y: -1.5792137, z: 0}
+    - {x: -6.4230094, y: 3.5044358, z: 0}
     - {x: 1.0746738, y: 2.7953644, z: 0}
-    - {x: 2.0468764, y: -0.8388224, z: 0}
+    - {x: 1.0055473, y: -0.41020262, z: 0}
   - region: {fileID: 974026097}
     points:
     - {x: 5.5802794, y: -4.0871134, z: 0}
@@ -1551,8 +1558,9 @@ MonoBehaviour:
     - {x: -11.41668, y: 0.6846869, z: 0}
     - {x: -10.6094265, y: 2.5262332, z: 0}
     - {x: -8.111988, y: 3.585753, z: 0}
-    - {x: -3.7314398, y: -2.133004, z: 0}
-    - {x: -5.963232, y: -1.2606708, z: 0}
+    - {x: -6.604566, y: -0.504987, z: 0}
+    - {x: -6.8769045, y: -1.2463526, z: 0}
+    - {x: -7.981388, y: -1.9423283, z: 0}
 --- !u!4 &1466471267
 Transform:
   m_ObjectHideFlags: 0
@@ -2145,14 +2153,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 12
+    indexCount: 15
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 6
+    vertexCount: 7
     localAABB:
-      m_Center: {x: -7.57406, y: 0.7263745, z: 0}
-      m_Extent: {x: 3.8426204, y: 2.8593783, z: 0}
+      m_Center: {x: -9.010623, y: 0.8217123, z: 0}
+      m_Extent: {x: 2.4060571, y: 2.7640407, z: 0}
   m_Shapes:
     vertices: []
     shapes: []
@@ -2169,10 +2177,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 050000000100050001000200050002000300030004000500
+  m_IndexBuffer: 060000000100060001000200060002000300060003000400040005000600
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 6
+    m_VertexCount: 7
     m_Channels:
     - stream: 0
       offset: 0
@@ -2230,8 +2238,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 192
-    _typelessdata: 83932cc1dafe26bf000000000000000000000000000080bf2810a83da490843eb9aa36c1a4472f3f000000000000000000000000000080bf000000008944fc3e36c029c1cead2140000000000000000000000000000080bff31ed73d1492503fb4ca01c1fa7c6540000000000000000000000000000080bf9f29dc3e0000803fe9cf6ec0238308c0000000000000000000000000000080bf0000803f00000000ccd2bec0a95da1bf000000000000000000000000000080bf5ca8353f2c331c3e
+    m_DataSize: 224
+    _typelessdata: 83932cc1dafe26bf000000000000000000000000000080bf1b34063e75f46e3eb9aa36c1a4472f3f000000000000000000000000000080bf00000000184ff33e36c029c1cead2140000000000000000000000000ffff7fbfd6c72b3e47ef4e3fb4ca01c1fa7c6540000000000000000000000000000080bf7ace2f3f0000803f9b58d3c0d44601bf000000000000000000000000000080bf0000803fac1f853e9a0fdcc07b889fbf000000000000000000000000000080bf0983713f79eb003e8867ffc0379ef8bf000000000000000000000000000080bf1dc1363f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -2285,8 +2293,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: -7.57406, y: 0.7263745, z: 0}
-    m_Extent: {x: 3.8426204, y: 2.8593783, z: 0}
+    m_Center: {x: -9.010623, y: 0.8217123, z: 0}
+    m_Extent: {x: 2.4060571, y: 2.7640407, z: 0}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -2461,6 +2469,7 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
     - _DrawOutlineColor: 0
     - _DrawSelectoinColor: 0
@@ -2481,6 +2490,7 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 0.07735002, g: 1, b: 0, a: 1}
     - _SelectionColor: {r: 0.5, g: 0.5, b: 1, a: 1}

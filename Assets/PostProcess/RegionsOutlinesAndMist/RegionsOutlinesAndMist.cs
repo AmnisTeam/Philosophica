@@ -24,21 +24,45 @@ public sealed class RegionsOutlinesAndMistRenderer : PostProcessEffectRenderer<R
         Camera camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         RenderTexture noShaderTexture = camera.GetComponent<NoRegionShaderTextureScript>().noShaderTexture;
         RenderTexture outlineTexture = camera.GetComponent<NoRegionShaderTextureScript>().outlineTexture;
+        RenderTexture innerGlowTexture = camera.GetComponent<NoRegionShaderTextureScript>().innerGlowTexture;
 
+
+        Shader outlineShader = Shader.Find("Custom/Outline");
+        Material outlineMaterial = new Material(outlineShader);
+
+        RenderTexture innerGlowTextureTemp = RenderTexture.GetTemporary(innerGlowTexture.width, innerGlowTexture.height);
+        Graphics.Blit(innerGlowTexture, innerGlowTextureTemp, outlineMaterial);
+
+        RenderTexture innerGlowTextureTemp2 = Blur(innerGlowTextureTemp, innerGlowTextureTemp.width, innerGlowTextureTemp.height, 5);
+
+        RenderTexture blurredTexture = Blur(noShaderTexture, Screen.width, Screen.height, settings.iterations);
+
+
+
+        sheet.properties.SetTexture("_RegionsColorsTexture", noShaderTexture);
+        sheet.properties.SetTexture("_NoShaderTexture", blurredTexture);
+        sheet.properties.SetTexture("_OutlineTexture", outlineTexture);
+        sheet.properties.SetTexture("_InnerGlowTexture", innerGlowTextureTemp2);
+        RenderTexture.ReleaseTemporary(blurredTexture);
+        RenderTexture.ReleaseTemporary(innerGlowTextureTemp);
+        RenderTexture.ReleaseTemporary(innerGlowTextureTemp2);
+
+        context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);
+    }
+
+    public RenderTexture Blur(RenderTexture renderTexture, int width, int height, int iterations)
+    {
         Shader boxSamplingShader = Shader.Find("Custom/BoxSamplingShader");
         Material boxSamplingMaterial = new Material(boxSamplingShader);
         RenderTexture[] textures = new RenderTexture[16];
 
-        int width = noShaderTexture.width;
-        int height = noShaderTexture.height;
-
         textures[0] = RenderTexture.GetTemporary(width, height, 0);
         RenderTexture currentSource = textures[0];
-        Graphics.Blit(noShaderTexture, currentSource, boxSamplingMaterial);
+        Graphics.Blit(renderTexture, currentSource, boxSamplingMaterial);
 
         int lastIteration = 0;
-        
-        for (int i = 1; i < settings.iterations; i++)
+
+        for (int i = 1; i < iterations; i++)
         {
             width /= 2;
             height /= 2;
@@ -61,13 +85,6 @@ public sealed class RegionsOutlinesAndMistRenderer : PostProcessEffectRenderer<R
             RenderTexture.ReleaseTemporary(currentSource);
             currentSource = currentDestination;
         }
-
-
-        sheet.properties.SetTexture("_RegionsColorsTexture", noShaderTexture);
-        sheet.properties.SetTexture("_NoShaderTexture", currentSource);
-        sheet.properties.SetTexture("_OutlineTexture", outlineTexture);
-        RenderTexture.ReleaseTemporary(currentSource);
-
-        context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);
+        return currentSource;
     }
 }

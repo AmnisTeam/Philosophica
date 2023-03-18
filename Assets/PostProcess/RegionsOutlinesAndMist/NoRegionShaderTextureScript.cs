@@ -7,12 +7,14 @@ public class NoRegionShaderTextureScript : MonoBehaviour
 {
     public RenderTexture noShaderTexture;
     public RenderTexture outlineTexture;
+    public RenderTexture innerGlowTexture;
     public RegionsSystem regionsSystem;
     private int renderTextureDepth = 24;
     void Start()
     {
         noShaderTexture = new RenderTexture(Screen.width, Screen.height, renderTextureDepth);
         outlineTexture = new RenderTexture(Screen.width, Screen.height, renderTextureDepth);
+        innerGlowTexture = new RenderTexture(Screen.width, Screen.height, renderTextureDepth);
     }
 
     void Update()
@@ -37,11 +39,20 @@ public class NoRegionShaderTextureScript : MonoBehaviour
 
         // Rendering
         GetComponent<Camera>().Render();
+        SetDrawOutlineColorToAllRegions(false);
+
+        SyncRenderTexture(innerGlowTexture, renderTextureDepth);
+        GetComponent<Camera>().targetTexture = innerGlowTexture;
+        SetDrawInnerGlowToAllRegions(true);
+
+
+        // Rendering
+        GetComponent<Camera>().Render();
 
         // Restoring old parametors;
         GetComponent<Camera>().targetTexture = defaultTexture;
         SetDrawOnlyColorToAllRegions(false);
-        SetDrawOutlineColorToAllRegions(false);
+        SetDrawInnerGlowToAllRegions(false);
         GetComponent<PostProcessVolume>().enabled = true;
         GetComponent<Camera>().cullingMask = oldMask;
     }
@@ -58,6 +69,13 @@ public class NoRegionShaderTextureScript : MonoBehaviour
         float value = state ? 1 : 0;
         for (int i = 0; i < regionsSystem.regionSerds.Count; i++)
             regionsSystem.regionSerds[i].region.GetComponent<Renderer>().materials[0].SetFloat("_DrawOutlineColor", value);
+    }
+
+    public void SetDrawInnerGlowToAllRegions(bool state)
+    {
+        float value = state ? 1 : 0;
+        for (int i = 0; i < regionsSystem.regionSerds.Count; i++)
+            regionsSystem.regionSerds[i].region.GetComponent<Renderer>().materials[0].SetFloat("_DrawInnerGlowColor", value);
     }
 
     public void SyncRenderTexture(RenderTexture renderTexture, int depth)

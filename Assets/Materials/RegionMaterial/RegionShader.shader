@@ -102,8 +102,10 @@ Shader "Unlit/RegionShader"
         [HDR]
         _RegionColor ("Region color", Color) = (1,0,0,1)
         _OutlineColor ("Outline color", Color) = (0.5,0.5,1,1)
+        _InnerGlowColor ("Inner glow color", Color) = (0.5,0.5,1,1)
         _DrawOnlyColor ("Draw only color", Range(0,1)) = 0
         _DrawOutlineColor ("Draw outline color", Range(0,1)) = 0
+        _DrawInnerGlowColor ("Draw inner color", Range(0,1)) = 0
         _Aspect ("Aspect", Range(0,1)) = 0
         _Width ("Width", Range(0, 10000)) = 1
     }
@@ -145,8 +147,10 @@ Shader "Unlit/RegionShader"
        
             float4 _RegionColor;
             float4 _OutlineColor;
+            float4 _InnerGlowColor;
             float _DrawOnlyColor;
             float _DrawOutlineColor;
+            float _DrawInnerGlowColor;
             float _Aspect;
             float _Width;
 
@@ -238,6 +242,11 @@ Shader "Unlit/RegionShader"
                 else
                     regionColor = _RegionColor;
 
+                if (_DrawInnerGlowColor >= 0.5f)
+                    regionColor = _InnerGlowColor;
+                else
+                    regionColor = _RegionColor;
+                
                 if (_DrawOnlyColor >= 0.5)
                 {
                     color = regionColor;
