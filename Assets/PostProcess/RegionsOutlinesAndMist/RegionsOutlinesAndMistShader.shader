@@ -18,6 +18,7 @@ Shader "Custom/RegionsOutlinesAndMistShader"
 
             sampler2D _NoShaderTexture;
             sampler2D _RegionsColorsTexture;
+            sampler2D _OutlineTexture;
             float2 _MainTex_TexelSize;
 
 
@@ -58,7 +59,8 @@ Shader "Custom/RegionsOutlinesAndMistShader"
                 //                    tex2D(_NoShaderTexture, i.texcoord + _MainTex_TexelSize)) / 4;
 
 
-                return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _RegionsColorsTexture, 2);
+                //return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _RegionsColorsTexture, 2);
+                return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _OutlineTexture, 2);
             }
             ENDHLSL
         }

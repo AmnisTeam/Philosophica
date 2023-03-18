@@ -23,6 +23,7 @@ public sealed class RegionsOutlinesAndMistRenderer : PostProcessEffectRenderer<R
 
         Camera camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         RenderTexture noShaderTexture = camera.GetComponent<NoRegionShaderTextureScript>().noShaderTexture;
+        RenderTexture outlineTexture = camera.GetComponent<NoRegionShaderTextureScript>().outlineTexture;
 
         Shader boxSamplingShader = Shader.Find("Custom/BoxSamplingShader");
         Material boxSamplingMaterial = new Material(boxSamplingShader);
@@ -64,6 +65,7 @@ public sealed class RegionsOutlinesAndMistRenderer : PostProcessEffectRenderer<R
 
         sheet.properties.SetTexture("_RegionsColorsTexture", noShaderTexture);
         sheet.properties.SetTexture("_NoShaderTexture", currentSource);
+        sheet.properties.SetTexture("_OutlineTexture", outlineTexture);
         RenderTexture.ReleaseTemporary(currentSource);
 
         context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);

@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -11,6 +12,14 @@ using UnityEngine;
 public class Region : MonoBehaviour
 {
     float aspect = 0;
+
+    public void Init(RegionsSystem regionsSystem)
+    {
+        gameObject.layer = LayerMask.NameToLayer("Regions");
+        SetColor(regionsSystem.nextRegionColor);
+        SetOutlineColorToRegionColor();
+    }
+
     public void SetColor(UnityEngine.Color color)
     {
         if (gameObject.GetComponent<Renderer>().sharedMaterial != null)
@@ -43,11 +52,49 @@ public class Region : MonoBehaviour
         GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().sharedMesh;
     }
 
+    public void SetOutlineColorToRegionColor()
+    {
+        Material material = gameObject.GetComponent<Renderer>().materials[0];
+        Color regionColor = material.GetColor("_RegionColor");
 
-    public void Update()
+        material.SetColor("_OutlineColor", regionColor);
+    }
+
+    public void SetOutlineColor(Color color)
+    {
+        gameObject.GetComponent<Renderer>().materials[0].SetColor("_OutlineColor", color);
+    }
+
+    public void GraduallyChangeOutlineColor(Color color, float time)
+    {
+        Color outlineColor = gameObject.GetComponent<Renderer>().materials[0].GetColor("_OutlineColor");
+        LeanTween.value(0, 1, time).setOnUpdate((float val) =>
+        {
+            Color currentColor = Color.Lerp(outlineColor, color, val);
+            SetOutlineColor(currentColor);
+        }).setEaseOutSine();
+    }
+
+    public void UpdateShaderAspectAndWidth()
     {
         Vector3 size = GetComponent<Renderer>().bounds.size;
         GetComponent<Renderer>().materials[0].SetFloat("_Aspect", size.y / size.x);
         GetComponent<Renderer>().materials[0].SetFloat("_Width", size.x);
+    }
+
+    public void Awake()
+    {
+        SetOutlineColorToRegionColor();
+    }
+
+    public void Start()
+    {
+        //GraduallyChangeOutlineColor(new Color(1, 1, 1), 2);
+    }
+
+
+    public void Update()
+    {
+        UpdateShaderAspectAndWidth();
     }
 }
