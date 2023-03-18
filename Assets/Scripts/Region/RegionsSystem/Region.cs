@@ -10,7 +10,7 @@ using UnityEngine;
 [System.Serializable]
 public class Region : MonoBehaviour
 {
-
+    float aspect = 0;
     public void SetColor(UnityEngine.Color color)
     {
         if (gameObject.GetComponent<Renderer>().sharedMaterial != null)
@@ -39,7 +39,15 @@ public class Region : MonoBehaviour
         if (GetComponent<MeshFilter>().sharedMesh == null)
             GetComponent<MeshFilter>().sharedMesh = new Mesh();
 
-        Triangulator.Triangulate(points, GetComponent<MeshFilter>().sharedMesh);
+        aspect = Triangulator.Triangulate(points, GetComponent<MeshFilter>().sharedMesh);
         GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().sharedMesh;
+    }
+
+
+    public void Update()
+    {
+        Vector3 size = GetComponent<Renderer>().bounds.size;
+        GetComponent<Renderer>().materials[0].SetFloat("_Aspect", size.y / size.x);
+        GetComponent<Renderer>().materials[0].SetFloat("_Width", size.x);
     }
 }

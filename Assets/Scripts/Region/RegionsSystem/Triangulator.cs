@@ -48,7 +48,7 @@ public class Triangulator : MonoBehaviour
     }
 
     
-    public static Vector2[] GetUv(Vector3[] vertices)
+    public static Vector2[] GetUv(Vector3[] vertices, out float aspect)
     {
         Vector2[] uv = new Vector2[vertices.Length];
         Vector3 min = vertices[0];
@@ -74,11 +74,13 @@ public class Triangulator : MonoBehaviour
         for (int i = 0; i < vertices.Length; i++)
             uv[i] = (vertices[i] - min) / size;
 
+        aspect = size.y / size.x;
+
         return uv;
     }
 
     // It will throw you an error if you try to pass points in a counterclock-wise order
-    public static void Triangulate(List<Vector3> points, Mesh mesh)
+    public static float Triangulate(List<Vector3> points, Mesh mesh)
     {
         mesh.Clear();
         if (points.Count >= 3)
@@ -142,10 +144,14 @@ public class Triangulator : MonoBehaviour
             indices[currentIndicesCount++] = indexList[1];
             indices[currentIndicesCount++] = indexList[2];
 
+            float aspect = 0;
+
             mesh.vertices = vertices;
-            mesh.uv = GetUv(vertices);
+            mesh.uv = GetUv(vertices, out aspect);
             mesh.triangles = indices;
             mesh.RecalculateNormals();
+            return aspect;
         }
+        return 0;
     }
 }

@@ -17,10 +17,11 @@ Shader "Custom/RegionsOutlinesAndMistShader"
             TEXTURE2D_SAMPLER2D(_CameraNormalsTexture, sampler_CameraNormalsTexture);
 
             sampler2D _NoShaderTexture;
+            sampler2D _RegionsColorsTexture;
             float2 _MainTex_TexelSize;
 
 
-            float4 get_outlines(float2 uv, float thickness)
+            float4 get_outlines(float2 uv, sampler2D regionsTexture, float thickness)
             {
                 float halfScaleFloor = floor(thickness * 0.5);
                 float halfScaleCeil = ceil(thickness * 0.5);
@@ -30,11 +31,11 @@ Shader "Custom/RegionsOutlinesAndMistShader"
                 float2 bottomRightUV = uv + float2(_MainTex_TexelSize.x * halfScaleCeil, -_MainTex_TexelSize.y * halfScaleFloor);
                 float2 topLeftUV = uv + float2(-_MainTex_TexelSize.x * halfScaleFloor, _MainTex_TexelSize.y * halfScaleCeil);
 
-                float4 ceterDepth = tex2D(_NoShaderTexture, uv);
-                float4 depth0 = tex2D(_NoShaderTexture, bottomLeftUV);
-                float4 depth1 = tex2D(_NoShaderTexture, topRightUV);
-                float4 depth2 = tex2D(_NoShaderTexture, bottomRightUV);
-                float4 depth3 = tex2D(_NoShaderTexture, topLeftUV);
+                float4 ceterDepth = tex2D(regionsTexture, uv);
+                float4 depth0 = tex2D(regionsTexture, bottomLeftUV);
+                float4 depth1 = tex2D(regionsTexture, topRightUV);
+                float4 depth2 = tex2D(regionsTexture, bottomRightUV);
+                float4 depth3 = tex2D(regionsTexture, topLeftUV);
 
                 float4 depthFiniteDifference0 = depth1 - depth0;
                 float4 depthFiniteDifference1 = depth3 - depth2;
@@ -44,22 +45,11 @@ Shader "Custom/RegionsOutlinesAndMistShader"
                 return edgeDepth;
             }
 
-            half3 Sample (float2 uv) {
-			    return tex2D(_NoShaderTexture, uv).rgb;
-		    }
-
-            half3 SampleBox (float2 uv, float delta) {
-                float4 o = _MainTex_TexelSize.xyxy * float2(-delta, delta).xxyy;
-                half3 s =
-                    Sample(uv + o.xy) + Sample(uv + o.zy) +
-                    Sample(uv + o.xw) + Sample(uv + o.zw);
-                return s * 0.25f;
-		    }
-
             float4 Frag(VaryingsDefault i) : SV_Target
             {
                 float4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
                 float4 regionsOnlyColor = tex2D(_NoShaderTexture, i.texcoord);
+                float4 regionsColor = tex2D(_RegionsColorsTexture, i.texcoord);
 
 
                 // float4 blurColor = (tex2D(_NoShaderTexture, i.texcoord) + 
@@ -68,7 +58,7 @@ Shader "Custom/RegionsOutlinesAndMistShader"
                 //                    tex2D(_NoShaderTexture, i.texcoord + _MainTex_TexelSize)) / 4;
 
 
-                return regionsOnlyColor;
+                return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _RegionsColorsTexture, 2);
             }
             ENDHLSL
         }
