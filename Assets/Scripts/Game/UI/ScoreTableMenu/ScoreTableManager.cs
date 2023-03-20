@@ -169,29 +169,27 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
 
         if (delete0)
         {
-            Destroy(rows[0].row);
-            rows.Remove(rows[0]);
+            //Destroy(rows[0].row);
+            //rows.Remove(rows[0]);
+            RemovePlayer(0);
             delete0 = false;
         }
 
         if (delete1)
         {
-            Destroy(rows[1].row);
-            rows.Remove(rows[1]);
+            RemovePlayer(1);
             delete1 = false;
         }
 
         if (delete2)
         {
-            Destroy(rows[2].row);
-            rows.Remove(rows[2]);
+            RemovePlayer(2);
             delete2 = false;
         }
 
         if (delete3)
         {
-            Destroy(rows[3].row);
-            rows.Remove(rows[2]);
+            RemovePlayer(3);
             delete3 = false;
         }
     }

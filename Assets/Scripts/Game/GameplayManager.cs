@@ -368,8 +368,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     //    }
     //}
 
-    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) {
-        GameObject.FindGameObjectWithTag("SCORE_TABLE_TAG").GetComponent<ScoreTableManager>().RemovePlayer(otherPlayer.ActorNumber-1);
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) 
+    {
+        playersManager.disconnect(otherPlayer.ActorNumber - 1);
     }
 
     public void OffensivePlayerSelectionStart()
