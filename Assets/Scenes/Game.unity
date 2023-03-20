@@ -1335,9 +1335,9 @@ Mesh:
       format: 0
       dimension: 0
     - stream: 0
-      offset: 0
+      offset: 24
       format: 0
-      dimension: 0
+      dimension: 2
     - stream: 0
       offset: 0
       format: 0
@@ -1374,8 +1374,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 144
-    _typelessdata: 85b807c15e9b0dc0000000000000000000000000000080bf3ed31dc10c2e35bf000000000000000000000000000080bf72380fc19bc0453f000000000000000000000000ffff7fbf9a3be3c01408a23f000000000000000000000000000080bf9349b2c0c4b7383e000000000000000000000000000080bf819aa9c0d0f900c0000000000000000000000000000080bf
+    m_DataSize: 192
+    _typelessdata: 85b807c15e9b0dc0000000000000000000000000000080bfdcfb9a3e000000003ed31dc10c2e35bf000000000000000000000000000080bf00000000e880dd3e72380fc19bc0453f000000000000000000000000ffff7fbfc9cc4c3e1db05b3f9a3be3c01408a23f000000000000000000000000000080bfd8fb1a3f0000803f9349b2c0c4b7383e000000000000000000000000000080bf43c7703f0c1d303f819aa9c0d0f900c0000000000000000000000000000080bf0000803fab65683d
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -1472,7 +1472,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   regionPrefab: {fileID: 3269934478401789399, guid: fee093a1b9a0e3c46b40fa3f07a486b3, type: 3}
-  nextRegionColor: {r: 1, g: 1, b: 1, a: 0}
+  nextRegionColor: {r: 1, g: 1, b: 1, a: 1}
   handleRadius: 0.2
   regionSerds:
   - region: {fileID: 220590196}
@@ -1886,7 +1886,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!225 &158544389
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2267,7 +2266,7 @@ GameObject:
   - component: {fileID: 220590198}
   - component: {fileID: 220590196}
   - component: {fileID: 220590197}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2740,9 +2739,9 @@ Mesh:
       format: 0
       dimension: 0
     - stream: 0
-      offset: 0
+      offset: 24
       format: 0
-      dimension: 0
+      dimension: 2
     - stream: 0
       offset: 0
       format: 0
@@ -2779,8 +2778,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 144
-    _typelessdata: b1a58c40e865d13f000000000000000000000000000080bfc59c6340d71d4140000000000000000000000000000080bf862c8340ac7b7040000000000000000000000000000080bf02f6bf40c7078840000000000000000000000000000080bf66f5fb40ec6e2940000000000000000000000000000080bf627ce340b0df9e3f000000000000000000000000ffff7fbf
+    m_DataSize: 192
+    _typelessdata: b1a58c40e865d13f000000000000000000000000000080bfd7f2463e8a4b063ec59c6340d71d4140000000000000000000000000000080bf00000000fd14173f862c8340ac7b7040000000000000000000000000000080bf3ebb003e6608563f02f6bf40c7078840000000000000000000000000000080bfa5d2103f0000803f66f5fb40ec6e2940000000000000000000000000000080bf0000803f8f36ef3e627ce340b0df9e3f000000000000000000000000ffff7fbfc2a6523f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -2931,7 +2930,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &264928979
@@ -3460,7 +3459,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &299676459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3651,7 +3649,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &315819548
@@ -5732,9 +5730,9 @@ Mesh:
       format: 0
       dimension: 0
     - stream: 0
-      offset: 0
+      offset: 24
       format: 0
-      dimension: 0
+      dimension: 2
     - stream: 0
       offset: 0
       format: 0
@@ -5771,8 +5769,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 144
-    _typelessdata: 094a85c0b0df9e3f000000000000000000000000000080bf2ca896c057b22440000000000000000000000000000080bf221486c0ce228040000000000000000000000000000080bfb4bfccbf3ddf9340000000000000000000000000000080bfe94a5a3d4f6e6540000000000000000000000000000080bfdf619dbf09db0940000000000000000000000000000080bf
+    m_DataSize: 192
+    _typelessdata: 094a85c0b0df9e3f000000000000000000000000000080bf6173e93d000000002ca896c057b22440000000000000000000000000000080bf000000006acfc93e221486c0ce228040000000000000000000000000000080bfdbd6de3dde48513fb4bfccbf3ddf9340000000000000000000000000000080bf2921273f0000803fe94a5a3d4f6e6540000000000000000000000000000080bf0000803fab84313fdf619dbf09db0940000000000000000000000000000080bfa1063b3f01478a3e
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -6650,7 +6648,7 @@ GameObject:
   - component: {fileID: 650230386}
   - component: {fileID: 650230384}
   - component: {fileID: 650230385}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7946,7 +7944,7 @@ GameObject:
   - component: {fileID: 787418578}
   - component: {fileID: 787418580}
   - component: {fileID: 787418577}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8981,7 +8979,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &851522507
 GameObject:
   m_ObjectHideFlags: 0
@@ -9256,7 +9253,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &877348186
 GameObject:
   m_ObjectHideFlags: 0
@@ -9346,7 +9342,7 @@ GameObject:
   - component: {fileID: 878568800}
   - component: {fileID: 878568802}
   - component: {fileID: 878568799}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10146,7 +10142,7 @@ GameObject:
   - component: {fileID: 958888242}
   - component: {fileID: 958888244}
   - component: {fileID: 958888241}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12051,7 +12047,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!114 &1187530891 stripped
@@ -12982,7 +12978,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &1348655984
@@ -15017,7 +15013,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!21 &1563518314
 Material:
   serializedVersion: 8
@@ -15102,7 +15097,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &1571860185
@@ -15948,9 +15943,9 @@ Mesh:
       format: 0
       dimension: 0
     - stream: 0
-      offset: 0
+      offset: 24
       format: 0
-      dimension: 0
+      dimension: 2
     - stream: 0
       offset: 0
       format: 0
@@ -15987,8 +15982,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 144
-    _typelessdata: fb038f40fa4943c0000000000000000000000000000080bfcdb75b403ef4c5bf000000000000000000000000ffff7fbf66478a40e0088bbc000000000000000000000000000080bfa6e8b4405468c13e000000000000000000000000000080bf6c10f4405a37dfbf000000000000000000000000000080bf86daf440446184c0000000000000000000000000000080bf
+    m_DataSize: 192
+    _typelessdata: fb038f40fa4943c0000000000000000000000000000080bf39827b3e2b35763ecdb75b403ef4c5bf000000000000000000000000ffff7fbf00000000a0e2123f66478a40e0088bbc000000000000000000000000000080bf3294573e149e693fa6e8b4405468c13e000000000000000000000000000080bfa1bc063f0000803f6c10f4405a37dfbf000000000000000000000000000080bfbe807e3faab1073f86daf440446184c0000000000000000000000000000080bf0000803f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -17676,9 +17671,9 @@ Mesh:
       format: 0
       dimension: 0
     - stream: 0
-      offset: 0
+      offset: 24
       format: 0
-      dimension: 0
+      dimension: 2
     - stream: 0
       offset: 0
       format: 0
@@ -17715,8 +17710,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 120
-    _typelessdata: b84402c0f89049c0000000000000000000000000000080bf7ce467c06225e8bf000000000000000000000000000080bfd2f33dc0e0eddb3e000000000000000000000000000080bfa4ba0c4071a75b3f000000000000000000000000000080bfa4ba0c4068661cc0000000000000000000000000000080bf
+    m_DataSize: 160
+    _typelessdata: b84402c0f89049c0000000000000000000000000000080bfeaa28b3e000000007ce467c06225e8bf000000000000000000000000000080bf00000000abaaaa3ed2f33dc0e0eddb3e000000000000000000000000000080bfc682e63d02a1643fa4ba0c4071a75b3f000000000000000000000000000080bf0000803f0000803fa4ba0c4068661cc0000000000000000000000000000080bf0000803fbb53343e
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -17978,9 +17973,9 @@ Mesh:
       format: 0
       dimension: 0
     - stream: 0
-      offset: 0
+      offset: 24
       format: 0
-      dimension: 0
+      dimension: 2
     - stream: 0
       offset: 0
       format: 0
@@ -18017,8 +18012,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 144
-    _typelessdata: 26da0cc133541340000000000000000000000000000080bf333f0dc148536d40000000000000000000000000000080bf68a7e1c0c0ec8f40000000000000000000000000000080bf48ebafc07ae76e40000000000000000000000000000080bfef56bdc03a6f0b40000000000000000000000000000080bf6fc2d9c068d1ed3f000000000000000000000000000080bf
+    m_DataSize: 192
+    _typelessdata: 26da0cc133541340000000000000000000000000000080bf30bbf23bfa422c3e333f0dc148536d40000000000000000000000000000080bf000000007370333f68a7e1c0c0ec8f40000000000000000000000000000080bf8688083f0000803f48ebafc07ae76e40000000000000000000000000000080bf0000803ff0d4353fef56bdc03a6f0b40000000000000000000000000000080bf51c35f3f81d2f83d6fc2d9c068d1ed3f000000000000000000000000000080bf0c7f1b3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -18765,7 +18760,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &1898887546 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 787162923219038593, guid: e66a38329877c884cb6aa4600a307500, type: 3}
@@ -19063,7 +19057,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.2784314, g: 0.2784314, b: 0.2784314, a: 1}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -19332,7 +19326,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &1945807259
@@ -20067,7 +20061,7 @@ GameObject:
   - component: {fileID: 1999210604}
   - component: {fileID: 1999210606}
   - component: {fileID: 1999210603}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21451,7 +21445,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &2100993408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21897,7 +21890,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2142768906
 GameObject:
   m_ObjectHideFlags: 0
