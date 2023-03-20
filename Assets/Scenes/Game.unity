@@ -2905,10 +2905,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Aspect: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
+    - _DrawOutlineColor: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -2921,10 +2924,13 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _Width: 1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
@@ -3619,10 +3625,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Aspect: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
+    - _DrawOutlineColor: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -3635,10 +3644,13 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _Width: 1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
@@ -12013,10 +12025,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Aspect: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
+    - _DrawOutlineColor: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -12029,10 +12044,13 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _Width: 1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
@@ -12938,10 +12956,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Aspect: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
+    - _DrawOutlineColor: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -12954,10 +12975,13 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _Width: 1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
@@ -15052,10 +15076,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Aspect: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
+    - _DrawOutlineColor: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -15068,10 +15095,13 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _Width: 1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
@@ -19007,6 +19037,7 @@ GameObject:
   - component: {fileID: 1926198291}
   - component: {fileID: 1926198293}
   - component: {fileID: 1926198292}
+  - component: {fileID: 1926198294}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -19095,8 +19126,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   scalingSpeed: 1
+  scalingSpeedTouch: 0.1
   minScale: 1
   maxScale: 20
+  canvas: {fileID: 32189311}
+  isDrag: 0
+  isLocked: 0
 --- !u!114 &1926198292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19186,6 +19221,22 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   priority: 0
+--- !u!114 &1926198294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1926198287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c24c8895c3f7c748995076108cd4ad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noShaderTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
+  outlineTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
+  innerGlowTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
+  regionsSystem: {fileID: 102743451}
 --- !u!114 &1932296511 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4429099728930130315, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
@@ -19255,10 +19306,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Aspect: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DrawInnerGlowColor: 0
     - _DrawOnlyColor: 0
+    - _DrawOutlineColor: 0
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -19271,10 +19325,13 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _Width: 1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
+    - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
@@ -21628,6 +21685,7 @@ MonoBehaviour:
   minutes: {fileID: 689276440}
   secundes: {fileID: 1804972988}
   tableCompiler: {fileID: 2104777009}
+  pv: {fileID: 0}
   timeToQuestion: 0
   timerToQuestion: 0
   rightAnswer: 0
@@ -21681,7 +21739,7 @@ MonoBehaviour:
   colorRightAnswer: {r: 0.4425163, g: 1, b: 0.36320752, a: 1}
   playersManager: {fileID: 267347261}
   questionManager: {fileID: 2104777008}
-  iconsContent: {fileID: 375754359}
+  iconsContent: {fileID: 0}
   table: []
   winner:
     id: 0
