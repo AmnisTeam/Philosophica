@@ -239,10 +239,7 @@ Shader "Unlit/RegionShader"
 
                 if (_DrawOutlineColor >= 0.5)
                     regionColor = _OutlineColor;
-                else
-                    regionColor = _RegionColor;
-
-                if (_DrawInnerGlowColor >= 0.5f)
+                else if (_DrawInnerGlowColor >= 0.5f)
                     regionColor = _InnerGlowColor;
                 else
                     regionColor = _RegionColor;

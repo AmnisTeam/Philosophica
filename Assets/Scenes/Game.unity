@@ -1456,7 +1456,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   regionPrefab: {fileID: 3269934478401789399, guid: fee093a1b9a0e3c46b40fa3f07a486b3, type: 3}
-  nextRegionColor: {r: 1, g: 1, b: 1, a: 0}
+  nextRegionColor: {r: 1, g: 1, b: 1, a: 1}
   handleRadius: 0.2
   regionSerds:
   - region: {fileID: 220590196}
@@ -1871,7 +1871,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!225 &158544389
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2252,7 +2251,7 @@ GameObject:
   - component: {fileID: 220590198}
   - component: {fileID: 220590196}
   - component: {fileID: 220590197}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3355,7 +3354,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &299676459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3546,7 +3544,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &315819548
@@ -6837,7 +6835,7 @@ GameObject:
   - component: {fileID: 650230386}
   - component: {fileID: 650230384}
   - component: {fileID: 650230385}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8299,7 +8297,7 @@ GameObject:
   - component: {fileID: 787418578}
   - component: {fileID: 787418580}
   - component: {fileID: 787418577}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9410,7 +9408,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &851522507
 GameObject:
   m_ObjectHideFlags: 0
@@ -9685,7 +9682,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &877348186
 GameObject:
   m_ObjectHideFlags: 0
@@ -9775,7 +9771,7 @@ GameObject:
   - component: {fileID: 878568800}
   - component: {fileID: 878568802}
   - component: {fileID: 878568799}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10614,7 +10610,7 @@ GameObject:
   - component: {fileID: 958888242}
   - component: {fileID: 958888244}
   - component: {fileID: 958888241}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12609,7 +12605,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!114 &1187530891 stripped
@@ -13405,7 +13401,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &1348655984
@@ -15636,7 +15632,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!21 &1563518314
 Material:
   serializedVersion: 8
@@ -15721,7 +15716,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &1571860185
@@ -19540,7 +19535,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &1898887546 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 787162923219038593, guid: e66a38329877c884cb6aa4600a307500, type: 3}
@@ -19699,7 +19693,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.2784314, g: 0.2784314, b: 0.2784314, a: 1}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -20044,7 +20038,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InnerGlowColor: {r: 0.5, g: 0.5, b: 1, a: 1}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 1, a: 1}
-    - _RegionColor: {r: 1, g: 1, b: 1, a: 0}
+    - _RegionColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.49056602, g: 0.057849757, b: 0.057849757, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!1 &1945807259
@@ -20703,7 +20697,7 @@ GameObject:
   - component: {fileID: 1999210604}
   - component: {fileID: 1999210606}
   - component: {fileID: 1999210603}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Region(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22239,7 +22233,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &2100993408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22761,7 +22754,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2142768906
 GameObject:
   m_ObjectHideFlags: 0
