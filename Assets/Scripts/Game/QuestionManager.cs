@@ -135,6 +135,7 @@ public class QuestionManager : MonoBehaviourPunCallbacks
                 if (player.isLocalClient) {
                     playersManager.playerAnswerData.find(player.id).answerId = selectedAnswer;
                     playersManager.playerAnswerData.find(player.id).timeToAnswer = timeToQuestion - timerToQuestion;
+                    Debug.Log($">>> checkSelectAnswer() -- {player} answered {selectedAnswer} within {timeToQuestion - timerToQuestion} seconds");
                     break;
                 }
             }
@@ -173,13 +174,16 @@ public class QuestionManager : MonoBehaviourPunCallbacks
                 endQuestion = true;
                 haveAnswer = true;
                 showTable = true;
-                selectedAnswer = selectionQuestions.activeSelection;
-                timerToShowTable = timeToShowTable;
+                /*selectedAnswer = selectionQuestions.activeSelection;
+                timerToShowTable = timeToShowTable;*/
 
                 foreach (Player player in playersManager.players.list) {
                     if (player.isLocalClient) {
                         playersManager.playerAnswerData.find(player.id).answerId = selectionQuestions.activeSelection;
-                        pv.RPC("RPC_RevealAnswerOfOpponentStageOne", RpcTarget.Others, player.id, selectionQuestions.activeSelection, timeToShowTable);
+                        pv.RPC("RPC_RevealAnswerOfOpponentStageOne", RpcTarget.Others, player.id,
+                                                                                       selectionQuestions.activeSelection,
+                                                                                       playersManager.playerAnswerData.find(player.id).timeToAnswer);
+                        break;
                     }
                 }
             }
@@ -206,7 +210,7 @@ public class QuestionManager : MonoBehaviourPunCallbacks
 
     [PunRPC]
     public void RPC_RevealAnswerOfOpponentStageOne(int playerIdx, int answerId, float answerTime) {
-        Debug.Log(">>> RPC invoked at RPC_RevealAnswerOfOpponentStageOne()");
+        Debug.Log($"{playerIdx} answered {answerId} within {answerTime} seconds");
         playersManager.playerAnswerData.find(playerIdx).answerId = answerId;
         playersManager.playerAnswerData.find(playerIdx).timeToAnswer = answerTime;
     }

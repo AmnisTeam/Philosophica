@@ -66,7 +66,7 @@ Shader "Custom/RegionsOutlinesAndMistShader"
 
                 
                 return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _OutlineTexture, 2) + whiteAndBlackColor * tex2D(_InnerGlowTexture, i.texcoord) * 2;
-                //return tex2D(_OutlineTexture, i.texcoord);
+                //return outlineColor;
             }
             ENDHLSL
         }
