@@ -16,6 +16,7 @@ public class QuestionManager : MonoBehaviourPunCallbacks
 
     public QuestionLoader questionLoader;
     public GameObject questionsMenu;
+    public GameObject tableMenu;
     public SelectionQuestions selectionQuestions;
     public PlayersManager playersManager;
     public ConfigTemp config;
@@ -48,7 +49,8 @@ public class QuestionManager : MonoBehaviourPunCallbacks
     public void setQuestion(Question question)
     {
         ShowTable(false);
-        OpenQuestionMenu();
+        //OpenQuestionMenu();
+        questionsMenu.GetComponent<CanvasGroup>().LeanAlpha(0, 1).setOnComplete(() => { questionsMenu.SetActive(false); });
 
         timeToQuestion = question.timeToQuestion;
         timerToQuestion = question.timeToQuestion;
@@ -85,7 +87,8 @@ public class QuestionManager : MonoBehaviourPunCallbacks
     public void ShowTable(bool toShowTable)
     {
         //questionMenuAnimator.SetBool("ShowTable", toShowTable);
-        showTable = toShowTable;
+        //showTable = toShowTable;
+        tableMenu.GetComponent<CanvasGroup>().LeanAlpha(0, 1).setOnComplete(() => { tableMenu.SetActive(toShowTable); });
     }
 
     public void OpenQuestionMenu()

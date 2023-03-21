@@ -22465,7 +22465,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92b16f8740a7f9f45976569763d4b150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  questionsMenu: {fileID: 158544386}
+  questionsMenu: {fileID: 907349528}
+  tableMenu: {fileID: 339311546}
   selectionQuestions: {fileID: 1854650471}
   playersManager: {fileID: 267347261}
   config: {fileID: 1411831728}
@@ -22489,7 +22490,6 @@ MonoBehaviour:
   timerToShowTable: 0
   showTable: 0
   time: 4.11
-  questionMenuAnimator: {fileID: 0}
 --- !u!114 &2104777009
 MonoBehaviour:
   m_ObjectHideFlags: 0

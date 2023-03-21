@@ -215,7 +215,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (viewResultsTimer >= viewResultsTime)
         {
             viewResultsStateIsEnded.state = true;
-            questionManager.CloseQuestionMenu();
+            //questionManager.CloseQuestionMenu();
+            questionForPlayers.GetComponent<CanvasGroup>().LeanAlpha(0, 1).setOnComplete(() => { questionForPlayers.SetActive(false); });
         }
     }
 
