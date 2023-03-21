@@ -12,6 +12,7 @@ public class Player : BaseRaw
     public List<Region> claimedRegions = new List<Region>();
     public int scores = 0;
     public bool isLocalClient;
+    public bool isLose = false;
 
     public Player()
     {

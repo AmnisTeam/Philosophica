@@ -10,6 +10,7 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
     {
         public float timeToEvent = float.NaN;
         public GameObject row;
+        public Player player = null;
 
         public RowMoveableContainer(GameObject row)
         {
@@ -91,6 +92,18 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
         return id;
     }
 
+    public ScoreTableRow FindRowByPlayer(Player player)
+    {
+        GameObject findedRow = null;
+        for(int x = 0; x < rows.Count; x++)
+            if(rows[x].player == player)
+            {
+                findedRow = rows[x].row;
+                break;
+            }
+        return findedRow.GetComponent<ScoreTableRow>();
+    }
+
     public void ChangeStateOfScoreTable(GameObject gameObject)
     {
         int id = findRowId(gameObject);
@@ -129,6 +142,7 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
         {
             ScoreTableRow scoreTableRow = rows[x].row.GetComponent<ScoreTableRow>();
             Player player = playersManager.players.get(x);
+            rows[x].player = player;
             scoreTableRow.FillRow(
                 iconsContent.lobbyIcons[(int)players[x].CustomProperties["playerIconId"]], 
                 players[x].NickName, 

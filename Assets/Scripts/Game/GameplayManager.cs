@@ -38,6 +38,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     private PlayersManager playersManager;
     public QuestionManager questionManager;
     public RegionsSystem regionSystem;
+    public ScoreTableManager scoreTableManager;
     public TextMeshProUGUI nextQuestionTimeText;
     public TextMeshProUGUI stepsText;
     public ToastShower toast;
@@ -799,10 +800,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             GlobalVariables.Delay(menusTransitionDelayTime, () =>
             {
                 steps++;
-                currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
+                int count = 0;
+                do
+                {
+                    currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
+                    count++;
+                } while (!playersManager.players.get(currentOffensivePlayer).isLose && count < playersManager.players.count);
+                Debug.Log("Количесто оставшихся территорий у проигравшено = " + battle.GetLoser().player.claimedRegions.Count);
                 if (battle.GetLoser().player.claimedRegions.Count == 0)
                     fromBattleResultsToLosePlayer.Set(true);
-                if (steps >= maxSteps)
+                else if (steps >= maxSteps)
                     fromBattleResultsToEndGame.Set(true);
                 else
                     fromBattleResultsToOffensive.Set(true);
@@ -881,12 +888,20 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void LosePlayerStart()
     {
+        battle.GetLoser().player.isLose = true;
         losePlayerAnnouncement.SetActive(true);
-        losePlayerAnnouncementText.text = "Игрок" + "<color=" + battle.GetLoser().player.color.ToHexString() + ">" + battle.GetLoser().player.nickname + "</color> потерял все территории";
+        losePlayerAnnouncementText.text = "Игрок" + "<color=#" + battle.GetLoser().player.color.ToHexString().Substring(0, 6) + ">" + battle.GetLoser().player.nickname + "</color> потерял все территории";
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
+        GlobalVariables.Delay(menusTransitionTime + losePlayerAnnouncmentTime / 2.0, () => { scoreTableManager.FindRowByPlayer(battle.GetLoser().player).GetComponent<ScoreTableRow>().isLose = true; });
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime)
             .setDelay((float)(menusTransitionTime + losePlayerAnnouncmentTime))
-            .setOnComplete(() => { losePlayerAnnouncement.SetActive(false); });
+            .setOnComplete(() => { 
+                losePlayerAnnouncement.SetActive(false);
+                if (steps >= maxSteps)
+                    fromBattleResultsToEndGame.Set(true);
+                else
+                    fromBattleResultsToOffensive.Set(true);
+            });
         fromBattleResultsToLosePlayer.Set(false);
     }
 
@@ -1051,6 +1066,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         State losePlayerState = new State();
         losePlayerState.startEvents += LosePlayerStart;
         losePlayerState.updateEvents += LosePlayerUpdate;
+        gameStateMachine.states.Add(losePlayerState);
 
         battleCond = new BoolCondition();
         gameStateMachine.transitions.Add(new Transition(battleCond, battleRoundResultsState, battleResultsState, gameStateMachine));

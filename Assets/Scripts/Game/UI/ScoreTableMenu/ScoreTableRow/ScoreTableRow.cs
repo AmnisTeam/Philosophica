@@ -10,6 +10,7 @@ public class ScoreTableRow : MonoBehaviour, IPointerDownHandler
     public CanvasGroup backgroundRow;
     public GameObject iconContanier;
     public Image icon;
+    public Image cross;
     public CanvasGroup content;
     public TMPro.TMP_Text nickname;
     public TMPro.TMP_Text countLands;
@@ -19,8 +20,11 @@ public class ScoreTableRow : MonoBehaviour, IPointerDownHandler
 
     public float timeToDisappearanceContentAndStars;
     public float timeToHiddenBackgroundToIcon;
+    public float timeAppearanceCross;
 
     public bool isOpen = false;
+    public bool isLose;
+    private bool oldLose;
 
     public void FillRow(Sprite iconSprite, string nickname, int countLands, int maxCountLands, int countScores, Color color)
     {
@@ -69,6 +73,14 @@ public class ScoreTableRow : MonoBehaviour, IPointerDownHandler
 
     private void Update()
     {   
+        if(oldLose != isLose)
+        {
 
+            oldLose = isLose;
+            if (isLose)
+                cross.GetComponent<CanvasGroup>().LeanAlpha(1, timeAppearanceCross);
+            else
+                cross.GetComponent<CanvasGroup>().LeanAlpha(0, timeAppearanceCross);
+        }
     }
 }
