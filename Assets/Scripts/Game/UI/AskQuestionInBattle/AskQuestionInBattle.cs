@@ -181,9 +181,7 @@ public class AskQuestionInBattle : MonoBehaviourPunCallbacks
         LeanTween.color(answersBackgrounds[answerId].rectTransform, answerColor, buttonsChangeTime);
     }
 
-    public static string GetHealthStr(double health, double maxHealth, Color healthColor)
-    {
-        string hex = healthColor.ToHexString();
-        return "<color=#" + hex + ">" + (int)health + "</color> / " + maxHealth;
+    public static string GetHealthStr(double health, double maxHealth, Color healthColor) {
+        return $"<color=#{healthColor.ToHexString()}>{(int)health}</color> / {maxHealth}";
     }
 }

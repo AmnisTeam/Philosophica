@@ -18,7 +18,7 @@ public class EndGamePrizeWinner : MonoBehaviour
         icon.color = iconColor;
         this.nickname.text = nickname;
         this.nickname.color = iconColor;
-        this.points.text = points.ToString() + (toWritePoints ? " очков" : "");
+        this.points.text = $"{points}{(toWritePoints ? " очков" : "")}";
     }
 
     public void SetWinner(Player person)
@@ -27,7 +27,7 @@ public class EndGamePrizeWinner : MonoBehaviour
         SetWinner(iconsContent.lobbyIcons[person.iconId],
                   person.color,
                   person.nickname,
-                  (int)person.scores);
+                  person.scores);
     }
 
     private void Awake()

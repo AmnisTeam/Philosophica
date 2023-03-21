@@ -27,23 +27,18 @@ public class BattleResultsVictory : MonoBehaviour
         winnersNameText.text = winner.nickname;
         winnersNameText.color = winner.color;
 
-        string winnerName = "<color=#" + winner.color.ToHexString() + ">" + winner.nickname + "</color>";
-        string loserName = "<color=#" + loser.color.ToHexString() + ">" + loser.nickname + "</color>";
+        string winnerName = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color>";
+        string loserName = $"<color=#{loser.color.ToHexString()}>{loser.nickname}</color>";
 
 
         houseIcon.gameObject.SetActive(false);
         shieldIcon.gameObject.SetActive(false);
-        if (type == "offence")
-        {
-            notification.text = "Поэтому " + winnerName + " получает территорию " + loserName + " ";
+        if (type == "offence") {
+            notification.text = $"Поэтому {winnerName} получает территорию {loserName}";
             houseIcon.gameObject.SetActive(true);
-        }
-        else if (type == "defense")
-        {
-            notification.text = "Игрок " + winnerName + " успешно защитил свои территории от нападения";
+        } else if (type == "defense") {
+            notification.text = $"Игрок {winnerName} успешно защитил свои территории от нападения";
             shieldIcon.gameObject.SetActive(true);
         }
-
-        
     }
 }

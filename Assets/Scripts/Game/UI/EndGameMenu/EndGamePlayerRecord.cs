@@ -18,7 +18,7 @@ public class EndGamePlayerRecord : MonoBehaviour
         icon.sprite = iconSprite;
         icon.color = iconColor;
         this.nickname.text = nickname;
-        this.points.text = points.ToString() + " очков";
+        this.points.text = $"{points} очков";
         iconsContent = GameObject.FindWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
     }
 

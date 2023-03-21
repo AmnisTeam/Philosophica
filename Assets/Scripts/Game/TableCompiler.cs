@@ -95,7 +95,7 @@ public class TableCompiler : MonoBehaviour
         if (Math.Abs(restOfSeconds) < 10)
             secondsNonsignificantZero = "0";
 
-        return minutesNonsignificantZero + minutes + ":" + secondsNonsignificantZero + restOfSeconds;
+        return $"{minutesNonsignificantZero + minutes}:{secondsNonsignificantZero + restOfSeconds}";
     }
 
 }
