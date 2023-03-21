@@ -57,6 +57,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public GameObject attackAnnouncement;
     public TextMeshProUGUI attackAnnouncementText;
 
+    public GameObject losePlayerAnnouncement;
+    public TextMeshProUGUI losePlayerAnnouncementText;
+
     public GameObject opponentsAnnouncement;
     public UnityEngine.UI.Image opponentsAnnouncementOpponent1Icon;
     public TextMeshProUGUI opponentsAnnouncementOpponent1Nickname;
@@ -141,6 +144,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public double endGameAnnouncmentTime;
     public double endGameLoadingScreenTime;
 
+    public double losePlayerAnnouncmentTime;
+
     private double waitTimer = 0;
     private double waiteTime = 0;
 
@@ -171,10 +176,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolCondition battleCond;
     public BoolCondition fromBattleResultsToOffensive;
     public BoolCondition fromBattleResultsToEndGame;
+    public BoolCondition fromBattleResultsToLosePlayer;
 
     public void AskQuestionStart()
     {
         askQuestionStateIsEnded.state = false;
+        
         questionManager.setQuestion(currentQuestion);
     }
 
@@ -793,6 +800,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             {
                 steps++;
                 currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
+                if (battle.GetLoser().player.claimedRegions.Count == 0)
+                    fromBattleResultsToLosePlayer.Set(true);
                 if (steps >= maxSteps)
                     fromBattleResultsToEndGame.Set(true);
                 else
@@ -867,6 +876,23 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 loadingScreen.SetActive(false);
 
             });
+        fromBattleResultsToEndGame.Set(false);
+    }
+
+    public void LosePlayerStart()
+    {
+        losePlayerAnnouncement.SetActive(true);
+        losePlayerAnnouncementText.text = "Игрок" + "<color=" + battle.GetLoser().player.color.ToHexString() + ">" + battle.GetLoser().player.nickname + "</color> потерял все территории";
+        losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
+        losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime)
+            .setDelay((float)(menusTransitionTime + losePlayerAnnouncmentTime))
+            .setOnComplete(() => { losePlayerAnnouncement.SetActive(false); });
+        fromBattleResultsToLosePlayer.Set(false);
+    }
+
+    public void LosePlayerUpdate()
+    {
+        
     }
 
     public void EndGameUpdate()
@@ -1012,8 +1038,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         roundIsEnded = new BoolCondition();
         gameStateMachine.transitions.Add(new Transition(roundIsEnded, battleRoundResultsState, questionNumberAnnouncementState, gameStateMachine));
 
-        //BattleResultsState battleResultsState = new BattleResultsState(BattleResultsVictory, battle);
-
         State battleResultsState = new State();
         battleResultsState.startEvents += BattleResultsStart;
         battleResultsState.updateEvents += BattleResultsUpdate;
@@ -1024,6 +1048,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         endGameState.updateEvents += EndGameUpdate;
         gameStateMachine.states.Add(endGameState);
 
+        State losePlayerState = new State();
+        losePlayerState.startEvents += LosePlayerStart;
+        losePlayerState.updateEvents += LosePlayerUpdate;
+
         battleCond = new BoolCondition();
         gameStateMachine.transitions.Add(new Transition(battleCond, battleRoundResultsState, battleResultsState, gameStateMachine));
 
@@ -1033,9 +1061,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         fromBattleResultsToEndGame = new BoolCondition();
         gameStateMachine.transitions.Add(new Transition(fromBattleResultsToEndGame, battleResultsState, endGameState, gameStateMachine));
 
+        fromBattleResultsToLosePlayer = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromBattleResultsToLosePlayer, battleResultsState, losePlayerState, gameStateMachine));
+
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(4);
+        gameStateMachine.Start(0); //Стадия 1
+        //gameStateMachine.Start(4); //Стадия 2
+
     }
 
     public void Update()
