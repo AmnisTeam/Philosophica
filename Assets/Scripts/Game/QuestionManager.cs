@@ -43,7 +43,7 @@ public class QuestionManager : MonoBehaviourPunCallbacks
     public float time = 0.8f;
     private float timer = 0;
 
-    public Animator questionMenuAnimator;
+    //public Animator questionMenuAnimator;
 
     public void setQuestion(Question question)
     {
@@ -84,18 +84,18 @@ public class QuestionManager : MonoBehaviourPunCallbacks
 
     public void ShowTable(bool toShowTable)
     {
-        questionMenuAnimator.SetBool("ShowTable", toShowTable);
+        //questionMenuAnimator.SetBool("ShowTable", toShowTable);
         showTable = toShowTable;
     }
 
     public void OpenQuestionMenu()
     {
-        questionMenuAnimator.SetTrigger("Open");
+        //questionMenuAnimator.SetTrigger("Open");
     }
 
     public void CloseQuestionMenu()
     {
-        questionMenuAnimator.SetTrigger("Close");
+        //questionMenuAnimator.SetTrigger("Close");
     }
 
     public void loadQuestions()
@@ -190,7 +190,7 @@ public class QuestionManager : MonoBehaviourPunCallbacks
 
             if (timerToShowTable == 0 && showTable)
             {
-                questionsMenu.GetComponent<Animator>().SetBool("ShowTable", true);
+                //questionsMenu.GetComponent<Animator>().SetBool("ShowTable", true);
                 tableCompiler.compileTheTable();
             }
 

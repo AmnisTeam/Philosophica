@@ -10,6 +10,6 @@ public class LeaveButton : MonoBehaviourPunCallbacks {
     }
 
     public override void OnLeftRoom() {
-        PhotonNetwork.LoadLevel("MainScene(Stars)");
+        PhotonNetwork.LoadLevel(0);
     }
 }

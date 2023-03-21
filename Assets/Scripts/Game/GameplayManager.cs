@@ -71,10 +71,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public GameObject battleResultsVictory;
     public GameObject battleResultsDraw;
 
+    public GameObject questionForPlayers;
+    public GameObject tableMenu;
+
     public GameObject uiInterface;
     public GameObject endGameAnnouncment;
     public GameObject loadingScreen;
     public GameObject endGameMenu;
+    public GameObject closedWindow;
 
     public StateMachine gameStateMachine = new StateMachine();
 
@@ -880,6 +884,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void Start()
     {
+        DisableWindows();
+
         fastedWinner = new FastedWinner();
         fastedWinner.player = playersManager.players.get(0);
         fastedWinner.answer = "";
@@ -1325,5 +1331,31 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Region randomPlayerRegion = randomPlayer.claimedRegions[randomRegionId];
 
         battle = StartBattle(offensePlayer, randomPlayer, randomPlayerRegion, roundsCount, playersMaxHealth);
+    }
+
+    public void DisableWindows()
+    {
+        questionForPlayers.SetActive(false);
+        tableMenu.SetActive(false);
+
+
+        questionForPlayers.GetComponent<CanvasGroup>().alpha = 0;
+        tableMenu.GetComponent<CanvasGroup>().alpha = 0;
+    }
+
+    public void HideWindow(string windowTag)
+    {
+        GameObject go = GameObject.FindGameObjectWithTag(windowTag);
+        go.GetComponent<CanvasGroup>().LeanAlpha(0, 1).setOnComplete(() => { go.SetActive(false); });
+        closedWindow = go;
+    }
+
+    public void ShowWindow()
+    {
+        if (closedWindow != null)
+        {
+            closedWindow.SetActive(true);
+            closedWindow.GetComponent<CanvasGroup>().LeanAlpha(1, 1);
+        }
     }
 }

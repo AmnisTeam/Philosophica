@@ -16,6 +16,8 @@ TagManager:
   - a
   - SCORE_TABLE_TAG
   - TOAST_MANAGER_TAG
+  - QuestionForPlayers
+  - TableMenu
   layers:
   - Default
   - TransparentFX
