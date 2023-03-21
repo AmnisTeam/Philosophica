@@ -76,6 +76,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public GameObject loadingScreen;
     public GameObject endGameMenu;
 
+    public ScoreTableManager scoreTableManager;
+
     public StateMachine gameStateMachine = new StateMachine();
 
     public double sessionElapsedTime = 0;
@@ -292,6 +294,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void RPC_StepsUpdate(int newSteps) {
         Debug.Log(">>> RPC Received at RPC_StepsUpdate()");
         SetStepsText(newSteps, maxSteps);
+        scoreTableManager.UpdateTable();
     }
 
     [PunRPC]
@@ -866,6 +869,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void Awake()
     {
         playersManager = GetComponent<PlayersManager>();
+        scoreTableManager = GameObject.FindGameObjectWithTag("SCORE_TABLE_TAG").GetComponent<ScoreTableManager>();
         colorsHolderInstance = GameObject.FindGameObjectWithTag("COLOR_CONTENT_TAG").GetComponent<ColorsHolder>();
         iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
         pv = GetComponent<PhotonView>();
