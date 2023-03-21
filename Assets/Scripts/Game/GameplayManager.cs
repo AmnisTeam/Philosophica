@@ -246,14 +246,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         regionSelectionToast.message = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию: {(int)(regionSelectionMaxTime - regionSelectionTimer)}";
 
         if (winner.isLocalClient) {
-            regionId = GrantRegionToWinnerByMouseClick();
+            GrantRegionToWinnerByMouseClick();
         }
 
+        //if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection) {
         if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection) {
+            /*if (winner.isLocalClient) {
+                pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionId, winner.id, "RegionSelectionUpdate()&regionId_neq_neg1");
+            }*/
             stateEnded = true;
         }
 
-        if (regionSelectionTimer >= regionSelectionMaxTime && regionId != -1) {
+        if (regionSelectionTimer >= regionSelectionMaxTime) {
             GrantRandomFreeRegionToPlayer(winner);
             stateEnded = true;
         }
@@ -276,10 +280,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     
     [PunRPC]
     public void RPC_RegionWasChosen(int regionId, int playerId, string source) {
+        Debug.LogError($"Region {regionId} is being claimed by player {playerId} -- {source}");
+
         Region region = regionSystem.regionSerds[regionId].region;
         Player player = playersManager.players.get(playerId);
-
-        Debug.LogError($"Region {regionId} is being claimed by player {playerId} -- {source}");
 
         player.ClaimRegion(region);
     }
@@ -369,7 +373,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (offensePlayer.isLocalClient)
             offenseAnnouncementText.text = "¬аша очередь нападать. ¬ыберите, на кого хотите напасть.";
         else
-            offenseAnnouncementText.text = $"<color=#{winner.color.ToHexString()}>{offensePlayer.nickname}</color> выбирает на кого напасть.";
+            offenseAnnouncementText.text = $"<color=#{offensePlayer.color.ToHexString()}>{offensePlayer.nickname}</color> выбирает на кого напасть.";
 
         offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime);
         battle = null;
@@ -1054,7 +1058,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regs[randReg], playersManager.players.get(i).id, "GrantPlayersStartingRegions()");
                 regs.RemoveAt(randReg);
 
-                Debug.LogError($"Granting region {regs[randReg]} to player {playersManager.players.get(i).id}");
+                //Debug.LogError($"Granting region {regs[randReg]} to player {playersManager.players.get(i).id}");
             }
         }
     }
@@ -1121,9 +1125,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Debug.LogError($"Granting region {freeRegs[randReg]} to player {player.id}");
     }
 
-    public int GrantRegionToWinnerByMouseClick() {
-        int regionId = 0;
+    public void GrantRegionToWinnerByMouseClick() {
+        int regionId = -1;
         Region region = null;
+
+        
 
         if (Input.GetMouseButtonDown(0)) {
             Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
@@ -1133,30 +1139,49 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 region = hit.collider.gameObject.GetComponent<Region>();
 
                 if (region) {
-                    bool isAlreadyClaimed = false;
+                    List<int> regs = new List<int>();
+                    regs.AddRange(Enumerable.Range(0, regionSystem.regionSerds.Count));
+
+                    List<int> claimedRegs = new List<int>();
+                    for (int k = 0; k < regionSystem.regionSerds.Count; k++) {
+                        for (int i = 0; i < playersManager.players.count; i++) {
+                            for (int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++) {
+                                if (regionSystem.regionSerds[k].region == playersManager.players.get(i).claimedRegions[j]) {
+                                    claimedRegs.Add(k);
+                                }
+                            }
+                        }
+                    }
+
+                    List<int> freeRegs = regs.Except(claimedRegs).ToList();
+
+                    for (int k = 0; k < regionSystem.regionSerds.Count; k++) {
+                        if (regionSystem.regionSerds[k].region == region) {
+                            Debug.LogError($"Player has clicked on region {k} that's {(freeRegs.Contains(k) ? "FREE" : "NOT FREE")}");
+                            pv.RPC("RPC_RegionWasChosen", RpcTarget.All, k, winner.id, "GrantRegionToWinnerByMouseClick()");
+                            break;
+                        }
+                    }
+
+                    /*bool isAlreadyClaimed = false;
 
                     for (int i = 0; i < playersManager.players.count; i++) {
                         for (int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++) {
                             if (region == playersManager.players.get(i).claimedRegions[j]) {
                                 isAlreadyClaimed = true;
-                                regionId = j;
-                                break;
+                                claimedRegs.Add(j);
                             }
-                        }
-
-                        if (isAlreadyClaimed) {
-                            break;
                         }
                     }
 
                     if (!isAlreadyClaimed) {
-                        //pv.RPC("RPC_RegionWasChosen", RpcTarget.Others, regionId, winner.id, "GrantRegionToWinnerByMouseClick()");
-                    }
+                        Debug.LogError($"Player has clicked on region {regionId}");
+                        winner.ClaimRegion(region);
+                        pv.RPC("RPC_RegionWasChosen", RpcTarget.Others, regionId, winner.id, "GrantRegionToWinnerByMouseClick()");
+                    }*/
                 }
             }
         }
-
-        return regionId;
     }
 
     public void SetStepsText(int steps, int maxSteps)

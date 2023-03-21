@@ -3205,8 +3205,8 @@ MonoBehaviour:
   sessionElapsedTime: 0
   steps: 0
   maxSteps: 25
-  menusTransitionTime: 0.3
-  menusTransitionDelayTime: 0.2
+  menusTransitionTime: 0.6
+  menusTransitionDelayTime: 0.5
   timeToNextQuestion: 10
   timeToChooseTerretory: 10
   currentQuestion: 0
