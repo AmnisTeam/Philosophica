@@ -1091,7 +1091,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(4);
+        gameStateMachine.Start(0); //Стадия 1
+        //gameStateMachine.Start(4); //Стадия 2
     }
 
     public void Update()
