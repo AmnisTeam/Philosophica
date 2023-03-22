@@ -1829,7 +1829,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &158544387
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1880,7 +1880,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 158544386}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -3030,7 +3030,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89bdec4ee77c30e45adea9c0c609fff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreTableRowPrifab: {fileID: 1458655452449511978, guid: aaa5dc348fcbb724ea1ec834dc39c095, type: 3}
+  scoreTableRowPrifab: {fileID: 1458655452449511978, guid: 3c92ae3dac1d21143a6d3751d203f09f, type: 3}
   playersManager: {fileID: 267347261}
   gameplayManager: {fileID: 267347264}
   iconsContent: {fileID: 0}
@@ -3223,6 +3223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   questionManager: {fileID: 2104777008}
   regionSystem: {fileID: 102743451}
+  scoreTableManager: {fileID: 264982820}
   nextQuestionTimeText: {fileID: 921761597}
   stepsText: {fileID: 2146722985}
   toast: {fileID: 1895131572}
@@ -3237,8 +3238,8 @@ MonoBehaviour:
   offenseAnnouncementTimerText: {fileID: 2019740994}
   attackAnnouncement: {fileID: 783089714}
   attackAnnouncementText: {fileID: 829536489}
-  losePlayerAnnouncement: {fileID: 0}
-  losePlayerAnnouncementText: {fileID: 0}
+  losePlayerAnnouncement: {fileID: 1539171912}
+  losePlayerAnnouncementText: {fileID: 552618639}
   opponentsAnnouncement: {fileID: 144149869}
   opponentsAnnouncementOpponent1Icon: {fileID: 1447920684}
   opponentsAnnouncementOpponent1Nickname: {fileID: 792538935}
@@ -3282,7 +3283,7 @@ MonoBehaviour:
   closeBattleResultsTime: 5
   endGameAnnouncmentTime: 1.5
   endGameLoadingScreenTime: 1.5
-  losePlayerAnnouncmentTime: 0
+  losePlayerAnnouncmentTime: 1.5
 --- !u!114 &267347265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14097,6 +14098,7 @@ MonoBehaviour:
     claimedRegions: []
     scores: 0
     isLocalClient: 0
+    isLose: 0
 --- !u!4 &1411831729
 Transform:
   m_ObjectHideFlags: 0
@@ -22976,6 +22978,7 @@ GameObject:
   - component: {fileID: 2104777010}
   - component: {fileID: 2104777008}
   - component: {fileID: 2104777009}
+  - component: {fileID: 2104777011}
   m_Layer: 5
   m_Name: QuestionManager
   m_TagString: Untagged
@@ -23072,6 +23075,7 @@ MonoBehaviour:
     claimedRegions: []
     scores: 0
     isLocalClient: 0
+    isLose: 0
 --- !u!224 &2104777010
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23092,6 +23096,28 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2104777011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104777007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 3
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!114 &2133277543 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4429099728930130315, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}

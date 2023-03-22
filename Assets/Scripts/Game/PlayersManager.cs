@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ public class Player : BaseRaw
     public List<Region> claimedRegions = new List<Region>();
     public int scores = 0;
     public bool isLocalClient;
+    public bool isLose = false;
 
     public Player()
     {
@@ -67,7 +69,6 @@ public class PlayersManager : MonoBehaviour
     
     public void connected(Player player)
     {
-
         players.add(player);
         playerAnswerData.addwid(new PlayerAnswerData(), player);
         //Debug.Log("Player " + player.nickname + " has been connected!");
@@ -95,6 +96,18 @@ public class PlayersManager : MonoBehaviour
         players.list.RemoveAt(id);
         scoreTableManager.RemovePlayer(id);
         //tabMenuManager.disconnectPlayer(id);
+    }
+
+    public Photon.Realtime.Player GetPhotonPlayerByPlayer(Player player)
+    {
+        Photon.Realtime.Player photonPlayer = null;
+        for (int x = 0; x < PhotonNetwork.PlayerList.Length; x++)
+            if (player.id == PhotonNetwork.PlayerList[x].ActorNumber - 1)
+            {
+                photonPlayer = PhotonNetwork.PlayerList[x];
+                break;
+            }
+        return photonPlayer;
     }
 
     private void Awake()
