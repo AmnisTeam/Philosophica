@@ -5,7 +5,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using static GlobalVariables;
+public struct Pair<A, B>
+{
+    public A first;
+    public B second;
 
+    public Pair(A first, B second)
+    {
+        this.first = first;
+        this.second = second;
+    }
+}
 public class GlobalVariables : MonoBehaviour
 {
     public static Color healthColor = new Color(1, 0.3098039f, 0.3098039f);

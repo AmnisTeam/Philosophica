@@ -889,6 +889,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void LosePlayerStart()
     {
         battle.GetLoser().player.isLose = true;
+        scoreTableManager.UpdateRowsOrder();
         losePlayerAnnouncement.SetActive(true);
         losePlayerAnnouncementText.text = "Игрок" + "<color=#" + battle.GetLoser().player.color.ToHexString().Substring(0, 6) + ">" + battle.GetLoser().player.nickname + "</color> потерял все территории";
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
@@ -897,7 +898,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             .setDelay((float)(menusTransitionTime + losePlayerAnnouncmentTime))
             .setOnComplete(() => { 
                 losePlayerAnnouncement.SetActive(false);
-                if (steps >= maxSteps)
+                if (steps >= maxSteps || battle.GetWinner().player.claimedRegions.Count >= regionSystem.regionSerds.Count)
                     fromBattleResultsToEndGame.Set(true);
                 else
                     fromBattleResultsToOffensive.Set(true);
@@ -922,15 +923,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
         pv = GetComponent<PhotonView>();
            
-        int idx = 0;
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
-            playersManager.connected(new Player(idx,
+            playersManager.connected(new Player(player.ActorNumber - 1,
                                                 (int)player.CustomProperties["playerIconId"],
                                                 colorsHolderInstance.colors[(int)player.CustomProperties["playerColorIndex"]],
                                                 player.NickName,
                                                 player.IsLocal));
 
-            idx++;
         }
     }
 
