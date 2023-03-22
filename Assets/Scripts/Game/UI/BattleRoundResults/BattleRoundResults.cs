@@ -51,37 +51,26 @@ public class BattleRoundResults : MonoBehaviour
         int lastId1 = battle.opponents[0].playerAnswerData.Count - 1;
         int lastId2 = battle.opponents[1].playerAnswerData.Count - 1;
 
-        if (battle.opponents[0].playerAnswerData[lastId1].timeToAnswer == -1 ||
-            battle.opponents[0].playerAnswerData[lastId1].answerId == -1)
-        {
+        if (battle.opponents[0].playerAnswerData[lastId1].timeToAnswer == -1 || battle.opponents[0].playerAnswerData[lastId1].answerId == -1) {
             battle.winnerId = 1; // If the answer or the time is incorrect
-        }      
-        else if (battle.opponents[1].playerAnswerData[lastId2].timeToAnswer == -1 ||
-            battle.opponents[1].playerAnswerData[lastId2].answerId == -1)
-        {
+        } else if (battle.opponents[1].playerAnswerData[lastId2].timeToAnswer == -1 || battle.opponents[1].playerAnswerData[lastId2].answerId == -1) {
             battle.winnerId = 0; // If the answer or the time is incorrect
-        }        
-        else if (battle.opponents[0].playerAnswerData[lastId1].answerId ==
-            battle.questions[battle.currentQuestion].idRightAnswer &&
-            battle.opponents[1].playerAnswerData[lastId2].answerId !=
-            battle.questions[battle.currentQuestion].idRightAnswer)
+        }
+        
+        if (battle.opponents[0].playerAnswerData[lastId1].answerId == battle.questions[battle.currentQuestion].idRightAnswer &&
+            battle.opponents[1].playerAnswerData[lastId2].answerId != battle.questions[battle.currentQuestion].idRightAnswer)
         {
             battle.winnerId = 0; // If the first opponent answered correctly whereas the second not
         }        
-        else if (battle.opponents[1].playerAnswerData[lastId2].answerId ==
-            battle.questions[battle.currentQuestion].idRightAnswer &&
-            battle.opponents[0].playerAnswerData[lastId1].answerId !=
-            battle.questions[battle.currentQuestion].idRightAnswer)
+        else if (battle.opponents[1].playerAnswerData[lastId2].answerId == battle.questions[battle.currentQuestion].idRightAnswer &&
+                 battle.opponents[0].playerAnswerData[lastId1].answerId != battle.questions[battle.currentQuestion].idRightAnswer)
         {
             battle.winnerId = 1; // If the second opponent answered correctly whereas the first not
         }       
-        else if (battle.opponents[0].playerAnswerData[lastId1].timeToAnswer >=
-                battle.opponents[1].playerAnswerData[lastId2].timeToAnswer)
-        {
+        
+        if (battle.opponents[0].playerAnswerData[lastId1].timeToAnswer <= battle.opponents[1].playerAnswerData[lastId2].timeToAnswer) {
             battle.winnerId = 0; // If first opponent answerd faster
-        }         
-        else
-        {
+        } else {
             battle.winnerId = 1; // If second opponent answerd faster
         }
          
@@ -126,7 +115,7 @@ public class BattleRoundResults : MonoBehaviour
         opponent1Name.color = battle.opponents[0].player.color;
 
         opponent1HealthBar.value = (float)(battle.opponents[0].health / battle.opponents[0].maxHealh);
-        opponent1HealthPointsText.text = "<color=#FF4F4F>" + battle.opponents[0].health + "</color> / " + battle.opponents[0].maxHealh;
+        opponent1HealthPointsText.text = $"<color=#FF4F4F>{battle.opponents[0].health}</color> / {battle.opponents[0].maxHealh}";
 
 
         opponent2Avatar.sprite = iconsContent.lobbyIcons[battle.opponents[1].player.iconId];
@@ -136,7 +125,7 @@ public class BattleRoundResults : MonoBehaviour
         opponent2Name.color = battle.opponents[1].player.color;
 
         opponent2HealthBar.value = (float)(battle.opponents[1].health / battle.opponents[1].maxHealh);
-        opponent2HealthPointsText.text = "<color=#FF4F4F>" + battle.opponents[1].health + "</color> / " + battle.opponents[1].maxHealh;
+        opponent2HealthPointsText.text = $"<color=#FF4F4F>{battle.opponents[1].health}</color> / {battle.opponents[1].maxHealh}";
     }
 
     public void InitNotification()
@@ -161,43 +150,38 @@ public class BattleRoundResults : MonoBehaviour
         if (correctAnswersCount == battle.opponents.Length)
             everyoneAnsweredCorrectly = true;
 
-        if (!isCorrectAnswer)
+        if (!isCorrectAnswer) {
             notification.text = "Никто из игроков не дал правильный ответ, поэтому никто не получает урон.";
-        else
-        {
+        } else {
             Opponent opponent0 = battle.opponents[battle.winnerId];
             Opponent opponent1 = battle.opponents[1 - battle.winnerId];
 
-            string hex0 = "#" + opponent0.player.color.ToHexString();
-            string hex1 = "#" + opponent1.player.color.ToHexString();
+            string winningOpponentName = $"<color=#{opponent0.player.color.ToHexString()}>{opponent0.player.nickname}</color>";
+            string losingOpponentName = $"<color=#{opponent1.player.color.ToHexString()}>{opponent1.player.nickname}</color>";
 
-            string winningOpponentName = "<color=" + hex0 + ">" + opponent0.player.nickname + "</color>";
-            string losingOpponentName = "<color=" + hex1 + ">" + opponent1.player.nickname + "</color>";
+            string damageSeverity = $"урон в размере <color=#{GlobalVariables.healthColor.ToHexString()}>{(int)GetWinnersDamage()} единиц.</color>";
 
-            string hex = GlobalVariables.healthColor.ToHexString();
-            string damageSeverity = "урон в размере <color=#" + hex + ">" + (int)GetWinnersDamage() + " единиц.</color>";
-
-            if (everyoneAnsweredCorrectly)
-            {
-                notification.text = "Игрок " + losingOpponentName + " ответил медленнее, чем игрок " + winningOpponentName +
-                    ", поэтому он получает " + damageSeverity;
-            }
-            else
-            {
-                notification.text = "Игрок " + losingOpponentName + " ответил не правильно, поэтому он получает " + damageSeverity;
+            if (everyoneAnsweredCorrectly) {
+                notification.text = $"Игрок {losingOpponentName} ответил медленнее, чем игрок {winningOpponentName}, поэтому он получает {damageSeverity}";
+            } else {
+                notification.text = $"Игрок {losingOpponentName} ответил неправильно, поэтому он получает {damageSeverity}";
             }
         }       
     }
 
-    public double GetWinnersDamage()
-    {
+    public double GetWinnersDamage() {
         int winnerId = battle.winnerId;
         int lastRoundId = battle.opponents[winnerId].playerAnswerData.Count - 1;
         double damage = 0;
-        if (battle.opponents[winnerId].playerAnswerData[lastRoundId].timeToAnswer > 0)
+
+        if (battle.opponents[winnerId].playerAnswerData[lastRoundId].timeToAnswer > 0) {
             damage = (int)((10 - battle.opponents[winnerId].playerAnswerData[lastRoundId].timeToAnswer) * 10);
-        if (damage < 0)
+        }
+
+        if (damage < 0) { 
             damage = 10;
+        }
+
         return damage;
     }
 

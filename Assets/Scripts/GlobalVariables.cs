@@ -23,7 +23,7 @@ public class GlobalVariables : MonoBehaviour
         if (Math.Abs(restOfSeconds) < 10)
             secondsNonsignificantZero = "0";
 
-        return minutesNonsignificantZero + minutes + ":" + secondsNonsignificantZero + restOfSeconds;
+        return $"{minutesNonsignificantZero + minutes}:{secondsNonsignificantZero + restOfSeconds}";
     }
 
     public class DelayClock
