@@ -26,7 +26,7 @@ public class ScoreTableRow : MonoBehaviour, IPointerDownHandler
     {
         icon.sprite = iconSprite;
         this.nickname.text = nickname;
-        this.countLands.text = countLands.ToString() + "/" + maxCountLands;
+        this.countLands.text = $"{countLands}/{maxCountLands}";
         this.countScores.text = countScores.ToString();
         icon.color = color;
     }

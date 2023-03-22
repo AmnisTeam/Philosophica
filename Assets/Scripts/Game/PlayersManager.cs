@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.VisualScripting;
 
 [Serializable]
 public class Player : BaseRaw
@@ -82,7 +83,7 @@ public class PlayersManager : MonoBehaviour
                 id = x;
                 break;
             }
-        toastShower.showText("Игрок " + player.nickname + " покинул игру.");
+        toastShower.showText($"Игрок <color=#{player.color.ToHexString()}>{player.nickname}</color> покинул игру.");
         players.list.RemoveAt(id);
         scoreTableManager.RemovePlayer(id);
         //tabMenuManager.disconnectPlayer(id);
@@ -90,7 +91,7 @@ public class PlayersManager : MonoBehaviour
 
     public void disconnect(int id)
     {
-        toastShower.showText("Игрок " + players.get(id).nickname + " покинул игру.");
+        toastShower.showText($"Игрок <color=#{players.get(id).color.ToHexString()}>{players.get(id).nickname}</color> покинул игру.");
         players.list.RemoveAt(id);
         scoreTableManager.RemovePlayer(id);
         //tabMenuManager.disconnectPlayer(id);
