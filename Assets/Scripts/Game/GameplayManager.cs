@@ -1103,7 +1103,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         gameStateMachine.Start(0); //Стадия 1
         //gameStateMachine.Start(4); //Стадия 2
-
     }
 
     public void Update()
