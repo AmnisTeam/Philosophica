@@ -87,6 +87,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public int steps = 0;
     public int maxSteps = 25;
 
+    public int countScoresForRegion;
+
     public float menusTransitionTime = 0.3f;
     public float menusTransitionDelayTime = 0.2f;
 
@@ -288,7 +290,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             steps++;
             pv.RPC("RPC_RegionWasChosen", RpcTarget.Others, regionId, winner.id);
             pv.RPC("RPC_StepsUpdate", RpcTarget.Others, steps);
+            if (reg)
+                pv.RPC("RPC_GetScoresForRegion", RpcTarget.All, winner.id);
             regionSelectionToast.isDone = true;
+
 
             if (GetFreeRegionsCount() > 0)
                 regionSelectionStateIsEnded.state = true;
@@ -309,6 +314,20 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         player.ClaimRegion(region);
 
 
+    }
+
+    [PunRPC]
+    public void RPC_GetScoresForRegion(int playerId)
+    {
+        Player player = null;
+        for(int x = 0; x < playersManager.players.count; x++)
+            if(playerId == playersManager.players.get(x).id)
+            {
+                player = playersManager.players.get(x);
+                break;
+            }
+        player.scores += countScoresForRegion;
+        scoreTableManager.UpdateTable();
     }
 
     [PunRPC]
@@ -758,6 +777,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         closeBattleResultsTimer = 0;
         battleResultsTimer = 0;
         fromBattleResultsToOffensive.Set(false);
+        battleCond.Set(false);
     }
 
     [PunRPC]

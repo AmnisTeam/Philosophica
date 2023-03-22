@@ -48,9 +48,9 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
                 upPos = rows[x - 1].row.transform.localPosition.y - (rows[x - 1].row.GetComponent<RectTransform>().rect.height + offset);
 
             float pos = rows[x].row.transform.localPosition.y;
-            float distance = upPos - pos;
+            float distance = Mathf.Abs(upPos - pos);
 
-            float velocity = curve.Evaluate((distanceToLerp - distance) / distanceToLerp) * vel;
+            float velocity = Mathf.Sign(upPos - pos) * curve.Evaluate((distanceToLerp - distance) / distanceToLerp) * vel;
             row.row.transform.localPosition = new Vector2(0, row.row.transform.localPosition.y + velocity);
         }
     }
@@ -162,6 +162,8 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
      * Ќазначает подр€д идущим (сверху вниз) запис€м в таблицы данные от игроков, которые
      * сортированы по убыванию очков, а затем по убыванию регионов. 
      * 
+     * ƒанные заново назначаютс€, без плавной сортировки!!! 
+     * 
      * Ётот метод вызываетс€ в методе RecreateTable() и лучше нигде в другом месте его не юзать 
      * (ну если сильно захочетс€, то можно :D )
      */
@@ -206,6 +208,27 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
             rows[x] = rows[id];
             rows[id] = temp;
         }
+    }
+
+    /*
+     * ќбнавл€ет уже созданные данные в таблице, а также плавно сортирует их 
+     */
+    public void UpdateTable()
+    {
+        for(int x = 0; x < rows.Count; x++)
+        {
+            ScoreTableRow row = rows[x].row.GetComponent<ScoreTableRow>();
+            Photon.Realtime.Player photonPlayer = playersManager.GetPhotonPlayerByPlayer(rows[x].player);
+            row.FillRow(
+                iconsContent.lobbyIcons[(int)photonPlayer.CustomProperties["playerIconId"]],
+                photonPlayer.NickName,
+                rows[x].player.claimedRegions.Count,
+                gameplayManager.regionSystem.regionSerds.Count,
+                rows[x].player.scores,
+                colorsHolder.colors[(int)photonPlayer.CustomProperties["playerColorIndex"]]);
+        }
+
+        UpdateRowsOrder();
     }
 
     void Awake()
