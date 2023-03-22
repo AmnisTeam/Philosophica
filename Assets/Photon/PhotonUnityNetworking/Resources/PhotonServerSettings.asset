@@ -69,6 +69,7 @@ MonoBehaviour:
   - RPC_StepsUpdate
   - RPC_RevealAnswerOfOpponentStageOne
   - RPC_RegionWasChosen
+  - RPC_GetScoresForRegion
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
