@@ -13,6 +13,7 @@ public abstract class Condition
 public class Transition
 {
     public Condition condition;
+    public int order;
     public int from;
     public int to;
 
