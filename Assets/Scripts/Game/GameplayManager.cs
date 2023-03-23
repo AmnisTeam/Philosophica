@@ -66,8 +66,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public TextMeshProUGUI opponentsAnnouncementOpponent1Nickname;
     public UnityEngine.UI.Image opponentsAnnouncementOpponent2Icon;
     public TextMeshProUGUI opponentsAnnouncementOpponent2Nickname;
-    
 
+
+    public GameObject gameBeggining;
+    public GameObject firstStageHint;
+    public GameObject questionMenu;
     public GameObject questionNumberAnnouncement;
     public TextMeshProUGUI questionNumberAnnouncementText;
     public GameObject askQuestionInBattle;
@@ -88,6 +91,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public int maxSteps = 25;
 
     public int countScoresForRegion;
+
+    public float gameBegginingTime = 5.0f;
+    private float gameBegginingTimer = 0.0f;
+
+    public float firstStageHintTime = 10.0f;
+    public float firstStageHintTimer = 0.0f;
 
     public float menusTransitionTime = 0.3f;
     public float menusTransitionDelayTime = 0.2f;
@@ -163,6 +172,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolToastMessage regionSelectionToast;
     public BoolToastMessage preparationToast;
 
+
+    public BoolCondition fromGameBegginingToAskQuestion;
+    public BoolCondition fromFirstStageHintToAskQuestion;
+    public BoolCondition fromGameBegginingToFirstStageHint;
     public BoolCondition askQuestionStateIsEnded;
     public BoolCondition viewResultsStateIsEnded;
     public BoolCondition regionSelectionStateIsEnded;
@@ -181,8 +194,62 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolCondition fromBattleResultsToEndGame;
     public BoolCondition fromBattleResultsToLosePlayer;
 
+    public void GameBegginingStart()
+    {
+        gameBeggining.SetActive(true);
+        gameBeggining.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+
+        fromGameBegginingToFirstStageHint.Set(false);
+        gameBegginingTimer = 0;
+    }
+
+    public void GameBegginingUpdate()
+    {
+        Debug.Log("GameBegginingUpdate");
+        gameBegginingTimer += Time.deltaTime;
+        if (gameBegginingTimer >= gameBegginingTime)
+        {    
+            gameBeggining.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                gameBeggining.SetActive(false);
+            });
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                fromGameBegginingToFirstStageHint.Set(true);
+            });       
+        }
+    }
+
+    public void FirstStageHintStart()
+    {
+        firstStageHint.SetActive(true);
+        firstStageHint.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+
+        firstStageHintTimer = 0;
+    }
+
+    public void FirstStageHintUpdate()
+    {
+        firstStageHintTimer += Time.deltaTime;
+
+        if (firstStageHintTimer >= firstStageHintTime)
+        {
+            firstStageHint.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                firstStageHint.SetActive(false);
+            });
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                fromFirstStageHintToAskQuestion.Set(true);
+            });
+        }
+    }
+
     public void AskQuestionStart()
     {
+        questionMenu.SetActive(true);
+        questionMenu.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+
         askQuestionStateIsEnded.state = false;
         
         questionManager.setQuestion(currentQuestion);
@@ -294,7 +361,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     
     [PunRPC]
     public void RPC_RegionWasChosen(int regionId, int playerId, string source) {
-        Debug.LogError($"Region {regionId} is being claimed by player {playerId} -- {source}");
+        //Debug.LogError($"Region {regionId} is being claimed by player {playerId} -- {source}");
 
         Region region = regionSystem.regionSerds[regionId].region;
         Player player = playersManager.players.get(playerId);
@@ -964,10 +1031,31 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         fastedWinner.answer = "";
         fastedWinner.timeToAnswer = float.MaxValue;
 
+        State gameBegginingState = new State();
+        gameBegginingState.startEvents += GameBegginingStart;
+        gameBegginingState.updateEvents += GameBegginingUpdate;
+        gameStateMachine.states.Add(gameBegginingState);
+
+        State firstStageHintState = new State();
+        firstStageHintState.startEvents += FirstStageHintStart;
+        firstStageHintState.updateEvents += FirstStageHintUpdate;
+        gameStateMachine.states.Add(firstStageHintState);
+
+        fromGameBegginingToFirstStageHint = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromGameBegginingToFirstStageHint, gameBegginingState, firstStageHintState, gameStateMachine));
+
         State askQuestionState = new State(); // 0
         askQuestionState.startEvents += AskQuestionStart;
         askQuestionState.updateEvents += AskQuestionUpdate;
         gameStateMachine.states.Add(askQuestionState);
+
+        //fromFirstStageHintToAskQuestion
+
+        fromFirstStageHintToAskQuestion = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromFirstStageHintToAskQuestion, firstStageHintState, askQuestionState, gameStateMachine));
+
+        fromGameBegginingToAskQuestion = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromGameBegginingToAskQuestion, gameBegginingState, askQuestionState, gameStateMachine));
 
         State viewResultsState = new State(); // 1
         viewResultsState.startEvents += ViewResultsStart;
@@ -1242,7 +1330,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
                     for (int k = 0; k < regionSystem.regionSerds.Count; k++) {
                         if (regionSystem.regionSerds[k].region == region) {
-                            Debug.LogError($"Player has clicked on region {k} that's {(freeRegs.Contains(k) ? "FREE" : "NOT FREE")}");
+                            //Debug.LogError($"Player has clicked on region {k} that's {(freeRegs.Contains(k) ? "FREE" : "NOT FREE")}");
                             pv.RPC("RPC_RegionWasChosen", RpcTarget.All, k, winner.id, "GrantRegionToWinnerByMouseClick()");
                             pv.RPC("RPC_GetScoresForRegion", RpcTarget.All, winner.id);
                             break;
