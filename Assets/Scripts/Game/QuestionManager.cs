@@ -49,7 +49,7 @@ public class QuestionManager : MonoBehaviourPunCallbacks
     public void setQuestion(Question question)
     {
         ShowTable(false);
-        //OpenQuestionMenu();
+        OpenQuestionMenu();
         questionsMenu.GetComponent<CanvasGroup>().LeanAlpha(0, 1).setOnComplete(() => { questionsMenu.SetActive(false); });
 
         timeToQuestion = question.timeToQuestion;
