@@ -9,6 +9,7 @@ using Unity.VisualScripting;
 public class Player : BaseRaw
 {
     public int iconId;
+    public int colorId;
     public UnityEngine.Color color;
     public string nickname;
     public List<Region> claimedRegions = new List<Region>();
@@ -21,10 +22,11 @@ public class Player : BaseRaw
 
     }
 
-    public Player(int id, int iconId, UnityEngine.Color color, string nickname, bool isLocalPlayer)
+    public Player(int id, int iconId, int colorId, UnityEngine.Color color, string nickname, bool isLocalPlayer)
     {
         this.id = id;
         this.iconId = iconId;
+        this.colorId = colorId;
         this.color = color;
         this.nickname = nickname;
         this.isLocalClient = isLocalPlayer;
@@ -108,6 +110,19 @@ public class PlayersManager : MonoBehaviour
                 break;
             }
         return photonPlayer;
+    }
+
+    public Photon.Realtime.Player GetRoomPlayerByColorId(int colorId) {
+        Photon.Realtime.Player roomPlayer = null;
+
+        for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++) {
+            if ((int)PhotonNetwork.CurrentRoom.Players[i].CustomProperties["playerColorIndex"] == colorId) {
+                roomPlayer = PhotonNetwork.CurrentRoom.Players[i];
+                break;
+            }
+        }
+
+        return roomPlayer;
     }
 
     private void Awake()
