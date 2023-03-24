@@ -292,10 +292,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     
     [PunRPC]
     public void RPC_RegionWasChosen(int regionId, int playerId, string source) {
-        Debug.LogError($"Region {regionId} is being claimed by player {playerId} -- {source}");
+        //Debug.LogError($"Region {regionId} is being claimed by player {playerId} -- {source}");
 
         Region region = regionSystem.regionSerds[regionId].region;
         Player player = playersManager.players.get(playerId);
+
+        cam.GetComponent<MoveCameraToActiveRegion>().SetTarget(region.gameObject, () => {  });
 
         player.ClaimRegion(region);
     }
