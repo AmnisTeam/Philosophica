@@ -71,6 +71,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public GameObject gameBeggining;
     public GameObject firstStageHint;
     public GameObject questionMenu;
+    public GameObject secondStageHint;
     public GameObject questionNumberAnnouncement;
     public TextMeshProUGUI questionNumberAnnouncementText;
     public GameObject askQuestionInBattle;
@@ -97,6 +98,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public float firstStageHintTime = 10.0f;
     public float firstStageHintTimer = 0.0f;
+
+    public float secondStageHintTime = 10.0f;
+    private float secondStageHintTimer = 0.0f;
 
     public float menusTransitionTime = 0.3f;
     public float menusTransitionDelayTime = 0.2f;
@@ -173,7 +177,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolToastMessage preparationToast;
 
 
-    public BoolCondition fromGameBegginingToAskQuestion;
+    //public BoolCondition fromGameBegginingToAskQuestion;
     public BoolCondition fromFirstStageHintToAskQuestion;
     public BoolCondition fromGameBegginingToFirstStageHint;
     public BoolCondition askQuestionStateIsEnded;
@@ -182,6 +186,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolCondition preparationStateIsEnded;
     public BoolCondition firstStageIsEnded;
     public BoolCondition stageTwoAnnouncementIsEnded;
+    public BoolCondition fromSecondStageHintToOffensivePlayerSelection;
+    public BoolCondition fromStageTwoAnnouncementToSecondStageHint;
     public BoolCondition offensivePlayerSelectionIsEnded;
     public BoolCondition attackAnnouncementIsEnded;
     public BoolCondition opponentsAnnouncementIsEnded;
@@ -449,6 +455,28 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     //    }
     //}
 
+    public void SecondStageHintStart()
+    {
+        secondStageHint.SetActive(true);
+        secondStageHint.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+    }
+
+    public void SecondStageHintUpdate()
+    {
+        secondStageHintTimer += Time.deltaTime;
+        if (secondStageHintTimer >= secondStageHintTime)
+        {
+            secondStageHint.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                secondStageHint.SetActive(false);
+            });
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                fromSecondStageHintToOffensivePlayerSelection.Set(true);
+            });
+        }
+    }
+
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) 
     {
         playersManager.disconnect(otherPlayer.ActorNumber-1);
@@ -456,7 +484,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void OffensivePlayerSelectionStart()
     {
-        Debug.Log("OffensivePlayerSelectionStart");
+        //Debug.Log("OffensivePlayerSelectionStart");
 
         offensivePlayerSelectionTimer = 0;
         offenseAnnouncement.SetActive(true);
@@ -1054,8 +1082,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         fromFirstStageHintToAskQuestion = new BoolCondition();
         gameStateMachine.transitions.Add(new Transition(fromFirstStageHintToAskQuestion, firstStageHintState, askQuestionState, gameStateMachine));
 
-        fromGameBegginingToAskQuestion = new BoolCondition();
-        gameStateMachine.transitions.Add(new Transition(fromGameBegginingToAskQuestion, gameBegginingState, askQuestionState, gameStateMachine));
+        //fromGameBegginingToAskQuestion = new BoolCondition();
+        //gameStateMachine.transitions.Add(new Transition(fromGameBegginingToAskQuestion, gameBegginingState, askQuestionState, gameStateMachine));
 
         State viewResultsState = new State(); // 1
         viewResultsState.startEvents += ViewResultsStart;
@@ -1099,10 +1127,23 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         firstStageIsEnded = new BoolCondition();
         gameStateMachine.transitions.Add(new Transition(firstStageIsEnded, regionSelectionState, stageTwoAnnouncementState, gameStateMachine));
 
+        State secondStageHintState = new State(); // 5
+        secondStageHintState.startEvents += SecondStageHintStart;
+        secondStageHintState.updateEvents += SecondStageHintUpdate;
+        gameStateMachine.states.Add(secondStageHintState);
+
+        //fromStageTwoAnnouncementToSecondStageHint = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(stageTwoAnnouncementState.fromStageTwoAnnouncementToSecondStageHint, stageTwoAnnouncementState, secondStageHintState, gameStateMachine));
+
+
+
         State offensivePlayerSelectionState = new State(); // 5
         offensivePlayerSelectionState.startEvents += OffensivePlayerSelectionStart;
         offensivePlayerSelectionState.updateEvents += OffensivePlayerSelectionUpdate;
         gameStateMachine.states.Add(offensivePlayerSelectionState);
+
+        fromSecondStageHintToOffensivePlayerSelection = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromSecondStageHintToOffensivePlayerSelection, secondStageHintState, offensivePlayerSelectionState, gameStateMachine));
 
         //stageTwoAnnouncementIsEnded = new BoolCondition();
         gameStateMachine.transitions.Add(new Transition(stageTwoAnnouncementState.offensivePlayerSelectionCond, 
