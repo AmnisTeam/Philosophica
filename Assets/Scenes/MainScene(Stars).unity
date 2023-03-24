@@ -78900,6 +78900,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colors: []
+  freeIndicies: 
 --- !u!114 &1924318070
 MonoBehaviour:
   m_ObjectHideFlags: 0
