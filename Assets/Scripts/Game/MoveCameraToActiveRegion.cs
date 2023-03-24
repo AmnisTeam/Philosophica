@@ -5,15 +5,16 @@ using UnityEngine;
 
 public class MoveCameraToActiveRegion : MonoBehaviour
 {
-    public double percentOfDistanceSpeed;
-    public double minDistanceToStopMove;
-    public GameObject target;
+    public float percentOfDistanceSpeed;
+    public float minSpeed;
+    public float minDistanceToStopMove;
+    public Vector3 target;
 
     public bool isMove = false;
 
     private Action onComplete;
 
-    public bool SetTarget(GameObject target, Action onComplete)
+    public bool SetTarget(Vector2 target, Action onComplete = null)
     {
         if(!isMove)
         {
@@ -35,16 +36,20 @@ public class MoveCameraToActiveRegion : MonoBehaviour
     {
         if(isMove)
         {
-            float distance = Vector2.Distance(target.transform.position, transform.position);
-            transform.position += (target.transform.position - transform.position) * distance;
+            float distance = Vector2.Distance(target, transform.position);
+            Vector3 velocity = (target - transform.position) * distance * percentOfDistanceSpeed;
+            Vector3 direction = Vector3.Normalize(target - transform.position);
+            velocity.z = 0;
+            direction.z = 0;
+            transform.position += velocity + direction * minSpeed;
 
-            distance = Vector2.Distance(target.transform.position, transform.position);
+            distance = Vector2.Distance(target, transform.position);
             if(distance < minDistanceToStopMove)
             {
                 isMove = false;
-                target = null;
                 GetComponent<CameraTransformation>().isLocked = false;
-                onComplete();
+                if(onComplete != null)
+                    onComplete();
             }
         }
     }
