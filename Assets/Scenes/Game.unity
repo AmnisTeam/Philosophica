@@ -3339,13 +3339,10 @@ MonoBehaviour:
   steps: 0
   maxSteps: 25
   countScoresForRegion: 0
-<<<<<<< HEAD
   gameBegginingTime: 5
   firstStageHintTime: 10
   firstStageHintTimer: 0
   secondStageHintTime: 10
-=======
->>>>>>> hell
   menusTransitionTime: 0.3
   menusTransitionDelayTime: 0.2
   timeToNextQuestion: 10
