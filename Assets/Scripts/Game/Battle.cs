@@ -10,6 +10,10 @@ public class Battle
     public List<QuestionManager.Question> questions = new List<QuestionManager.Question>();
     public int currentQuestion = 0;
 
+    public bool IsDraw() {
+        return GetDeadCount() <= 0 && currentQuestion >= questions.Count-1;
+    }
+
     public Opponent GetWinner()
     {
         foreach (var o in opponents)
@@ -53,6 +57,8 @@ public class Battle
         }
         return count;
     }
+
+
 
     public Battle(Opponent opponent1, Opponent opponent2, Region region)
     {

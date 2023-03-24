@@ -170,19 +170,19 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
     public void SetTable()
     {
         List<Player> players = GetSortedPlayers();
-        for (int x = 0; x < rows.Count; x++)
-        {
+
+        for (int x = 0; x < rows.Count; x++) {
             ScoreTableRow scoreTableRow = rows[x].row.GetComponent<ScoreTableRow>();
-            Player player = players[x];
-            Photon.Realtime.Player photonPlayer = playersManager.GetPhotonPlayerByPlayer(player);
-            rows[x].player = player;
+            rows[x].player = players[x];
+
             scoreTableRow.FillRow(
-                iconsContent.lobbyIcons[(int)photonPlayer.CustomProperties["playerIconId"]],
-                photonPlayer.NickName,
-                player.claimedRegions.Count,
-                gameplayManager.regionSystem.regionSerds.Count,
-                player.scores,
-                colorsHolder.colors[(int)photonPlayer.CustomProperties["playerColorIndex"]]);
+                iconsContent.lobbyIcons[players[x].iconId], 
+                players[x].nickname, 
+                players[x].claimedRegions.Count, 
+                gameplayManager.regionSystem.regionSerds.Count, 
+                players[x].scores, 
+                colorsHolder.colors[players[x].colorId]
+            );
         }
     }
 
@@ -213,19 +213,18 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
     /*
      * Обнавляет уже созданные данные в таблице, а также плавно сортирует их 
      */
-    public void UpdateTable()
-    {
-        for(int x = 0; x < rows.Count; x++)
-        {
+    public void UpdateTable() {
+        for(int x = 0; x < rows.Count; x++) {
             ScoreTableRow row = rows[x].row.GetComponent<ScoreTableRow>();
-            Photon.Realtime.Player photonPlayer = playersManager.GetPhotonPlayerByPlayer(rows[x].player);
+
             row.FillRow(
-                iconsContent.lobbyIcons[(int)photonPlayer.CustomProperties["playerIconId"]],
-                photonPlayer.NickName,
+                iconsContent.lobbyIcons[rows[x].player.iconId],
+                rows[x].player.nickname,
                 rows[x].player.claimedRegions.Count,
                 gameplayManager.regionSystem.regionSerds.Count,
                 rows[x].player.scores,
-                colorsHolder.colors[(int)photonPlayer.CustomProperties["playerColorIndex"]]);
+                colorsHolder.colors[rows[x].player.colorId]
+            );
         }
 
         UpdateRowsOrder();
