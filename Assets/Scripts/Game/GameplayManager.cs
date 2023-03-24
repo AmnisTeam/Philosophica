@@ -352,7 +352,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             }
         }
 
-        if (regionSelectionTimer >= regionSelectionMaxTime) {
+        if (regionSelectionTimer >= regionSelectionMaxTime || !questionManager.tableCompiler.isHaveRightAnswer) {
             if (questionManager.tableCompiler.isHaveRightAnswer)
                 GrantRandomFreeRegionToPlayer(winner);
             stateEnded = true;
