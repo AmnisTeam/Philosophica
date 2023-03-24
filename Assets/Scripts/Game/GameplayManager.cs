@@ -290,14 +290,17 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void RegionSelectionStart()
     {
-        winner = questionManager.tableCompiler.table[0];
-        winnerRegionsCountAtStartOfSelection = winner.claimedRegions.Count;
+        if (questionManager.tableCompiler.isHaveRightAnswer)
+        {
+            winner = questionManager.tableCompiler.table[0];
+            winnerRegionsCountAtStartOfSelection = winner.claimedRegions.Count;
 
-        regionSelectionToast = new BoolToastMessage($"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию");
-        toast.showText(regionSelectionToast);
+            regionSelectionToast = new BoolToastMessage($"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию");
+            toast.showText(regionSelectionToast);
 
-        regionSelectionTimer = 0;
-        regionSelectionStateIsEnded.state = false;
+            regionSelectionTimer = 0;
+            regionSelectionStateIsEnded.state = false;
+        }
     }
 
     public void RegionSelectionUpdate()
@@ -305,18 +308,27 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         bool stateEnded = false;
         regionSelectionTimer += Time.deltaTime;
 
-        regionSelectionToast.message = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию: {(int)(regionSelectionMaxTime - regionSelectionTimer)}";
-
-        if (winner.isLocalClient) {
-            GrantRegionToWinnerByMouseClick();
+        if (questionManager.tableCompiler.isHaveRightAnswer) {
+            regionSelectionToast.message = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию: {(int)(regionSelectionMaxTime - regionSelectionTimer)}";
         }
 
-        if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection) {
-            stateEnded = true;
+        if (questionManager.tableCompiler.isHaveRightAnswer) {
+            if (winner.isLocalClient) {
+                GrantRegionToWinnerByMouseClick();
+            }
         }
 
-        if (regionSelectionTimer >= regionSelectionMaxTime) {
-            GrantRandomFreeRegionToPlayer(winner);
+
+        if (questionManager.tableCompiler.isHaveRightAnswer) {
+            if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection) {
+                stateEnded = true;
+            }
+        }
+
+        if (regionSelectionTimer >= regionSelectionMaxTime || !questionManager.tableCompiler.isHaveRightAnswer) {
+            if (questionManager.tableCompiler.isHaveRightAnswer) {
+                GrantRandomFreeRegionToPlayer(winner);
+            }
             stateEnded = true;
         }
 
@@ -339,16 +351,17 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         player.scores += countScoresForRegion;
         scoreTableManager.UpdateTable();
 
+        if (region && questionManager.tableCompiler.isHaveRightAnswer) {
+            Vector2 regionCenter = Vector2.zero;
+            for (int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++) {
+                regionCenter += region.GetComponent<MeshFilter>().mesh.vertices[x].ToXY();
+            }
 
-        Vector2 regionCenter = Vector2.zero;
-        for (int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++) {
-            regionCenter += region.GetComponent<MeshFilter>().mesh.vertices[x].ToXY();
+            regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
+
+            //pv.RPC("RPC_MoveCameraToChoosenRegion", RpcTarget.All, regionCenter.x, regionCenter.y);
+            Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
         }
-
-        regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
-
-        //pv.RPC("RPC_MoveCameraToChoosenRegion", RpcTarget.All, regionCenter.x, regionCenter.y);
-        Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
     }
 
     /*[PunRPC]
@@ -436,7 +449,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         steps++;
         SetStepsText(steps, maxSteps);
 
-        regionSelectionToast.isDone = true;
+        if (questionManager.tableCompiler.isHaveRightAnswer) {
+            regionSelectionToast.isDone = true;
+        }
+
         if (GetFreeRegionsCount() > 0) {
             regionSelectionStateIsEnded.state = true;
         } else {
