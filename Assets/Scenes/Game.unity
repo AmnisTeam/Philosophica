@@ -3258,6 +3258,7 @@ MonoBehaviour:
   sessionElapsedTime: 0
   steps: 0
   maxSteps: 25
+  countScoresForRegion: 0
   menusTransitionTime: 0.3
   menusTransitionDelayTime: 0.2
   timeToNextQuestion: 10
@@ -20211,6 +20212,7 @@ GameObject:
   - component: {fileID: 1926198293}
   - component: {fileID: 1926198292}
   - component: {fileID: 1926198294}
+  - component: {fileID: 1926198295}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -20410,6 +20412,23 @@ MonoBehaviour:
   outlineTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
   innerGlowTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
   regionsSystem: {fileID: 102743451}
+--- !u!114 &1926198295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1926198287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59ad7d925c1241549b5f7fb280a000eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  percentOfDistanceSpeed: 0.001
+  minSpeed: 0.05
+  minDistanceToStopMove: 0.5
+  target: {x: 0, y: 0, z: 0}
+  isMove: 0
 --- !u!1 &1931150213
 GameObject:
   m_ObjectHideFlags: 0

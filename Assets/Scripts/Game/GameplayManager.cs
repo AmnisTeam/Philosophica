@@ -277,9 +277,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (stateEnded) {
             steps++;
             pv.RPC("RPC_StepsUpdate", RpcTarget.Others, steps);
-            /*if (region)
-                pv.RPC("RPC_GetScoresForRegion", RpcTarget.All, winner.id);*/
-            regionSelectionToast.isDone = true;
+
+            if (region) //Если регион был найден
+            {
+                pv.RPC("RPC_GetScoresForRegion", RpcTarget.All, winner.id);
+                Vector2 regionCenter = Vector2.zero;
+                for(int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++)
+                    regionCenter += region.GetComponent<MeshFilter>().mesh.vertices[x].ToXY();
+                regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
+
+                pv.RPC("RPC_MoveCameraToChoosenRegion", RpcTarget.All, regionCenter.x, regionCenter.y);
+            }
+                regionSelectionToast.isDone = true;
 
             if (GetFreeRegionsCount() > 0) {
                 regionSelectionStateIsEnded.state = true;
@@ -294,12 +303,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     
     [PunRPC]
     public void RPC_RegionWasChosen(int regionId, int playerId, string source) {
-        Debug.LogError($"Region {regionId} is being claimed by player {playerId} -- {source}");
+        //Debug.LogError($"Region {regionId} is being claimed by player {playerId} -- {source}");
 
         Region region = regionSystem.regionSerds[regionId].region;
         Player player = playersManager.players.get(playerId);
 
         player.ClaimRegion(region);
+    }
+
+    [PunRPC]
+    public void RPC_MoveCameraToChoosenRegion(float posX, float posY)
+    {
+        Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(posX, posY));
     }
 
     [PunRPC]
@@ -1190,7 +1205,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int k = 0; k < regionSystem.regionSerds.Count; k++) {
             for (int i = 0; i < playersManager.players.count; i++) {
                 for (int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++) {
-                    Debug.LogError($"Looking if region {k} is claimed by player {i} (pointer at {j})");
+                    //Debug.LogError($"Looking if region {k} is claimed by player {i} (pointer at {j})");
                     if (regionSystem.regionSerds[k].region == playersManager.players.get(i).claimedRegions[j]) {
                         claimedRegs.Add(k);
                     }
@@ -1203,9 +1218,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         pv.RPC("RPC_RegionWasChosen", RpcTarget.All, freeRegs[randReg], player.id, "GrantRandomFreeRegionToPlayer()");
         pv.RPC("RPC_GetScoresForRegion", RpcTarget.All, player.id);
 
-        Debug.LogError($"Currently CLAIMED regions are: {string.Join(' ', claimedRegs)}");
-        Debug.LogError($"Currently FREE regions are: {string.Join(' ', freeRegs)}");
-        Debug.LogError($"Granting region {freeRegs[randReg]} to player {player.id}");
+        //Debug.LogError($"Currently CLAIMED regions are: {string.Join(' ', claimedRegs)}");
+        //Debug.LogError($"Currently FREE regions are: {string.Join(' ', freeRegs)}");
+        //Debug.LogError($"Granting region {freeRegs[randReg]} to player {player.id}");
 
         //return regionSystem.regionSerds[freeRegs[randReg]].region;
     }
@@ -1242,7 +1257,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
                     for (int k = 0; k < regionSystem.regionSerds.Count; k++) {
                         if (regionSystem.regionSerds[k].region == region) {
-                            Debug.LogError($"Player has clicked on region {k} that's {(freeRegs.Contains(k) ? "FREE" : "NOT FREE")}");
+                            //Debug.LogError($"Player has clicked on region {k} that's {(freeRegs.Contains(k) ? "FREE" : "NOT FREE")}");
                             pv.RPC("RPC_RegionWasChosen", RpcTarget.All, k, winner.id, "GrantRegionToWinnerByMouseClick()");
                             pv.RPC("RPC_GetScoresForRegion", RpcTarget.All, winner.id);
                             break;
