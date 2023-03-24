@@ -1885,6 +1885,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!225 &158544389
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3520,6 +3521,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &299676459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9977,6 +9979,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &851522507
 GameObject:
   m_ObjectHideFlags: 0
@@ -10251,6 +10254,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &877348186
 GameObject:
   m_ObjectHideFlags: 0
@@ -16593,6 +16597,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!21 &1563518314
 Material:
   serializedVersion: 8
@@ -21394,6 +21399,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &1898887546 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 787162923219038593, guid: e66a38329877c884cb6aa4600a307500, type: 3}
@@ -21603,6 +21609,7 @@ GameObject:
   - component: {fileID: 1926198293}
   - component: {fileID: 1926198292}
   - component: {fileID: 1926198294}
+  - component: {fileID: 1926198295}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -21810,6 +21817,23 @@ MonoBehaviour:
   outlineTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
   innerGlowTexture: {fileID: 8400000, guid: ead3278bd2a39ff45a8992c2ad8af231, type: 2}
   regionsSystem: {fileID: 102743451}
+--- !u!114 &1926198295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1926198287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59ad7d925c1241549b5f7fb280a000eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  percentOfDistanceSpeed: 0.001
+  minSpeed: 0.01
+  minDistanceToStopMove: 1
+  target: {x: 0, y: 0, z: 0}
+  isMove: 0
 --- !u!1 &1931150213
 GameObject:
   m_ObjectHideFlags: 0
@@ -24342,6 +24366,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &2100993408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24888,6 +24913,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2142768906
 GameObject:
   m_ObjectHideFlags: 0

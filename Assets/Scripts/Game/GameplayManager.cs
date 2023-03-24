@@ -293,7 +293,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         winner = questionManager.tableCompiler.table[0];
         winnerRegionsCountAtStartOfSelection = winner.claimedRegions.Count;
 
-        regionSelectionToast = new BoolToastMessage($"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> �������� ����������");
+        regionSelectionToast = new BoolToastMessage($"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию");
         toast.showText(regionSelectionToast);
 
         regionSelectionTimer = 0;
@@ -305,7 +305,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         bool stateEnded = false;
         regionSelectionTimer += Time.deltaTime;
 
-        regionSelectionToast.message = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> �������� ����������: {(int)(regionSelectionMaxTime - regionSelectionTimer)}";
+        regionSelectionToast.message = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию: {(int)(regionSelectionMaxTime - regionSelectionTimer)}";
 
         if (winner.isLocalClient) {
             GrantRegionToWinnerByMouseClick();
@@ -448,7 +448,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void PreparationStart()
     {
-        preparationToast = new BoolToastMessage("���������� � ���������� �������");
+        preparationToast = new BoolToastMessage("Подготовка к следующему вопросу");
         toast.showText(preparationToast);
         preparationTimer = 0;
         preparationStateIsEnded.state = false;
@@ -458,7 +458,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         preparationTimer += Time.deltaTime;
 
-        preparationToast.message = $"���������� � ���������� �������: {(int)(preparationTime - preparationTimer)}";
+        preparationToast.message = $"Подготовка к следующему вопросу: {(int)(preparationTime - preparationTimer)}";
 
         if (preparationTimer >= preparationTime * 0.9)
             preparationToast.isDone = true;
@@ -519,7 +519,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void OffensivePlayerSelectionStart()
     {
-        //Debug.Log("OffensivePlayerSelectionStart");
+        Debug.Log("OffensivePlayerSelectionStart");
 
         offensivePlayerSelectionTimer = 0;
         offenseAnnouncement.SetActive(true);
@@ -530,9 +530,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         offenseAnnouncementAvatar.GetComponent<UnityEngine.UI.Image>().color = offensePlayer.color;
 
         if (offensePlayer.isLocalClient)
-            offenseAnnouncementText.text = "���� ������� ��������. ��������, �� ���� ������ �������.";
+            offenseAnnouncementText.text = "Ваша очередь нападать. Выберите, на кого хотите напасть.";
         else
-            offenseAnnouncementText.text = $"<color=#{offensePlayer.color.ToHexString()}>{offensePlayer.nickname}</color> �������� �� ���� �������.";
+            offenseAnnouncementText.text = $"<color=#{offensePlayer.color.ToHexString()}>{offensePlayer.nickname}</color> выбирает на кого напасть.";
 
         offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime);
         battle = null;
@@ -591,7 +591,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         attackAnnouncement.SetActive(true);
         attackAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
-        attackAnnouncementText.text = $"<color=#{battle.opponents[0].player.color.ToHexString()}>{battle.opponents[0].player.nickname}</color> ����� �� " +
+        attackAnnouncementText.text = $"<color=#{battle.opponents[0].player.color.ToHexString()}>{battle.opponents[0].player.nickname}</color> напал на " +
                                       $"<color=#{battle.opponents[1].player.color.ToHexString()}>{battle.opponents[1].player.nickname}</color>";
         attackAnnouncementTimer = 0;
         attackAnnouncementIsEnded.state = false;
@@ -876,7 +876,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
                     count++;
                 } while (!playersManager.players.get(currentOffensivePlayer).isLose && count < playersManager.players.count);
-                //Debug.Log("��������� ���������� ���������� � ������������ = " + battle.GetLoser().player.claimedRegions.Count);
+                //Debug.Log("Количесто оставшихся территорий у проигравшено = " + battle.GetLoser().player.claimedRegions.Count);
                 
                 if (!battle.IsDraw()) {
                     if (battle.GetLoser().player.claimedRegions.Count == 0)
@@ -886,7 +886,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     else
                         fromBattleResultsToOffensive.Set(true);
                 } else {
-                    // � ��� ���������?
+                    // а так правильно?
                     if (steps >= maxSteps)
                         fromBattleResultsToEndGame.Set(true);
                     else
@@ -965,7 +965,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         battle.GetLoser().player.isLose = true;
         scoreTableManager.UpdateRowsOrder();
         losePlayerAnnouncement.SetActive(true);
-        losePlayerAnnouncementText.text = "�����" + "<color=#" + battle.GetLoser().player.color.ToHexString().Substring(0, 6) + ">" + battle.GetLoser().player.nickname + "</color> ������� ��� ����������";
+        losePlayerAnnouncementText.text = "Игрок" + "<color=#" + battle.GetLoser().player.color.ToHexString().Substring(0, 6) + ">" + battle.GetLoser().player.nickname + "</color> потерял все территории";
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
         GlobalVariables.Delay(menusTransitionTime + losePlayerAnnouncmentTime / 2.0, () => { scoreTableManager.FindRowByPlayer(battle.GetLoser().player).GetComponent<ScoreTableRow>().isLose = true; });
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime)
@@ -1016,6 +1016,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void Start()
     {
+        SetStepsText(steps, maxSteps);
+
         fastedWinner = new FastedWinner();
         fastedWinner.player = playersManager.players.get(0);
         fastedWinner.answer = "";
@@ -1196,8 +1198,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(0); //������ 1
-        //gameStateMachine.Start(4); //������ 2
+        gameStateMachine.Start(0); //Стадия 1
+        //gameStateMachine.Start(4); //Стадия 2
     }
 
     public void Update()
