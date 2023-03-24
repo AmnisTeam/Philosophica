@@ -31,7 +31,7 @@ public class QuestionManager : MonoBehaviourPunCallbacks
     public float timeToQuestion;
     public float timerToQuestion;
     public int rightAnswer = 0;
-    public int selectedAnswer = 0;
+    public int selectedAnswer = -1;
     public bool haveAnswer = false;
     public bool endQuestion = false;
 
@@ -42,6 +42,8 @@ public class QuestionManager : MonoBehaviourPunCallbacks
 
     public float time = 0.8f;
     private float timer = 0;
+
+    private bool isReset = false;
 
     public Animator questionMenuAnimator;
 
@@ -59,14 +61,14 @@ public class QuestionManager : MonoBehaviourPunCallbacks
         }
         
         rightAnswer = question.idRightAnswer;
-        selectedAnswer = 0;
+        selectedAnswer = -1;
 
         foreach (Player player in playersManager.players.list) {
-            if (player.isLocalClient) {
-                playersManager.playerAnswerData.find(player.id).answerId = 0;
-                playersManager.playerAnswerData.find(player.id).timeToAnswer = timeToQuestion;
-                break;
-            }
+            //if (player.isLocalClient) {
+            playersManager.playerAnswerData.find(player.id).answerId = -1;
+            playersManager.playerAnswerData.find(player.id).timeToAnswer = timeToQuestion;
+                //break;
+            //}
         }
         
         haveAnswer = false;
@@ -192,6 +194,12 @@ public class QuestionManager : MonoBehaviourPunCallbacks
             {
                 questionsMenu.GetComponent<Animator>().SetBool("ShowTable", true);
                 tableCompiler.compileTheTable();
+                isReset = true;
+            }
+            else if (isReset) //вызов только 1 раз для сброса таблицы
+            {
+                tableCompiler.resetTable();
+                isReset = false;
             }
 
             minutes.text = "";
@@ -206,6 +214,7 @@ public class QuestionManager : MonoBehaviourPunCallbacks
                 secundes.text += '0';
             secundes.text += ((int)(timerToQuestion % 60)).ToString();
         }
+        //Debug.Log(selectionQuestions.activeSelection);
     }
 
     [PunRPC]

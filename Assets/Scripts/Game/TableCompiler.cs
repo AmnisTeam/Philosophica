@@ -47,33 +47,28 @@ public class TableCompiler : MonoBehaviour
         for(int x = 0; x < questionManager.playersManager.players.count; x++)
         {
             PlayerAnswerData answerData = playersManager.playerAnswerData.find(table[x].id);
-            
-            // REMOVE КОСТЫЛЬ
-            if (answerData.answerId == -1)
-                answerData.answerId = 0;
-
 
             nickname[x].text = table[x].nickname;
-            answer[x].text = questionManager.activeQuestion.answer[answerData.answerId];
+            if (answerData.answerId >= 0)
+            {
+                answer[x].text = questionManager.activeQuestion.answer[answerData.answerId];
+                time[x].text = GetTimeStr(answerData.timeToAnswer);
+            }
+            else
+            {
+                answer[x].text = "-";
+                time[x].text = "Нет ответа";
+                questionManager.selectionQuestions.activeSelection = -1;
+            }
+
             if (answerData.answerId == questionManager.rightAnswer)
                 answer[x].color = colorRightAnswer;
             else
                 answer[x].color = Color.white;
+
             icons[x].sprite = iconsContent.lobbyIcons[table[x].iconId];
             icons[x].color = table[x].color;
 
-            //minutes[x].text = "";
-            //secundes[x].text = "";
-            //time[x].text = "";
-
-            //if ((int)(answerData.timeToAnswer / 60) / 10 == 0)
-            //    minutes[x].text += '0';
-            //minutes[x].text += ((int)(answerData.timeToAnswer / 60)).ToString();
-
-            //if ((int)(answerData.timeToAnswer % 60) / 10 == 0)
-            //    secundes[x].text += '0';
-            //secundes[x].text += ((int)(answerData.timeToAnswer % 60)).ToString();
-            time[x].text = GetTimeStr(answerData.timeToAnswer);
         }
 
         for (int x = 0; x < questionManager.playersManager.MAX_COUNT_PLAYERS; x++)
@@ -110,6 +105,21 @@ public class TableCompiler : MonoBehaviour
 
             winnerIcon.sprite = iconsContent.lobbyIcons[table[0].iconId];
             winnerIcon.color = new UnityEngine.Color(0, 0, 0, 0); //аватарка типо есть, но она становится прозрачной
+        }
+    }
+
+    public void resetTable()
+    {
+        for (int x = 0; x < questionManager.playersManager.players.count; x++)
+        {
+            if (table.Count > 0)
+            {
+                PlayerAnswerData answerData = playersManager.playerAnswerData.find(table[x].id);
+                answerData.answerId = -1;
+                questionManager.selectionQuestions.activeSelection = -1;
+                answer[x].text = "-";
+                time[x].text = "Нет ответа";
+            }
         }
     }
 
