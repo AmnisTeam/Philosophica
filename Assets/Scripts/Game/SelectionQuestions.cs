@@ -20,14 +20,14 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
 
     public float speed = 0.01f;
     public float[] opacity = new float[4];
-    public int activeSelection = 0;
+    public int activeSelection = -1;
     public float shadowMinColor = 0.2f;
     public float shadowSpeed = 0.6f;
     private float shadowColor = 1;
     private float shadowChoosButtonColor = 1;
     private float t;
 
-    public bool an = false;
+    private bool an = false;
 
     public void toActiveSelection(int idx)
     {
@@ -36,6 +36,11 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
             activeSelection = idx;
             an = false;
         }
+/*        else
+        {
+            activeSelection = -1;
+            an = true; // todo хз зачем это но если  до этого false, то тут наверное true???
+        }*/
     }
 
     public void setVisibleButtons()
@@ -76,13 +81,13 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
                 if (!an) break;
             }
         }
-        else
+        else if (activeSelection != -1)
         {
             opacity[activeSelection] += speed * Time.deltaTime;
             if (opacity[activeSelection] > 1)
                 opacity[activeSelection] = 1;
         }
-
+        //Debug.Log(activeSelection);
         //for (int x = 0; x < 6; x++)
         //{
         //    if(!(questionManager.endQuestion && 0 == questionManager.rightAnswer))

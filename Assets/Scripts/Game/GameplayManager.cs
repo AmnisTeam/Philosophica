@@ -66,8 +66,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public TextMeshProUGUI opponentsAnnouncementOpponent1Nickname;
     public UnityEngine.UI.Image opponentsAnnouncementOpponent2Icon;
     public TextMeshProUGUI opponentsAnnouncementOpponent2Nickname;
-    
 
+
+    public GameObject gameBeggining;
+    public GameObject firstStageHint;
+    public GameObject questionMenu;
+    public GameObject secondStageHint;
     public GameObject questionNumberAnnouncement;
     public TextMeshProUGUI questionNumberAnnouncementText;
     public GameObject askQuestionInBattle;
@@ -82,12 +86,23 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public StateMachine gameStateMachine = new StateMachine();
 
+    public System.Random random;
+
     public double sessionElapsedTime = 0;
 
     public int steps = 0;
     public int maxSteps = 25;
 
     public int countScoresForRegion;
+
+    public float gameBegginingTime = 5.0f;
+    private float gameBegginingTimer = 0.0f;
+
+    public float firstStageHintTime = 10.0f;
+    public float firstStageHintTimer = 0.0f;
+
+    public float secondStageHintTime = 10.0f;
+    private float secondStageHintTimer = 0.0f;
 
     public float menusTransitionTime = 0.3f;
     public float menusTransitionDelayTime = 0.2f;
@@ -152,7 +167,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     private double waitTimer = 0;
     private double waiteTime = 0;
 
-    
+    private List<int> regionIndexes = new List<int>();
+    private bool wasRpcSent = false;
 
     private int winnerRegionsCountAtStartOfSelection;
     private Player winner;
@@ -163,12 +179,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolToastMessage regionSelectionToast;
     public BoolToastMessage preparationToast;
 
+
+    //public BoolCondition fromGameBegginingToAskQuestion;
+    public BoolCondition fromFirstStageHintToAskQuestion;
+    public BoolCondition fromGameBegginingToFirstStageHint;
     public BoolCondition askQuestionStateIsEnded;
     public BoolCondition viewResultsStateIsEnded;
     public BoolCondition regionSelectionStateIsEnded;
     public BoolCondition preparationStateIsEnded;
     public BoolCondition firstStageIsEnded;
     public BoolCondition stageTwoAnnouncementIsEnded;
+    public BoolCondition fromSecondStageHintToOffensivePlayerSelection;
+    public BoolCondition fromStageTwoAnnouncementToSecondStageHint;
     public BoolCondition offensivePlayerSelectionIsEnded;
     public BoolCondition attackAnnouncementIsEnded;
     public BoolCondition opponentsAnnouncementIsEnded;
@@ -181,16 +203,67 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolCondition fromBattleResultsToEndGame;
     public BoolCondition fromBattleResultsToLosePlayer;
 
+    public void GameBegginingStart()
+    {
+        gameBeggining.SetActive(true);
+        gameBeggining.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+
+        fromGameBegginingToFirstStageHint.Set(false);
+        gameBegginingTimer = 0;
+    }
+
+    public void GameBegginingUpdate()
+    {
+        Debug.Log("GameBegginingUpdate");
+        gameBegginingTimer += Time.deltaTime;
+        if (gameBegginingTimer >= gameBegginingTime)
+        {    
+            gameBeggining.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                gameBeggining.SetActive(false);
+            });
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                fromGameBegginingToFirstStageHint.Set(true);
+            });       
+        }
+    }
+
+    public void FirstStageHintStart()
+    {
+        firstStageHint.SetActive(true);
+        firstStageHint.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+
+        firstStageHintTimer = 0;
+    }
+
+    public void FirstStageHintUpdate()
+    {
+        firstStageHintTimer += Time.deltaTime;
+
+        if (firstStageHintTimer >= firstStageHintTime)
+        {
+            firstStageHint.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                firstStageHint.SetActive(false);
+            });
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                fromFirstStageHintToAskQuestion.Set(true);
+            });
+        }
+    }
+
     public void AskQuestionStart()
     {
+        questionMenu.SetActive(true);
+        questionMenu.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+
         askQuestionStateIsEnded.state = false;
         
         questionManager.setQuestion(currentQuestion);
-    }
 
-    [PunRPC]
-    public void RPC_AskQuestionStart() {
-        AskQuestionStart();
+        wasRpcSent = false;
     }
 
     public void AskQuestionUpdate()
@@ -199,20 +272,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             askQuestionStateIsEnded.state = true;
     }
 
-    [PunRPC]
-    public void RPC_AskQuestionUpdate() {
-        AskQuestionUpdate();
-    }
-
     public void ViewResultsStart()
     {
         viewResultsTimer = 0;
         viewResultsStateIsEnded.state = false;
-    }
-
-    [PunRPC]
-    public void RPC_ViewResultsStart() {
-        ViewResultsStart();
     }
 
     public void ViewResultsUpdate()
@@ -225,99 +288,149 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    public void RPC_ViewResultsUpdate() {
-        ViewResultsUpdate();
-    }
-
     public void RegionSelectionStart()
     {
-        winner = questionManager.tableCompiler.table[0];
-        winnerRegionsCountAtStartOfSelection = winner.claimedRegions.Count;
+        if (questionManager.tableCompiler.isHaveRightAnswer)
+        {
+            winner = questionManager.tableCompiler.table[0];
+            winnerRegionsCountAtStartOfSelection = winner.claimedRegions.Count;
 
-        regionSelectionToast = new BoolToastMessage($"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию");
-        toast.showText(regionSelectionToast);
+            regionSelectionToast = new BoolToastMessage($"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> РІС‹Р±РёСЂР°РµС‚ С‚РµСЂСЂРёС‚РѕСЂРёСЋ");
+            toast.showText(regionSelectionToast);
 
-        regionSelectionTimer = 0;
-        regionSelectionStateIsEnded.state = false;
-    }
-
-    [PunRPC]
-    public void RPC_RegionSelectionStart() {
-        RegionSelectionStart();
+            regionSelectionTimer = 0;
+            regionSelectionStateIsEnded.state = false;
+        }
     }
 
     public void RegionSelectionUpdate()
     {
         bool stateEnded = false;
-        Region region = null;
         regionSelectionTimer += Time.deltaTime;
 
-        regionSelectionToast.message = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию: {(int)(regionSelectionMaxTime - regionSelectionTimer)}";
-
-        if (winner.isLocalClient) {
-            //region = GrantRegionToWinnerByMouseClick();
-            GrantRegionToWinnerByMouseClick();
+        if (questionManager.tableCompiler.isHaveRightAnswer) {
+            regionSelectionToast.message = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> РІС‹Р±РёСЂР°РµС‚ С‚РµСЂСЂРёС‚РѕСЂРёСЋ: {(int)(regionSelectionMaxTime - regionSelectionTimer)}";
         }
 
-        //if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection) {
-        if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection) {
-            /*if (winner.isLocalClient) {
-                pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionId, winner.id, "RegionSelectionUpdate()&regionId_neq_neg1");
-            }*/
-            stateEnded = true;
+        if (questionManager.tableCompiler.isHaveRightAnswer) {
+            if (winner.isLocalClient) {
+                GrantRegionToWinnerByMouseClick();
+            }
         }
 
-        if (regionSelectionTimer >= regionSelectionMaxTime) {
-            //region = GrantRandomFreeRegionToPlayer(winner);
-            GrantRandomFreeRegionToPlayer(winner);
+
+        if (questionManager.tableCompiler.isHaveRightAnswer) {
+            if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection) {
+                stateEnded = true;
+            }
+        }
+
+        if (regionSelectionTimer >= regionSelectionMaxTime || !questionManager.tableCompiler.isHaveRightAnswer) {
+            if (questionManager.tableCompiler.isHaveRightAnswer) {
+                GrantRandomFreeRegionToPlayer(winner);
+            }
             stateEnded = true;
         }
 
         if (stateEnded) {
-            steps++;
-            pv.RPC("RPC_StepsUpdate", RpcTarget.Others, steps);
-
-            if (region) //Если регион был найден
-            {
-                pv.RPC("RPC_GetScoresForRegion", RpcTarget.All, winner.id);
-                Vector2 regionCenter = Vector2.zero;
-                for(int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++)
-                    regionCenter += region.GetComponent<MeshFilter>().mesh.vertices[x].ToXY();
-                regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
-
-                pv.RPC("RPC_MoveCameraToChoosenRegion", RpcTarget.All, regionCenter.x, regionCenter.y);
-            }
-                regionSelectionToast.isDone = true;
-
-            if (GetFreeRegionsCount() > 0) {
-                regionSelectionStateIsEnded.state = true;
-            } else {
-                firstStageIsEnded.state = true;
-            }
-            
-            Wait(0.8);
-            //pv.RPC("RPC_RegionWasChosen", RpcTarget.Others, regionId, winner.id, "RegionSelectionUpdate()");
+            pv.RPC("RPC_StepsUpdate", RpcTarget.All);
         }
     }
     
     [PunRPC]
     public void RPC_RegionWasChosen(int regionId, int playerId, string source) {
-        //Debug.LogError($"Region {regionId} is being claimed by player {playerId} -- {source}");
+        //Debug.LogError($"Player {playerId} has claimed region {regionId}");
 
         Region region = regionSystem.regionSerds[regionId].region;
         Player player = playersManager.players.get(playerId);
 
         player.ClaimRegion(region);
+        regionIndexes.Remove(regionId);
+        //Debug.LogError($"Free regions: {string.Join(" ", regionIndexes)} ({GetFreeRegionsCount()})");
+
+        player.scores += countScoresForRegion;
+        scoreTableManager.UpdateTable();
+
+        if (region && questionManager.tableCompiler.isHaveRightAnswer) {
+            Vector2 regionCenter = Vector2.zero;
+            for (int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++) {
+                regionCenter += region.GetComponent<MeshFilter>().mesh.vertices[x].ToXY();
+            }
+
+            regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
+
+            //pv.RPC("RPC_MoveCameraToChoosenRegion", RpcTarget.All, regionCenter.x, regionCenter.y);
+            Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
+        }
     }
 
-    [PunRPC]
-    public void RPC_MoveCameraToChoosenRegion(float posX, float posY)
-    {
+    /*[PunRPC]
+    public void RPC_MoveCameraToChoosenRegion(float posX, float posY) {
         Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(posX, posY));
-    }
+    }*/
 
     [PunRPC]
+    public void RPC_RegionDistribution(Dictionary<int, int> info) {
+        foreach (var rec in info) {
+            //Debug.LogError($"Player {rec.Key} has claimed region {rec.Value}");
+
+            Region region = regionSystem.regionSerds[rec.Value].region;
+            Player player = playersManager.players.get(rec.Key);
+
+            player.ClaimRegion(region);
+            regionIndexes.Remove(rec.Value);
+            //Debug.LogError($"Free regions: {string.Join(" ", regionIndexes)} ({GetFreeRegionsCount()})");
+        }
+    }
+
+    public void GrantRandomFreeRegionToPlayer(Player player) {
+        if (!wasRpcSent) {
+            int randRegIdx = random.Next(0, regionIndexes.Count);
+            pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionIndexes[randRegIdx], player.id, "GrantRandomFreeRegionToPlayer()");
+            wasRpcSent = true;
+        }
+    }
+
+    public void GrantRegionToWinnerByMouseClick() {
+        if (Input.GetMouseButtonDown(0)) {
+            if (!wasRpcSent) {
+                Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit)) {
+                    Region region = hit.collider.gameObject.GetComponent<Region>();
+
+                    if (region) {
+                        for (int k = 0; k < regionIndexes.Count; k++) {
+                            if (regionSystem.regionSerds[regionIndexes[k]].region == region) {
+                                pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionIndexes[k], winner.id, "GrantRegionToWinnerByMouseClick()");
+                                wasRpcSent = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void GrantPlayersStartingRegions() {
+        if (PhotonNetwork.IsMasterClient) {
+            Dictionary<int, int> playerIdxToRegIdx = new Dictionary<int, int>();
+            List<int> regs = new List<int>(Enumerable.Range(0, regionSystem.regionSerds.Count));
+
+            for (int i = 0; i < playersManager.players.count; i++) {
+                int playerIdx = playersManager.players.get(i).id;
+                int randRegIdx = random.Next(0, regs.Count);
+
+                playerIdxToRegIdx.Add(playerIdx, regs[randRegIdx]);
+                regs.RemoveAt(randRegIdx);
+            }
+
+            pv.RPC("RPC_RegionDistribution", RpcTarget.All, playerIdxToRegIdx);
+        }
+    }
+
+    /*[PunRPC]
     public void RPC_GetScoresForRegion(int playerId)
     {
         Player player = null;
@@ -329,38 +442,39 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             }
         player.scores += countScoresForRegion;
         scoreTableManager.UpdateTable();
-    }
+    }*/
 
     [PunRPC]
-    public void RPC_StepsUpdate(int newSteps) {
-        Debug.Log(">>> RPC Received at RPC_StepsUpdate()");
-        SetStepsText(newSteps, maxSteps);
-        scoreTableManager.UpdateTable();
-    }
+    public void RPC_StepsUpdate() {
+        steps++;
+        SetStepsText(steps, maxSteps);
 
-    [PunRPC]
-    public void RPC_RegionSelectionUpdate() {
-        RegionSelectionStart();
+        if (questionManager.tableCompiler.isHaveRightAnswer) {
+            regionSelectionToast.isDone = true;
+        }
+
+        if (GetFreeRegionsCount() > 0) {
+            regionSelectionStateIsEnded.state = true;
+        } else {
+            firstStageIsEnded.state = true;
+        }
+            
+        Wait(0.8);
     }
 
     public void PreparationStart()
     {
-        preparationToast = new BoolToastMessage("Подготовка к следующему вопросу");
+        preparationToast = new BoolToastMessage("РџРѕРґРіРѕС‚РѕРІРєР° Рє СЃР»РµРґСѓСЋС‰РµРјСѓ РІРѕРїСЂРѕСЃСѓ");
         toast.showText(preparationToast);
         preparationTimer = 0;
         preparationStateIsEnded.state = false;
-    }
-
-    [PunRPC]
-    public void RPC_PreparationStart() {
-        PreparationStart();
     }
 
     public void PreparationUpdate()
     {
         preparationTimer += Time.deltaTime;
 
-        preparationToast.message = $"Подготовка к следующему вопросу: {(int)(preparationTime - preparationTimer)}";
+        preparationToast.message = $"РџРѕРґРіРѕС‚РѕРІРєР° Рє СЃР»РµРґСѓСЋС‰РµРјСѓ РІРѕРїСЂРѕСЃСѓ: {(int)(preparationTime - preparationTimer)}";
 
         if (preparationTimer >= preparationTime * 0.9)
             preparationToast.isDone = true;
@@ -370,11 +484,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             preparationStateIsEnded.state = true;
             currentQuestion = (currentQuestion + 1) % questionManager.questionLoader.questions.Count();
         }
-    }
-
-    [PunRPC]
-    public void RPC_PreparationUpdate() {
-        PreparationUpdate();
     }
 
     //public void stageTwoAnnouncementStart()
@@ -397,6 +506,28 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     //    }
     //}
 
+    public void SecondStageHintStart()
+    {
+        secondStageHint.SetActive(true);
+        secondStageHint.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+    }
+
+    public void SecondStageHintUpdate()
+    {
+        secondStageHintTimer += Time.deltaTime;
+        if (secondStageHintTimer >= secondStageHintTime)
+        {
+            secondStageHint.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                secondStageHint.SetActive(false);
+            });
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                fromSecondStageHintToOffensivePlayerSelection.Set(true);
+            });
+        }
+    }
+
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) 
     {
         playersManager.disconnect(otherPlayer.ActorNumber-1);
@@ -415,18 +546,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         offenseAnnouncementAvatar.GetComponent<UnityEngine.UI.Image>().color = offensePlayer.color;
 
         if (offensePlayer.isLocalClient)
-            offenseAnnouncementText.text = "Ваша очередь нападать. Выберите, на кого хотите напасть.";
+            offenseAnnouncementText.text = "Р’Р°С€Р° РѕС‡РµСЂРµРґСЊ РЅР°РїР°РґР°С‚СЊ. Р’С‹Р±РµСЂРёС‚Рµ, РЅР° РєРѕРіРѕ С…РѕС‚РёС‚Рµ РЅР°РїР°СЃС‚СЊ.";
         else
-            offenseAnnouncementText.text = $"<color=#{offensePlayer.color.ToHexString()}>{offensePlayer.nickname}</color> выбирает на кого напасть.";
+            offenseAnnouncementText.text = $"<color=#{offensePlayer.color.ToHexString()}>{offensePlayer.nickname}</color> РІС‹Р±РёСЂР°РµС‚ РЅР° РєРѕРіРѕ РЅР°РїР°СЃС‚СЊ.";
 
         offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime);
         battle = null;
         offensivePlayerSelectionIsEnded.state = false;
-    }
-
-    [PunRPC]
-    public void RPC_OffensivePlayerSelectionStart() {
-        OffensivePlayerSelectionStart();
     }
 
     public void OffensivePlayerSelectionUpdate()
@@ -477,16 +603,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    public void RPC_OffensivePlayerSelectionUpdate() {
-        OffensivePlayerSelectionUpdate();
-    }
-
     public void AttackAnnouncementStart()
     {
         attackAnnouncement.SetActive(true);
         attackAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
-        attackAnnouncementText.text = $"<color=#{battle.opponents[0].player.color.ToHexString()}>{battle.opponents[0].player.nickname}</color> напал на " +
+        attackAnnouncementText.text = $"<color=#{battle.opponents[0].player.color.ToHexString()}>{battle.opponents[0].player.nickname}</color> РЅР°РїР°Р» РЅР° " +
                                       $"<color=#{battle.opponents[1].player.color.ToHexString()}>{battle.opponents[1].player.nickname}</color>";
         attackAnnouncementTimer = 0;
         attackAnnouncementIsEnded.state = false;
@@ -530,11 +651,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    public void RPC_AttackAnnouncementUpdate() {
-        AttackAnnouncementUpdate();
-    }
-
     public void OpponentsAnnouncementStart()
     {
         OpponentsAnnouncementTimer = 0;
@@ -561,11 +677,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         opponentsAnnouncementIsEnded.state = false;
     }
 
-    [PunRPC]
-    public void RPC_OpponentsAnnouncementStart() {
-        OpponentsAnnouncementStart();
-    }
-
     public void OpponentsAnnouncementUpdate()
     {
         OpponentsAnnouncementTimer += Time.deltaTime;
@@ -583,24 +694,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    public void RPC_OpponentsAnnouncementUpdate() {
-        OpponentsAnnouncementUpdate();
-    }
-
-
     public void QuestionNumberAnnouncementStart()
     {
         questionNumberAnnouncementTimer = 0;
         questionNumberAnnouncement.SetActive(true);
         questionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
-        questionNumberAnnouncementText.text = $"Вопрос {battle.currentQuestion + 1}";
+        questionNumberAnnouncementText.text = $"пїЅпїЅпїЅпїЅпїЅпїЅ {battle.currentQuestion + 1}";
         questionNumberAnnouncementIsEnded.state = false;
-    }
-
-    [PunRPC]
-    public void RPC_QuestionNumberAnnouncementStart() {
-        QuestionNumberAnnouncementStart();
     }
 
     public void QuestionNumberAnnouncementUpdate()
@@ -620,11 +720,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    public void RPC_QuestionNumberAnnouncementUpdate() {
-        QuestionNumberAnnouncementUpdate();
-    }
-
     public void AskQuestionInBattleStart()
     {
         askQuestionInBattle.SetActive(true);
@@ -633,11 +728,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         askQuestionInBattleIsEnded.state = false;
-    }
-
-    [PunRPC]
-    public void RPC_AskQuestionInBattleStart() {
-        AskQuestionInBattleStart();
     }
 
     public void AskQuestionInBattleUpdate()
@@ -652,11 +742,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    public void RPC_AskQuestionInBattleUpdate() {
-        AskQuestionInBattleUpdate();
-    }
-
     public void CorrectAnsewerRevealingInBattleStart()
     {
         AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
@@ -664,11 +749,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         correctAnsewerRevealingInBattleIsEnded.state = false;
         correctAnsewerRevealingTimer = 0;
-    }
-
-    [PunRPC]
-    public void RPC_CorrectAnsewerRevealingInBattleStart() {
-        CorrectAnsewerRevealingInBattleStart();
     }
 
     public void CorrectAnsewerRevealingInBattleUpdate()
@@ -686,11 +766,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 correctAnsewerRevealingInBattleIsEnded.state = true;
             });
         }
-    }
-
-    [PunRPC]
-    public void RPC_CorrectAnsewerRevealingInBattleUpdate() {
-        CorrectAnsewerRevealingInBattleUpdate();
     }
 
     public void BattleRoundResultsStart()
@@ -717,11 +792,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         roundIsEnded.state = false;
 
         battleCond.Set(false);
-    }
-
-    [PunRPC]
-    public void RPC_BattleRoundResultsStart() {
-        BattleRoundResultsStart();
     }
 
     public void BattleRoundResultsUpdate()
@@ -757,11 +827,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    public void RPC_BattleRoundResultsUpdate() {
-        BattleRoundResultsUpdate();
-    }
-
     public void BattleResultsStart()
     {
         if (battle.GetDeadCount() > 0)
@@ -784,11 +849,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         battleResultsTimer = 0;
         fromBattleResultsToOffensive.Set(false);
         battleCond.Set(false);
-    }
-
-    [PunRPC]
-    public void RPC_BattleResultsStart() {
-        BattleResultsStart();
     }
 
     public void BattleResultsUpdate()
@@ -832,7 +892,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
                     count++;
                 } while (!playersManager.players.get(currentOffensivePlayer).isLose && count < playersManager.players.count);
-                //Debug.Log("Количесто оставшихся территорий у проигравшено = " + battle.GetLoser().player.claimedRegions.Count);
+                //Debug.Log("РљРѕР»РёС‡РµСЃС‚Рѕ РѕСЃС‚Р°РІС€РёС…СЃСЏ С‚РµСЂСЂРёС‚РѕСЂРёР№ Сѓ РїСЂРѕРёРіСЂР°РІС€РµРЅРѕ = " + battle.GetLoser().player.claimedRegions.Count);
                 
                 if (!battle.IsDraw()) {
                     if (battle.GetLoser().player.claimedRegions.Count == 0)
@@ -842,7 +902,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     else
                         fromBattleResultsToOffensive.Set(true);
                 } else {
-                    // а так правильно?
+                    // Р° С‚Р°Рє РїСЂР°РІРёР»СЊРЅРѕ?
                     if (steps >= maxSteps)
                         fromBattleResultsToEndGame.Set(true);
                     else
@@ -850,11 +910,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 }
             });         
         }
-    }
-
-    [PunRPC]
-    public void RPC_BattleResultsUpdate() {
-        BattleResultsUpdate();
     }
 
     public WinnerPerson GetFastedWinner()
@@ -926,7 +981,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         battle.GetLoser().player.isLose = true;
         scoreTableManager.UpdateRowsOrder();
         losePlayerAnnouncement.SetActive(true);
-        losePlayerAnnouncementText.text = "Игрок" + "<color=#" + battle.GetLoser().player.color.ToHexString().Substring(0, 6) + ">" + battle.GetLoser().player.nickname + "</color> потерял все территории";
+        losePlayerAnnouncementText.text = "РРіСЂРѕРє" + "<color=#" + battle.GetLoser().player.color.ToHexString().Substring(0, 6) + ">" + battle.GetLoser().player.nickname + "</color> РїРѕС‚РµСЂСЏР» РІСЃРµ С‚РµСЂСЂРёС‚РѕСЂРёРё";
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
         GlobalVariables.Delay(menusTransitionTime + losePlayerAnnouncmentTime / 2.0, () => { scoreTableManager.FindRowByPlayer(battle.GetLoser().player).GetComponent<ScoreTableRow>().isLose = true; });
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime)
@@ -958,6 +1013,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         colorsHolderInstance = GameObject.FindGameObjectWithTag("COLOR_CONTENT_TAG").GetComponent<ColorsHolder>();
         iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
         pv = GetComponent<PhotonView>();
+
+        random = new System.Random();
+        regionIndexes.AddRange(Enumerable.Range(0, regionSystem.regionSerds.Count));
           
         int idx = 0;
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
@@ -974,15 +1032,38 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void Start()
     {
+        SetStepsText(steps, maxSteps);
+
         fastedWinner = new FastedWinner();
         fastedWinner.player = playersManager.players.get(0);
         fastedWinner.answer = "";
         fastedWinner.timeToAnswer = float.MaxValue;
 
+        State gameBegginingState = new State();
+        gameBegginingState.startEvents += GameBegginingStart;
+        gameBegginingState.updateEvents += GameBegginingUpdate;
+        gameStateMachine.states.Add(gameBegginingState);
+
+        State firstStageHintState = new State();
+        firstStageHintState.startEvents += FirstStageHintStart;
+        firstStageHintState.updateEvents += FirstStageHintUpdate;
+        gameStateMachine.states.Add(firstStageHintState);
+
+        fromGameBegginingToFirstStageHint = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromGameBegginingToFirstStageHint, gameBegginingState, firstStageHintState, gameStateMachine));
+
         State askQuestionState = new State(); // 0
         askQuestionState.startEvents += AskQuestionStart;
         askQuestionState.updateEvents += AskQuestionUpdate;
         gameStateMachine.states.Add(askQuestionState);
+
+        //fromFirstStageHintToAskQuestion
+
+        fromFirstStageHintToAskQuestion = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromFirstStageHintToAskQuestion, firstStageHintState, askQuestionState, gameStateMachine));
+
+        //fromGameBegginingToAskQuestion = new BoolCondition();
+        //gameStateMachine.transitions.Add(new Transition(fromGameBegginingToAskQuestion, gameBegginingState, askQuestionState, gameStateMachine));
 
         State viewResultsState = new State(); // 1
         viewResultsState.startEvents += ViewResultsStart;
@@ -1026,10 +1107,23 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         firstStageIsEnded = new BoolCondition();
         gameStateMachine.transitions.Add(new Transition(firstStageIsEnded, regionSelectionState, stageTwoAnnouncementState, gameStateMachine));
 
+        State secondStageHintState = new State(); // 5
+        secondStageHintState.startEvents += SecondStageHintStart;
+        secondStageHintState.updateEvents += SecondStageHintUpdate;
+        gameStateMachine.states.Add(secondStageHintState);
+
+        //fromStageTwoAnnouncementToSecondStageHint = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(stageTwoAnnouncementState.fromStageTwoAnnouncementToSecondStageHint, stageTwoAnnouncementState, secondStageHintState, gameStateMachine));
+
+
+
         State offensivePlayerSelectionState = new State(); // 5
         offensivePlayerSelectionState.startEvents += OffensivePlayerSelectionStart;
         offensivePlayerSelectionState.updateEvents += OffensivePlayerSelectionUpdate;
         gameStateMachine.states.Add(offensivePlayerSelectionState);
+
+        fromSecondStageHintToOffensivePlayerSelection = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromSecondStageHintToOffensivePlayerSelection, secondStageHintState, offensivePlayerSelectionState, gameStateMachine));
 
         //stageTwoAnnouncementIsEnded = new BoolCondition();
         gameStateMachine.transitions.Add(new Transition(stageTwoAnnouncementState.offensivePlayerSelectionCond, 
@@ -1120,8 +1214,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         GrantPlayersStartingRegions();
 
-        gameStateMachine.Start(0); //Стадия 1
-        //gameStateMachine.Start(4); //Стадия 2
+        gameStateMachine.Start(0); //РЎС‚Р°РґРёСЏ 1
+        //gameStateMachine.Start(4); //РЎС‚Р°РґРёСЏ 2
     }
 
     public void Update()
@@ -1137,27 +1231,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
 
         SetNextQuestionTimeText(timeToNextQuestion);
-        SetStepsText(steps, maxSteps);
+        //SetStepsText(steps, maxSteps);
 
         UpdateRegionColors();
-    }
-
-    private void GrantPlayersStartingRegions() {
-        if (PhotonNetwork.IsMasterClient) {
-            List<int> regs = new List<int>();
-            regs.AddRange(Enumerable.Range(0, regionSystem.regionSerds.Count));
-
-            System.Random random = new System.Random();
-
-            for (int i = 0; i < playersManager.players.count; i++) {
-                int randReg = random.Next(0, regs.Count);
-
-                pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regs[randReg], playersManager.players.get(i).id, "GrantPlayersStartingRegions()");
-                regs.RemoveAt(randReg);
-
-                //Debug.LogError($"Granting region {regs[randReg]} to player {playersManager.players.get(i).id}");
-            }
-        }
     }
 
     private void UpdateRegionColors()
@@ -1195,98 +1271,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         waitTimer = 0;
     }
 
-    public void GrantRandomFreeRegionToPlayer(Player player) {
-        System.Random random = new System.Random();
-
-        List<int> regs = new List<int>();
-        regs.AddRange(Enumerable.Range(0, regionSystem.regionSerds.Count));
-
-        List<int> claimedRegs = new List<int>();
-        for (int k = 0; k < regionSystem.regionSerds.Count; k++) {
-            for (int i = 0; i < playersManager.players.count; i++) {
-                for (int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++) {
-                    //Debug.LogError($"Looking if region {k} is claimed by player {i} (pointer at {j})");
-                    if (regionSystem.regionSerds[k].region == playersManager.players.get(i).claimedRegions[j]) {
-                        claimedRegs.Add(k);
-                    }
-                }
-            }
-        }
-
-        List<int> freeRegs = regs.Except(claimedRegs).ToList();
-        int randReg = random.Next(0, freeRegs.Count);
-        pv.RPC("RPC_RegionWasChosen", RpcTarget.All, freeRegs[randReg], player.id, "GrantRandomFreeRegionToPlayer()");
-        pv.RPC("RPC_GetScoresForRegion", RpcTarget.All, player.id);
-
-        //Debug.LogError($"Currently CLAIMED regions are: {string.Join(' ', claimedRegs)}");
-        //Debug.LogError($"Currently FREE regions are: {string.Join(' ', freeRegs)}");
-        //Debug.LogError($"Granting region {freeRegs[randReg]} to player {player.id}");
-
-        //return regionSystem.regionSerds[freeRegs[randReg]].region;
-    }
-
-    public void GrantRegionToWinnerByMouseClick() {
-        int regionId = -1;
-        Region region = null;
-
-        
-
-        if (Input.GetMouseButtonDown(0)) {
-            Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit)) {
-                region = hit.collider.gameObject.GetComponent<Region>();
-
-                if (region) {
-                    List<int> regs = new List<int>();
-                    regs.AddRange(Enumerable.Range(0, regionSystem.regionSerds.Count));
-
-                    List<int> claimedRegs = new List<int>();
-                    for (int k = 0; k < regionSystem.regionSerds.Count; k++) {
-                        for (int i = 0; i < playersManager.players.count; i++) {
-                            for (int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++) {
-                                if (regionSystem.regionSerds[k].region == playersManager.players.get(i).claimedRegions[j]) {
-                                    claimedRegs.Add(k);
-                                }
-                            }
-                        }
-                    }
-
-                    List<int> freeRegs = regs.Except(claimedRegs).ToList();
-
-                    for (int k = 0; k < regionSystem.regionSerds.Count; k++) {
-                        if (regionSystem.regionSerds[k].region == region) {
-                            //Debug.LogError($"Player has clicked on region {k} that's {(freeRegs.Contains(k) ? "FREE" : "NOT FREE")}");
-                            pv.RPC("RPC_RegionWasChosen", RpcTarget.All, k, winner.id, "GrantRegionToWinnerByMouseClick()");
-                            pv.RPC("RPC_GetScoresForRegion", RpcTarget.All, winner.id);
-                            break;
-                        }
-                    }
-
-                    /*bool isAlreadyClaimed = false;
-
-                    for (int i = 0; i < playersManager.players.count; i++) {
-                        for (int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++) {
-                            if (region == playersManager.players.get(i).claimedRegions[j]) {
-                                isAlreadyClaimed = true;
-                                claimedRegs.Add(j);
-                            }
-                        }
-                    }
-
-                    if (!isAlreadyClaimed) {
-                        Debug.LogError($"Player has clicked on region {regionId}");
-                        winner.ClaimRegion(region);
-                        pv.RPC("RPC_RegionWasChosen", RpcTarget.Others, regionId, winner.id, "GrantRegionToWinnerByMouseClick()");
-                    }*/
-                }
-            }
-        }
-
-        //return region;
-    }
-
     public void SetStepsText(int steps, int maxSteps)
     {
         stepsText.text = $"{steps}/{maxSteps}";
@@ -1294,14 +1278,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public int GetFreeRegionsCount()
     {
-        int claimedRegions = 0;
+       /* int claimedRegions = 0;
         for (int p = 0; p < playersManager.players.count; p++) {
             claimedRegions += playersManager.players.get(p).claimedRegions.Count;
         }
 
-        int freeRegions = regionSystem.regionSerds.Count - claimedRegions;
+        int freeRegions = regionSystem.regionSerds.Count - claimedRegions;*/
 
-        return freeRegions;
+        return regionIndexes.Count;
     }
 
     public Battle StartBattle(Player player1, Player player2, Region region, int roundsCount, double playersMaxHealth)
