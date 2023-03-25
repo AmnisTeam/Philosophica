@@ -4241,7 +4241,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &339311547
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10640,7 +10640,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &907349529
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20784,6 +20784,7 @@ MonoBehaviour:
   activeSelection: -1
   shadowMinColor: 0.3
   shadowSpeed: 5
+  buttonsAnimationTime: 0.3
 --- !u!225 &1854650472
 CanvasGroup:
   m_ObjectHideFlags: 0

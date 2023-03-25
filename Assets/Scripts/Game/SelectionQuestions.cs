@@ -23,6 +23,7 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
     public int activeSelection = -1;
     public float shadowMinColor = 0.2f;
     public float shadowSpeed = 0.6f;
+    public float buttonsAnimationTime = 0.3f;
     private float shadowColor = 1;
     private float shadowChoosButtonColor = 1;
     private float t;
@@ -31,16 +32,52 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
 
     public void toActiveSelection(int idx)
     {
-        if (!questionManager.haveAnswer)
-        {
-            activeSelection = idx;
-            an = false;
-        }
+        //if (!questionManager.haveAnswer)
+        //{
+        //    activeSelection = idx;
+        //    an = false;
+        //}
+
+        HideAllBordersExcept(idx);
+        ShowBorder(idx);
+        activeSelection = idx;
+
+
+
 /*        else
         {
             activeSelection = -1;
             an = true; // todo хз зачем это но если  до этого false, то тут наверное true???
         }*/
+    }
+
+    public void HideAllBordersExcept(int id)
+    {
+        for (int i = 0; i < borders.Length; i++)
+            if (i != id)
+                HideBorder(i);
+    }
+
+    public void HideAllBorders()
+    {
+        for (int i = 0; i < borders.Length; i++)
+            HideBorder(i);
+    }
+
+    public void ShowAllBorders()
+    {
+        for (int i = 0; i < borders.Length; i++)
+            ShowBorder(i);
+    }
+
+    public void HideBorder(int id)
+    {
+        borders[id].gameObject.GetComponent<CanvasGroup>().LeanAlpha(0, buttonsAnimationTime);
+    }
+
+    public void ShowBorder(int id)
+    {
+        borders[id].gameObject.GetComponent<CanvasGroup>().LeanAlpha(1, buttonsAnimationTime);
     }
 
     public void setVisibleButtons()
@@ -110,13 +147,13 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
             if (shadowChoosButtonColor < 0)
                 shadowChoosButtonColor = 0;
 
-            for (int x = 0; x < 4; x++)
-                //if (x != activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
-                if (x == activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
-                {
-                    //buttons[x].color = new UnityEngine.Color(255, 255, 255, shadowColor);
-                    borders[x].GetComponent<CanvasGroup>().alpha = 1;
-                }
+            //for (int x = 0; x < 4; x++)
+            //    //if (x != activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
+            //    if (x == activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
+            //    {
+            //        //buttons[x].color = new UnityEngine.Color(255, 255, 255, shadowColor);
+            //        borders[x].GetComponent<CanvasGroup>().alpha = 1;
+            //    }
 
             cavasGroup.alpha = shadowChoosButtonColor;
         }
