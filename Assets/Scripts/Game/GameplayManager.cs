@@ -886,12 +886,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             GlobalVariables.Delay(menusTransitionDelayTime, () =>
             {
                 steps++;
-                int count = 0;
                 do
                 {
                     currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
-                    count++;
-                } while (!playersManager.players.get(currentOffensivePlayer).isLose && count < playersManager.players.count);
+                } while (playersManager.players.get(currentOffensivePlayer).isLose);
                 //Debug.Log("Количесто оставшихся территорий у проигравшено = " + battle.GetLoser().player.claimedRegions.Count);
                 
                 if (!battle.IsDraw()) {
