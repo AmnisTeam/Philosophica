@@ -3480,6 +3480,7 @@ MonoBehaviour:
   endGameAnnouncmentTime: 1.5
   endGameLoadingScreenTime: 1.5
   losePlayerAnnouncmentTime: 1.5
+  onceAddSteps: 0
 --- !u!114 &267347265
 MonoBehaviour:
   m_ObjectHideFlags: 0
