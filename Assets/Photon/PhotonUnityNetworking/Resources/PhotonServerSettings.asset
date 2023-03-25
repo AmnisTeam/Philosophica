@@ -71,6 +71,7 @@ MonoBehaviour:
   - RPC_RegionWasChosen
   - RPC_GetScoresForRegion
   - RPC_RegionDistribution
+  - RPC_SynchronizedPlayers
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -12,7 +12,8 @@ public class StageTwoAnnouncementState : GameState
     public BoolCondition fromStageTwoAnnouncementToSecondStageHint;
     public float menusTransitionTime;
     public float menusTransitionDelayTime;
-    public StageTwoAnnouncementState(GameObject stageTwoAnnoucment,
+    public GameplayManager gameplayManager;
+    public StageTwoAnnouncementState(GameplayManager gameplayManager, GameObject stageTwoAnnoucment,
                                     double stageTwoAnnouncmentTimer, 
                                     double stageTwoAnnouncmentTime,
                                     float menusTransitionTime,
@@ -29,6 +30,7 @@ public class StageTwoAnnouncementState : GameState
 
     public override void Start()
     {
+        gameplayManager.onceAddSteps = false;
         stageTwoAnnoucment.SetActive(true);
         stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
         stageTwoAnnouncmentTimer = 0;

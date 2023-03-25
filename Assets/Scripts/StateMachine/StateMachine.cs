@@ -7,6 +7,15 @@ using UnityEngine;
 
 public abstract class Condition
 {
+    public static int globalConditionId = 0;
+    public int id;
+
+    public Condition()
+    {
+        id = globalConditionId;
+        globalConditionId++;
+    }
+
     public abstract bool CheckCondition();
 }
 
@@ -71,6 +80,11 @@ public class StateMachine
     public void UpdateConditions()
     {
         CheckConditions();
+    }
+
+    public void AddTransition(Transition transition)
+    {
+        transitions.Add(transition);
     }
 
     public void CheckConditions()
