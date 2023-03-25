@@ -6,6 +6,9 @@ using Photon.Pun;
 
 public class SelectionQuestions : MonoBehaviourPunCallbacks
 {
+    public Color defaultAnswerColor;
+    public Color correctAnswerColor;
+
     //public Image[] selection0;
     //public Image[] selection1;
     //public Image[] selection2;
@@ -80,17 +83,38 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
         borders[id].gameObject.GetComponent<CanvasGroup>().LeanAlpha(1, buttonsAnimationTime);
     }
 
-    public void setVisibleButtons()
+    public void MarkAnswerAsCorrect(int id)
     {
-        //shadowColor = 1;
-        //for (int x = 0; x < 4; x++)
-        //    buttons[x].color = new UnityEngine.Color(255, 255, 255, 1);
-        for (int x = 0; x < 4; x++)
-        {
-            borders[x].GetComponent<CanvasGroup>().alpha = 0;
-            backgrounds[x].color = new UnityEngine.Color(0, 0, 0, 1);
-        }
+        LeanTween.color(borders[id].rectTransform, correctAnswerColor, buttonsAnimationTime);
     }
+
+    public void MarkAnswerAsDefault(int id)
+    {
+        LeanTween.color(borders[id].rectTransform, defaultAnswerColor, buttonsAnimationTime);
+    }
+
+    public void HideAllBordersWithoutAnimation()
+    {
+        for (int i = 0; i < backgrounds.Length; i++)
+            borders[i].gameObject.GetComponent<CanvasGroup>().alpha = 0;
+    }
+    public void MarkAllAnswersAsDefaultWithoutAnimation()
+    {
+        for (int i = 0; i < backgrounds.Length; i++)
+            backgrounds[i].color = defaultAnswerColor;
+    }
+
+    //public void setVisibleButtons()
+    //{
+    //    //shadowColor = 1;
+    //    //for (int x = 0; x < 4; x++)
+    //    //    buttons[x].color = new UnityEngine.Color(255, 255, 255, 1);
+    //    for (int x = 0; x < 4; x++)
+    //    {
+    //        borders[x].GetComponent<CanvasGroup>().alpha = 0;
+    //        backgrounds[x].color = new UnityEngine.Color(0, 0, 0, 1);
+    //    }
+    //}
 
     void Start()
     {
@@ -176,7 +200,8 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
                     selection3[x].color = new UnityEngine.Color(0, 255, 0, selection3[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection3[x].color.a + speed * Time.deltaTime);
             */
 
-            backgrounds[questionManager.rightAnswer].color = new UnityEngine.Color(0, 0.5f, 0, 1);
+            //backgrounds[questionManager.rightAnswer].color = new UnityEngine.Color(0, 0.5f, 0, 1);
+            MarkAnswerAsCorrect(questionManager.rightAnswer);
         }
     }
 }

@@ -20762,6 +20762,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86d7aede1ac1e564092d79f612f71405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultAnswerColor: {r: 0, g: 0, b: 0, a: 1}
+  correctAnswerColor: {r: 0, g: 0.8235294, b: 0.29411766, a: 1}
   buttons:
   - {fileID: 722542648}
   - {fileID: 350697539}
