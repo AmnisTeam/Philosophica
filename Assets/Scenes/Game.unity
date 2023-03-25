@@ -3506,6 +3506,7 @@ MonoBehaviour:
   endGameAnnouncmentTime: 1.5
   endGameLoadingScreenTime: 1.5
   losePlayerAnnouncmentTime: 1.5
+  onceAddSteps: 0
 --- !u!114 &267347265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4277,7 +4278,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &339311547
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10735,7 +10736,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &907349529
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20899,6 +20900,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86d7aede1ac1e564092d79f612f71405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultAnswerColor: {r: 0, g: 0, b: 0, a: 1}
+  correctAnswerColor: {r: 0, g: 0.8235294, b: 0.29411766, a: 1}
   buttons:
   - {fileID: 722542648}
   - {fileID: 350697539}
@@ -20921,6 +20924,7 @@ MonoBehaviour:
   activeSelection: -1
   shadowMinColor: 0.3
   shadowSpeed: 5
+  buttonsAnimationTime: 0.3
 --- !u!225 &1854650472
 CanvasGroup:
   m_ObjectHideFlags: 0
