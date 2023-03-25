@@ -55,20 +55,15 @@ public class BattleRoundResults : MonoBehaviour
             battle.winnerId = 1; // If the answer or the time is incorrect
         } else if (battle.opponents[1].playerAnswerData[lastId2].timeToAnswer == -1 || battle.opponents[1].playerAnswerData[lastId2].answerId == -1) {
             battle.winnerId = 0; // If the answer or the time is incorrect
-        }
-        
-        if (battle.opponents[0].playerAnswerData[lastId1].answerId == battle.questions[battle.currentQuestion].idRightAnswer &&
+        } else if (battle.opponents[0].playerAnswerData[lastId1].answerId == battle.questions[battle.currentQuestion].idRightAnswer &&
             battle.opponents[1].playerAnswerData[lastId2].answerId != battle.questions[battle.currentQuestion].idRightAnswer)
         {
             battle.winnerId = 0; // If the first opponent answered correctly whereas the second not
-        }        
-        else if (battle.opponents[1].playerAnswerData[lastId2].answerId == battle.questions[battle.currentQuestion].idRightAnswer &&
+        } else if (battle.opponents[1].playerAnswerData[lastId2].answerId == battle.questions[battle.currentQuestion].idRightAnswer &&
                  battle.opponents[0].playerAnswerData[lastId1].answerId != battle.questions[battle.currentQuestion].idRightAnswer)
         {
             battle.winnerId = 1; // If the second opponent answered correctly whereas the first not
-        }       
-        
-        if (battle.opponents[0].playerAnswerData[lastId1].timeToAnswer <= battle.opponents[1].playerAnswerData[lastId2].timeToAnswer) {
+        } else if (battle.opponents[0].playerAnswerData[lastId1].timeToAnswer <= battle.opponents[1].playerAnswerData[lastId2].timeToAnswer) {
             battle.winnerId = 0; // If first opponent answerd faster
         } else {
             battle.winnerId = 1; // If second opponent answerd faster

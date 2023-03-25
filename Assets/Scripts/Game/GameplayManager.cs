@@ -202,6 +202,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolCondition fromBattleResultsToOffensive;
     public BoolCondition fromBattleResultsToEndGame;
     public BoolCondition fromBattleResultsToLosePlayer;
+    public BoolCondition fromLosePlayerToEndGame;
+    public BoolCondition fromLosePlayerToOffensive;
 
     public void GameBegginingStart()
     {
@@ -987,9 +989,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             .setOnComplete(() => { 
                 losePlayerAnnouncement.SetActive(false);
                 if (steps >= maxSteps || battle.GetWinner().player.claimedRegions.Count >= regionSystem.regionSerds.Count)
-                    fromBattleResultsToEndGame.Set(true);
+                    fromLosePlayerToEndGame.Set(true);
                 else
-                    fromBattleResultsToOffensive.Set(true);
+                    fromLosePlayerToOffensive.Set(true);
             });
         fromBattleResultsToLosePlayer.Set(false);
     }
@@ -1209,6 +1211,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         fromBattleResultsToLosePlayer = new BoolCondition();
         gameStateMachine.transitions.Add(new Transition(fromBattleResultsToLosePlayer, battleResultsState, losePlayerState, gameStateMachine));
+
+        fromLosePlayerToEndGame = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromLosePlayerToEndGame, losePlayerState, endGameState, gameStateMachine));
+
+        fromLosePlayerToOffensive = new BoolCondition();
+        gameStateMachine.transitions.Add(new Transition(fromLosePlayerToOffensive, losePlayerState, offensivePlayerSelectionState, gameStateMachine));
 
         GrantPlayersStartingRegions();
 
