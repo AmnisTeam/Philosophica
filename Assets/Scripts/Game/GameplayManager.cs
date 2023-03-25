@@ -502,6 +502,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             regionIndexes.Remove(rec.Value);
             //Debug.LogError($"Free regions: {string.Join(" ", regionIndexes)} ({GetFreeRegionsCount()})");
         }
+
+        scoreTableManager.UpdateTable();
     }
 
     public void GrantRandomFreeRegionToPlayer(Player player) {
@@ -803,7 +805,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionNumberAnnouncementTimer = 0;
         questionNumberAnnouncement.SetActive(true);
         questionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
-        questionNumberAnnouncementText.text = $"������ {battle.currentQuestion + 1}";
+        questionNumberAnnouncementText.text = $"Вопрос {battle.currentQuestion + 1}";
         questionNumberAnnouncementIsEnded.state = false;
     }
 
