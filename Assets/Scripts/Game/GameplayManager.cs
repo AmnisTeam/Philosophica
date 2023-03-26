@@ -588,6 +588,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             regionIndexes.Remove(rec.Value);
             //Debug.LogError($"Free regions: {string.Join(" ", regionIndexes)} ({GetFreeRegionsCount()})");
         }
+
+        scoreTableManager.UpdateTable();
     }
 
     public void GrantRandomFreeRegionToPlayer(Player player) {
@@ -889,7 +891,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionNumberAnnouncementTimer = 0;
         questionNumberAnnouncement.SetActive(true);
         questionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
-        questionNumberAnnouncementText.text = $"������ {battle.currentQuestion + 1}";
+        questionNumberAnnouncementText.text = $"Вопрос {battle.currentQuestion + 1}";
         questionNumberAnnouncementIsEnded.state = false;
     }
 
@@ -1078,13 +1080,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 } while (playersManager.players.get(currentOffensivePlayer).isLose);
                 //Debug.Log("Количесто оставшихся территорий у проигравшено = " + battle.GetLoser().player.claimedRegions.Count);
                 
-                if (!battle.IsDraw()) {
+                if (battle != null && !battle.IsDraw()) {
                     if (battle.GetLoser().player.claimedRegions.Count == 0)
                         fromBattleResultsToLosePlayer.Set(true);
                     else if (steps >= maxSteps)
                         fromBattleResultsToEndGame.Set(true);
                     else
                         fromBattleResultsToOffensive.Set(true);
+
+                    scoreTableManager.UpdateTable();
                 } else {
                     // а так правильно?
                     if (steps >= maxSteps)
@@ -1164,7 +1168,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         battle.GetLoser().player.isLose = true;
         scoreTableManager.UpdateRowsOrder();
         losePlayerAnnouncement.SetActive(true);
-        losePlayerAnnouncementText.text = "Игрок" + "<color=#" + battle.GetLoser().player.color.ToHexString().Substring(0, 6) + ">" + battle.GetLoser().player.nickname + "</color> потерял все территории";
+        losePlayerAnnouncementText.text = "Игрок " + "<color=#" + battle.GetLoser().player.color.ToHexString().Substring(0, 6) + ">" + battle.GetLoser().player.nickname + "</color> потерял все территории";
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
         GlobalVariables.Delay(menusTransitionTime + losePlayerAnnouncmentTime / 2.0, () => { scoreTableManager.FindRowByPlayer(battle.GetLoser().player).GetComponent<ScoreTableRow>().isLose = true; });
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime)

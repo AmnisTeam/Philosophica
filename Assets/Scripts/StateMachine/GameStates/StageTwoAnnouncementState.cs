@@ -19,6 +19,7 @@ public class StageTwoAnnouncementState : GameState
                                     float menusTransitionTime,
                                     float menusTransitionDelayTime)
     {
+        this.gameplayManager = gameplayManager;
         this.stageTwoAnnoucment = stageTwoAnnoucment;
         this.stageTwoAnnouncmentTime = stageTwoAnnouncmentTime;
         this.stageTwoAnnouncmentTimer = stageTwoAnnouncmentTimer;
