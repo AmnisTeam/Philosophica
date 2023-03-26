@@ -994,13 +994,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 } while (playersManager.players.get(currentOffensivePlayer).isLose);
                 //Debug.Log("Количесто оставшихся территорий у проигравшено = " + battle.GetLoser().player.claimedRegions.Count);
                 
-                if (!battle.IsDraw()) {
+                if (battle != null && !battle.IsDraw()) {
                     if (battle.GetLoser().player.claimedRegions.Count == 0)
                         fromBattleResultsToLosePlayer.Set(true);
                     else if (steps >= maxSteps)
                         fromBattleResultsToEndGame.Set(true);
                     else
                         fromBattleResultsToOffensive.Set(true);
+
+                    scoreTableManager.UpdateTable();
                 } else {
                     // а так правильно?
                     if (steps >= maxSteps)
