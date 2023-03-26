@@ -24,6 +24,7 @@ public class StageTwoAnnouncementState : GameState
         this.stageTwoAnnouncmentTimer = stageTwoAnnouncmentTimer;
         this.menusTransitionTime = menusTransitionTime;
         this.menusTransitionDelayTime = menusTransitionDelayTime;
+        this.gameplayManager = gameplayManager;
         offensivePlayerSelectionCond = new BoolCondition();
         fromStageTwoAnnouncementToSecondStageHint = new BoolCondition();
     }

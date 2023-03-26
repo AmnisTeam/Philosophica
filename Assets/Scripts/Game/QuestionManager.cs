@@ -26,6 +26,10 @@ public class QuestionManager : MonoBehaviourPunCallbacks
     public TableCompiler tableCompiler;
     public Question activeQuestion;
 
+    public GameObject questionMenu;
+    public GameObject content;
+    public GameObject tableMenu;
+
     public PhotonView pv;
 
     public float timeToQuestion;
@@ -44,12 +48,19 @@ public class QuestionManager : MonoBehaviourPunCallbacks
     private float timer = 0;
 
     private bool isReset = false;
-
-    public Animator questionMenuAnimator;
+    public float menusTransitionTime = 0.2f;
+    private bool onceShowTable = false;
 
     public void setQuestion(Question question)
     {
-        ShowTable(false);
+        onceShowTable = false;
+        //ShowTable(false);
+        content.SetActive(true);
+        content.GetComponent<CanvasGroup>().alpha = 1;
+
+        tableMenu.SetActive(false);
+        tableMenu.GetComponent<CanvasGroup>().alpha = 0;
+        
         OpenQuestionMenu();
 
         timeToQuestion = question.timeToQuestion;
@@ -85,19 +96,31 @@ public class QuestionManager : MonoBehaviourPunCallbacks
     }
 
     public void ShowTable(bool toShowTable)
-    {
-        questionMenuAnimator.SetBool("ShowTable", toShowTable);
+    {    
+        if(toShowTable)
+        {
+            content.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { content.SetActive(false); tableMenu.SetActive(true); });
+            tableMenu.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setDelay(menusTransitionTime);
+        }
+        else
+        {
+            tableMenu.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { tableMenu.SetActive(false); content.SetActive(true); });
+            content.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setDelay(menusTransitionTime);
+        }
+
         showTable = toShowTable;
     }
 
     public void OpenQuestionMenu()
     {
-        questionMenuAnimator.SetTrigger("Open");
+        questionMenu.SetActive(true);
+        questionMenu.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
+        
     }
 
     public void CloseQuestionMenu()
     {
-        questionMenuAnimator.SetTrigger("Close");
+        questionMenu.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { if(questionMenu) questionMenu.SetActive(false); });
     }
 
     public void loadQuestions()
@@ -190,11 +213,12 @@ public class QuestionManager : MonoBehaviourPunCallbacks
                 }
             }
 
-            if (timerToShowTable == 0 && showTable)
+            if (timerToShowTable == 0 && showTable && !onceShowTable)
             {
-                questionsMenu.GetComponent<Animator>().SetBool("ShowTable", true);
+                ShowTable(true);
                 tableCompiler.compileTheTable();
                 isReset = true;
+                onceShowTable = true;
             }
             else if (isReset) //вызов только 1 раз для сброса таблицы
             {

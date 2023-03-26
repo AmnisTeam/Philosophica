@@ -72,6 +72,7 @@ MonoBehaviour:
   - RPC_GetScoresForRegion
   - RPC_RegionDistribution
   - RPC_SynchronizedPlayers
+  - RPC_SelectAnswerInQuestionMenu
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

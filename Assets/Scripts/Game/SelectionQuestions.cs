@@ -14,7 +14,6 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
     public TMPro.TMP_Text[] buttons;
     public Image[] borders;
     public Image[] backgrounds;
-    public CanvasGroup cavasGroup;
 
     public QuestionManager questionManager;
 
@@ -117,8 +116,6 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
                     //buttons[x].color = new UnityEngine.Color(255, 255, 255, shadowColor);
                     borders[x].GetComponent<CanvasGroup>().alpha = 1;
                 }
-
-            cavasGroup.alpha = shadowChoosButtonColor;
         }
 
         if(questionManager.endQuestion)
