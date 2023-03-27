@@ -126,7 +126,7 @@ public class TableMenu : MonoBehaviour
             if (winner.id == PhotonNetwork.LocalPlayer.ActorNumber - 1) //todo сломается если игрок кикнут в лобби
                 playSound.SoundPlay("winner");
             else
-                playSound.SoundPlay("looser");
+                playSound.SoundPlay("loser");
         }
         else
         {
@@ -138,7 +138,7 @@ public class TableMenu : MonoBehaviour
             winnerIcon.sprite = iconsContent.icons[table[0].iconId].sprite;
             winnerIcon.color = new UnityEngine.Color(0, 0, 0, 0); //аватарка типо есть, но она становится прозрачной
 
-            playSound.SoundPlay("looser");
+            playSound.SoundPlay("loser");
         }
     }
 

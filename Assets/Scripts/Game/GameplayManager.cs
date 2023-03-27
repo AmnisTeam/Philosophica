@@ -1003,8 +1003,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         if (damageDealingDelayTimer >= damageDealingDelay + battleRoundResultsNotificationDelay)
         {
+
             if (battleRoundResults.GetComponent<BattleRoundResults>().SomeoneAnsweredCorrectly())
+            {
+                playSound.SoundPlay("damage");
                 battleRoundResults.GetComponent<BattleRoundResults>().InflictDamageOnLoser();
+            }
             battleRoundResults.GetComponent<BattleRoundResults>().UpdateOpponentsHealthGradudally(opponentsHealthUpdatingTime);
             battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setDelay(battleRoundResultsDisappearingTime).
                 setOnComplete(() => 
