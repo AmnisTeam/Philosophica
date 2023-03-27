@@ -6,9 +6,6 @@ using Photon.Pun;
 
 public class SelectionQuestions : MonoBehaviourPunCallbacks
 {
-    public Color defaultAnswerColor;
-    public Color correctAnswerColor;
-
     //public Image[] selection0;
     //public Image[] selection1;
     //public Image[] selection2;
@@ -17,7 +14,6 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
     public TMPro.TMP_Text[] buttons;
     public Image[] borders;
     public Image[] backgrounds;
-    public CanvasGroup cavasGroup;
 
     public QuestionManager questionManager;
 
@@ -26,7 +22,6 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
     public int activeSelection = -1;
     public float shadowMinColor = 0.2f;
     public float shadowSpeed = 0.6f;
-    public float buttonsAnimationTime = 0.3f;
     private float shadowColor = 1;
     private float shadowChoosButtonColor = 1;
     private float t;
@@ -35,18 +30,11 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
 
     public void toActiveSelection(int idx)
     {
-        //if (!questionManager.haveAnswer)
-        //{
-        //    activeSelection = idx;
-        //    an = false;
-        //}
-
-        HideAllBordersExcept(idx);
-        ShowBorder(idx);
-        activeSelection = idx;
-
-
-
+        if (!questionManager.haveAnswer)
+        {
+            activeSelection = idx;
+            an = false;
+        }
 /*        else
         {
             activeSelection = -1;
@@ -54,67 +42,17 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
         }*/
     }
 
-    public void HideAllBordersExcept(int id)
+    public void setVisibleButtons()
     {
-        for (int i = 0; i < borders.Length; i++)
-            if (i != id)
-                HideBorder(i);
+        //shadowColor = 1;
+        //for (int x = 0; x < 4; x++)
+        //    buttons[x].color = new UnityEngine.Color(255, 255, 255, 1);
+        for (int x = 0; x < 4; x++)
+        {
+            borders[x].GetComponent<CanvasGroup>().alpha = 0;
+            backgrounds[x].color = new UnityEngine.Color(0, 0, 0, 1);
+        }
     }
-
-    public void HideAllBorders()
-    {
-        for (int i = 0; i < borders.Length; i++)
-            HideBorder(i);
-    }
-
-    public void ShowAllBorders()
-    {
-        for (int i = 0; i < borders.Length; i++)
-            ShowBorder(i);
-    }
-
-    public void HideBorder(int id)
-    {
-        borders[id].gameObject.GetComponent<CanvasGroup>().LeanAlpha(0, buttonsAnimationTime);
-    }
-
-    public void ShowBorder(int id)
-    {
-        borders[id].gameObject.GetComponent<CanvasGroup>().LeanAlpha(1, buttonsAnimationTime);
-    }
-
-    public void MarkAnswerAsCorrect(int id)
-    {
-        LeanTween.color(borders[id].rectTransform, correctAnswerColor, buttonsAnimationTime);
-    }
-
-    public void MarkAnswerAsDefault(int id)
-    {
-        LeanTween.color(borders[id].rectTransform, defaultAnswerColor, buttonsAnimationTime);
-    }
-
-    public void HideAllBordersWithoutAnimation()
-    {
-        for (int i = 0; i < backgrounds.Length; i++)
-            borders[i].gameObject.GetComponent<CanvasGroup>().alpha = 0;
-    }
-    public void MarkAllAnswersAsDefaultWithoutAnimation()
-    {
-        for (int i = 0; i < backgrounds.Length; i++)
-            backgrounds[i].color = defaultAnswerColor;
-    }
-
-    //public void setVisibleButtons()
-    //{
-    //    //shadowColor = 1;
-    //    //for (int x = 0; x < 4; x++)
-    //    //    buttons[x].color = new UnityEngine.Color(255, 255, 255, 1);
-    //    for (int x = 0; x < 4; x++)
-    //    {
-    //        borders[x].GetComponent<CanvasGroup>().alpha = 0;
-    //        backgrounds[x].color = new UnityEngine.Color(0, 0, 0, 1);
-    //    }
-    //}
 
     void Start()
     {
@@ -171,15 +109,13 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
             if (shadowChoosButtonColor < 0)
                 shadowChoosButtonColor = 0;
 
-            //for (int x = 0; x < 4; x++)
-            //    //if (x != activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
-            //    if (x == activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
-            //    {
-            //        //buttons[x].color = new UnityEngine.Color(255, 255, 255, shadowColor);
-            //        borders[x].GetComponent<CanvasGroup>().alpha = 1;
-            //    }
-
-            cavasGroup.alpha = shadowChoosButtonColor;
+            for (int x = 0; x < 4; x++)
+                //if (x != activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
+                if (x == activeSelection && !(questionManager.endQuestion && x == questionManager.rightAnswer))
+                {
+                    //buttons[x].color = new UnityEngine.Color(255, 255, 255, shadowColor);
+                    borders[x].GetComponent<CanvasGroup>().alpha = 1;
+                }
         }
 
         if(questionManager.endQuestion)
@@ -200,8 +136,7 @@ public class SelectionQuestions : MonoBehaviourPunCallbacks
                     selection3[x].color = new UnityEngine.Color(0, 255, 0, selection3[x].color.a + speed * Time.deltaTime > 1 ? 1 : selection3[x].color.a + speed * Time.deltaTime);
             */
 
-            //backgrounds[questionManager.rightAnswer].color = new UnityEngine.Color(0, 0.5f, 0, 1);
-            MarkAnswerAsCorrect(questionManager.rightAnswer);
+            backgrounds[questionManager.rightAnswer].color = new UnityEngine.Color(0, 0.5f, 0, 1);
         }
     }
 }

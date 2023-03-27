@@ -150,6 +150,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public GameObject gameBeggining;
     public GameObject firstStageHint;
     public GameObject questionMenu;
+    public GameObject questionMenu1;
+    public GameObject questionMenuTable;
     public GameObject secondStageHint;
     public GameObject questionNumberAnnouncement;
     public TextMeshProUGUI questionNumberAnnouncementText;
@@ -162,6 +164,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public GameObject endGameAnnouncment;
     public GameObject loadingScreen;
     public GameObject endGameMenu;
+
+    [SerializeField] private PlaySound playSound;
 
     public StateMachine gameStateMachine = new StateMachine();
 
@@ -185,6 +189,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public float menusTransitionTime = 0.3f;
     public float menusTransitionDelayTime = 0.2f;
+
+    public float timeToShowCorrectAnswer = 1.5f;
+    private float timerToShowCorrectAnswer = 0;
+
+    public float timeToShowTableMenu = 5;
+    private float timerToShowTableMenu = 0;
 
     public double timeToNextQuestion = 10;
     public double timeToChooseTerretory = 10;
@@ -254,6 +264,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     private Player winner;
     private Player offensePlayer;
 
+    public QuestionSession questionSession;
     public Battle battle;
 
     public BoolToastMessage regionSelectionToast;
@@ -264,6 +275,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public SynchronizedBoolCondition fromFirstStageHintToAskQuestion;
     public SynchronizedBoolCondition fromGameBegginingToFirstStageHint;
     public SynchronizedBoolCondition askQuestionStateIsEnded;
+    public SynchronizedBoolCondition fromAskQuestionToRightAnswer;
+    public SynchronizedBoolCondition fromRightAnswerToShowResultsInAskQuestion;
+    public SynchronizedBoolCondition fromShowResultsInAskQuestionToRegionSelection;
     public SynchronizedBoolCondition viewResultsStateIsEnded;
     public SynchronizedBoolCondition regionSelectionStateIsEnded;
     public SynchronizedBoolCondition preparationStateIsEnded;
@@ -360,45 +374,119 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_SelectAnswerInQuestionMenu(int answerId, float timeToAnswer, PhotonMessageInfo info)
+    {
+        questionSession.SetAnswerData(info.Sender.ActorNumber - 1, answerId, timeToAnswer);
+    }
+
+    public void SelectSelfAnswerInQuestionMenu(int buttonID)
+    {
+        pv.RPC("RPC_SelectAnswerInQuestionMenu", RpcTarget.All, buttonID, (float)questionMenu1.GetComponent<AskQuestionInQuestionMenu>().timer);
+    }
+
     public void AskQuestionStart()
     {
-        questionMenu.SetActive(true);
-        questionMenu.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+        //questionMenu.SetActive(true);
 
-        askQuestionStateIsEnded.state = false;
-        
-        questionManager.setQuestion(currentQuestion);
+        //questionManager.content.SetActive(true);
+        //questionManager.content.GetComponent<CanvasGroup>().alpha = 1;
 
+        //questionManager.tableMenu.SetActive(false);
+        //questionManager.tableMenu.GetComponent<CanvasGroup>().alpha = 0;
+
+        //questionMenu.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+
+        //questionManager.setQuestion(currentQuestion);
+
+        questionSession.UpdateCountPlayerAnswerData();
+        questionMenu1.SetActive(true);
+        questionMenu1.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
+        questionMenu1.GetComponent<AskQuestionInQuestionMenu>().Init(questionSession.GetCurrentQuestion());
+        questionMenu1.GetComponent<AskQuestionInQuestionMenu>().timer = 0;
+
+        //askQuestionStateIsEnded.state = false;
         wasRpcSent = false;
     }
 
     public void AskQuestionUpdate()
     {
-        if (questionManager.timerToQuestion <= 0)
-            askQuestionStateIsEnded.state = true;
-    }
+        //if (questionManager.timerToQuestion <= 0)
+        //    askQuestionStateIsEnded.state = true;
 
-    public void ViewResultsStart()
-    {
-        viewResultsTimer = 0;
-        viewResultsStateIsEnded.state = false;
-    }
+        AskQuestionInQuestionMenu askQuestionInQuestionMenu = questionMenu1.GetComponent<AskQuestionInQuestionMenu>();
+        askQuestionInQuestionMenu.timer += Time.deltaTime;
+        float timeLeft = (float)(questionSession.GetCurrentQuestion().timeToQuestion - askQuestionInQuestionMenu.timer);
+        if(timeLeft >= 0)
+            askQuestionInQuestionMenu.timerText.text = (timeLeft / 60).ToString("00") + ":" + (timeLeft % 60).ToString("00");
 
-    public void ViewResultsUpdate()
-    {
-        viewResultsTimer += Time.deltaTime;
-        if (viewResultsTimer >= viewResultsTime)
+        if(askQuestionInQuestionMenu.timer >= questionSession.GetCurrentQuestion().timeToQuestion)
         {
-            viewResultsStateIsEnded.state = true;
-            questionManager.CloseQuestionMenu();
+            fromAskQuestionToRightAnswer.Set(true);
+            askQuestionInQuestionMenu.timer = float.NaN;
         }
     }
 
+    public void RightAnswerStart()
+    {
+        questionMenu1.GetComponent<AskQuestionInQuestionMenu>().ShowCorrectAnswer();
+        timerToShowCorrectAnswer = 0;
+    }
+
+    public void RightAnswerUpdate()
+    {
+        timerToShowCorrectAnswer += Time.deltaTime;
+        if(timerToShowCorrectAnswer > timeToShowCorrectAnswer)
+        {
+            timerToShowCorrectAnswer = float.NaN;
+            questionMenu1.GetComponent<AskQuestionInQuestionMenu>().HideCorrectAnswer();
+            questionMenu1.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setDelay(menusTransitionTime).setOnComplete(() => { questionMenu1.SetActive(false); });
+            fromRightAnswerToShowResultsInAskQuestion.Set(true);
+        }
+    }
+
+    public void ShowResultsInAskQuestionStart()
+    {
+        questionMenuTable.SetActive(true);
+        questionMenuTable.GetComponent<TableMenu>().compileTheTable(questionSession.playerAnswerData);
+        questionMenuTable.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
+        timerToShowTableMenu = 0;
+    }
+
+    public void ShowResultsInAskQuestionUpdate()
+    {
+        timerToShowTableMenu += Time.deltaTime;
+        if(timerToShowTableMenu >= timeToShowTableMenu)
+        {
+            questionMenuTable.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { 
+                questionMenuTable.SetActive(false);
+                fromShowResultsInAskQuestionToRegionSelection.Set(true);
+            });
+            timerToShowTableMenu = float.NaN;
+        }
+    }
+
+    //public void ViewResultsStart()
+    //{
+    //    viewResultsTimer = 0;
+    //    viewResultsStateIsEnded.state = false;
+    //}
+
+    //public void ViewResultsUpdate()
+    //{
+    //    viewResultsTimer += Time.deltaTime;
+    //    if (viewResultsTimer >= viewResultsTime)
+    //    {
+    //        viewResultsStateIsEnded.state = true;
+    //        questionManager.CloseQuestionMenu();
+    //    }
+    //}
+
     public void RegionSelectionStart()
     {
-        if (questionManager.tableCompiler.isHaveRightAnswer)
+        if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
         {
-            winner = questionManager.tableCompiler.table[0];
+            winner = questionMenuTable.GetComponent<TableMenu>().table[0];
             winnerRegionsCountAtStartOfSelection = winner.claimedRegions.Count;
 
             regionSelectionToast = new BoolToastMessage($"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию");
@@ -413,25 +501,25 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         bool stateEnded = false;
         regionSelectionTimer += Time.deltaTime;
 
-        if (questionManager.tableCompiler.isHaveRightAnswer) {
+        if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
             regionSelectionToast.message = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию: {(int)(regionSelectionMaxTime - regionSelectionTimer)}";
         }
 
-        if (questionManager.tableCompiler.isHaveRightAnswer) {
+        if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
             if (winner.isLocalClient) {
                 GrantRegionToWinnerByMouseClick();
             }
         }
 
 
-        if (questionManager.tableCompiler.isHaveRightAnswer) {
+        if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
             if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection) {
                 stateEnded = true;
             }
         }
 
-        if (regionSelectionTimer >= regionSelectionMaxTime || !questionManager.tableCompiler.isHaveRightAnswer) {
-            if (questionManager.tableCompiler.isHaveRightAnswer) {
+        if (regionSelectionTimer >= regionSelectionMaxTime || !questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
+            if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
                 GrantRandomFreeRegionToPlayer(winner);
             }
             stateEnded = true;
@@ -442,7 +530,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             steps++;
             SetStepsText(steps, maxSteps);
 
-            if (questionManager.tableCompiler.isHaveRightAnswer)
+            if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
             {
                 regionSelectionToast.isDone = true;
             }
@@ -472,7 +560,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         player.scores += countScoresForRegion;
         scoreTableManager.UpdateTable();
 
-        if (region && questionManager.tableCompiler.isHaveRightAnswer) {
+        if (region && questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
             Vector2 regionCenter = Vector2.zero;
             for (int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++) {
                 regionCenter += region.GetComponent<MeshFilter>().mesh.vertices[x].ToXY();
@@ -524,6 +612,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     Region region = hit.collider.gameObject.GetComponent<Region>();
 
                     if (region) {
+                        playSound.SoundPlay("button_click");
                         for (int k = 0; k < regionIndexes.Count; k++) {
                             if (regionSystem.regionSerds[regionIndexes[k]].region == region) {
                                 pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionIndexes[k], winner.id, "GrantRegionToWinnerByMouseClick()");
@@ -588,7 +677,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (preparationTimer >= preparationTime)
         {
             preparationStateIsEnded.state = true;
-            currentQuestion = (currentQuestion + 1) % questionManager.questionLoader.questions.Count();
+            currentQuestion = (currentQuestion + 1) % questionSession.questionLoader.questions.Count();
         }
     }
 
@@ -1132,6 +1221,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void Start()
     {
+        questionSession = new QuestionSession(playersManager);
+        questionSession.UpdateCountPlayerAnswerData();
+
         SetStepsText(steps, maxSteps);
 
         fastedWinner = new FastedWinner();
@@ -1157,6 +1249,24 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         askQuestionState.updateEvents += AskQuestionUpdate;
         gameStateMachine.states.Add(askQuestionState);
 
+
+        State rightAnswerState = new State();
+        rightAnswerState.startEvents += RightAnswerStart;
+        rightAnswerState.updateEvents += RightAnswerUpdate;
+        gameStateMachine.states.Add(rightAnswerState);
+
+
+        State showResultsInAskQuestionState = new State();
+        showResultsInAskQuestionState.startEvents += ShowResultsInAskQuestionStart;
+        showResultsInAskQuestionState.updateEvents += ShowResultsInAskQuestionUpdate;
+        gameStateMachine.states.Add(showResultsInAskQuestionState);
+
+        fromAskQuestionToRightAnswer = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromAskQuestionToRightAnswer, askQuestionState, rightAnswerState, gameStateMachine));
+
+        fromRightAnswerToShowResultsInAskQuestion = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromRightAnswerToShowResultsInAskQuestion, rightAnswerState, showResultsInAskQuestionState, gameStateMachine));
+
         //fromFirstStageHintToAskQuestion
 
         fromFirstStageHintToAskQuestion = new SynchronizedBoolCondition(playersManager, pv, true);
@@ -1165,21 +1275,25 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         //fromGameBegginingToAskQuestion = new BoolCondition();
         //gameStateMachine.AddTransition(new Transition(fromGameBegginingToAskQuestion, gameBegginingState, askQuestionState, gameStateMachine));
 
-        State viewResultsState = new State(); // 1
-        viewResultsState.startEvents += ViewResultsStart;
-        viewResultsState.updateEvents += ViewResultsUpdate;
-        gameStateMachine.states.Add(viewResultsState);
+        //State viewResultsState = new State(); // 1
+        //viewResultsState.startEvents += ViewResultsStart;
+        //viewResultsState.updateEvents += ViewResultsUpdate;
+        //gameStateMachine.states.Add(viewResultsState);
 
-        askQuestionStateIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
-        gameStateMachine.AddTransition(new Transition(askQuestionStateIsEnded, askQuestionState, viewResultsState, gameStateMachine));
+        //askQuestionStateIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
+        //gameStateMachine.AddTransition(new Transition(askQuestionStateIsEnded, askQuestionState, viewResultsState, gameStateMachine));
 
         State regionSelectionState = new State(); // 2
         regionSelectionState.startEvents += RegionSelectionStart;
         regionSelectionState.updateEvents += RegionSelectionUpdate;
         gameStateMachine.states.Add(regionSelectionState);
 
-        viewResultsStateIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
-        gameStateMachine.AddTransition(new Transition(viewResultsStateIsEnded, viewResultsState, regionSelectionState, gameStateMachine));
+        fromShowResultsInAskQuestionToRegionSelection = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromShowResultsInAskQuestionToRegionSelection, showResultsInAskQuestionState, regionSelectionState, gameStateMachine));
+
+
+        //viewResultsStateIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
+        //gameStateMachine.AddTransition(new Transition(viewResultsStateIsEnded, viewResultsState, regionSelectionState, gameStateMachine));
 
         State preparationState = new State(); // 3
         preparationState.startEvents += PreparationStart;
@@ -1400,10 +1514,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Opponent opponent2 = new Opponent(player2, playersMaxHealth, playersMaxHealth, 0);
         Battle newBattle = new Battle(opponent1, opponent2, region);
 
-        if (roundsCount > questionManager.questionLoader.questions.Count())
-            roundsCount = questionManager.questionLoader.questions.Count();
+        if (roundsCount > questionSession.questionLoader.questions.Count())
+            roundsCount = questionSession.questionLoader.questions.Count();
 
-        int idsCount = questionManager.questionLoader.questions.Count();
+        int idsCount = questionSession.questionLoader.questions.Count();
         int[] ids = new int[idsCount];
         for (int i = 0; i < idsCount; i++)
             ids[i] = i;
@@ -1412,7 +1526,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < roundsCount; i++)
         {
             int randInt = rnd.Next(0, idsCount - 1);
-            QuestionManager.Question randQuestion = questionManager.questionLoader.questions[ids[randInt]];
+            QuestionManager.Question randQuestion = questionSession.questionLoader.questions[ids[randInt]];
 
             ids[randInt] = ids[idsCount - 1];
             idsCount--;
