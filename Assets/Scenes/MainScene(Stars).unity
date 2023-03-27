@@ -54210,7 +54210,7 @@ MonoBehaviour:
   - tag: region_claim
     sound: {fileID: 8300000, guid: 0d4cb706b5c10ab49b2db5131a044861, type: 3}
   - tag: damage
-    sound: {fileID: 8300000, guid: 0d4cb706b5c10ab49b2db5131a044861, type: 3}
+    sound: {fileID: 8300000, guid: 6b49a82def3b58641a421f4268038db4, type: 3}
   soundVolume: 0
 --- !u!82 &1247736753
 AudioSource:
