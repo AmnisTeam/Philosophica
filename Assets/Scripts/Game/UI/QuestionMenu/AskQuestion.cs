@@ -18,6 +18,7 @@ public class AskQuestion : MonoBehaviourPunCallbacks
 
     public QuestionManager.Question question;
 
+    public Button[] answerButtons;
     public TextMeshProUGUI[] answers;
     public Image[] answersBackgrounds;
     public Image[] answersBorders;
@@ -36,10 +37,14 @@ public class AskQuestion : MonoBehaviourPunCallbacks
             answers[a].text = question.answer[a];
         timer = 0;
         ResetAnswersWithoutAnimation();
+
+        changeButton—lickability(true);
     }
 
     public virtual void ShowCorrectAnswer()
     {
+        changeButton—lickability(false);
+
         MarkAnswerAsCorrect(question.idRightAnswer);
     }
 
@@ -76,5 +81,11 @@ public class AskQuestion : MonoBehaviourPunCallbacks
 
         answersBorders[buttonId].GetComponent<CanvasGroup>().LeanAlpha(1, buttonsChangeTime).setEaseOutSine();
     }
+
+    public void changeButton—lickability(bool state)
+    {
+        for (int i = 0; i < answerButtons.Length; i++)
+            answerButtons[i].enabled = state;
+    } 
 
 }
