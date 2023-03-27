@@ -10,6 +10,8 @@ using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
+using Photon.Realtime;
 
 public class BoolCondition : Condition
 {
@@ -123,6 +125,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public ToastShower toast;
     public Camera cam;
     public FastedWinner fastedWinner;
+
+    public Color unclaimedRegionColor;
 
     public IconsContentHolder iconsContent;
     public ColorsHolder colorsHolderInstance;
@@ -723,9 +727,35 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void UpdateRegionIndices() // Very unoptimized code
+    {
+        List<int> freeRegionsIndices = new List<int>();
+        for (int i = 0; i < regionSystem.regionSerds.Count; i++)
+            freeRegionsIndices.Add(i);
+
+            List<int> claimedRegions = new List<int>();
+        for (int i = 0; i < regionSystem.regionSerds.Count; i++)
+        {
+            for (int p = 0; p < playersManager.players.count; p++)
+            {
+                for (int r = 0; r < playersManager.players.get(p).claimedRegions.Count; r++)
+                {
+                    if (regionSystem.regionSerds[i].region == playersManager.players.get(p).claimedRegions[r])
+                    {
+                        claimedRegions.Add(i);
+                    }
+                }
+            }
+        }
+        freeRegionsIndices.Except(claimedRegions);
+        regionIndexes = freeRegionsIndices;
+    }
+
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) 
     {
+        //Player player = playersManager.players.get(otherPlayer.ActorNumber - 1);
         playersManager.disconnect(otherPlayer.ActorNumber-1);
+        UpdateRegionIndices();
     }
 
     public void OffensivePlayerSelectionStart()
@@ -1458,6 +1488,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     private void UpdateRegionColors()
     {
+        for (int i = 0; i < regionSystem.regionSerds.Count; i++)
+        {
+            regionSystem.regionSerds[i].region.SetColor(unclaimedRegionColor);
+        }
+
+
         for (int i = 0; i < playersManager.players.count; i++)
         {
             for(int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++)

@@ -2378,7 +2378,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &166837477
 GameObject:
   m_ObjectHideFlags: 0
@@ -3000,7 +2999,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &220590195
 GameObject:
   m_ObjectHideFlags: 0
@@ -4067,6 +4065,7 @@ MonoBehaviour:
   stepsText: {fileID: 2146722985}
   toast: {fileID: 1895131572}
   cam: {fileID: 1926198289}
+  unclaimedRegionColor: {r: 1, g: 1, b: 1, a: 1}
   iconsContent: {fileID: 0}
   colorsHolderInstance: {fileID: 0}
   pv: {fileID: 0}
@@ -4460,7 +4459,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &299676459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11018,7 +11016,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &734213492
 GameObject:
   m_ObjectHideFlags: 0
@@ -12942,7 +12939,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &851522507
 GameObject:
   m_ObjectHideFlags: 0
@@ -13217,7 +13213,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &877348186
 GameObject:
   m_ObjectHideFlags: 0
@@ -19026,7 +19021,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1411831727
 GameObject:
   m_ObjectHideFlags: 0
@@ -21257,7 +21251,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!21 &1563518314
 Material:
   serializedVersion: 8
@@ -24605,7 +24598,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1758737706
 GameObject:
   m_ObjectHideFlags: 0
@@ -27256,7 +27248,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &1898887546 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 787162923219038593, guid: e66a38329877c884cb6aa4600a307500, type: 3}
@@ -30798,7 +30789,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &2100993408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31417,7 +31407,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2142768906
 GameObject:
   m_ObjectHideFlags: 0

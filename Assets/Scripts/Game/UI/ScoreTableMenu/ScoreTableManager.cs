@@ -204,6 +204,7 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
                     break;
                 }
 
+
             RowMoveableContainer temp = rows[x];
             rows[x] = rows[id];
             rows[id] = temp;
