@@ -54201,6 +54201,14 @@ MonoBehaviour:
   sound:
   - tag: button_click
     sound: {fileID: 8300000, guid: 716a3956f6900774c9d40ec673eb3652, type: 3}
+  - tag: winner
+    sound: {fileID: 8300000, guid: 75d66f5f2d751444181a674de538230b, type: 3}
+  - tag: looser
+    sound: {fileID: 8300000, guid: d2047fea109a0bb4aa3de31b96a17050, type: 3}
+  - tag: new_stage
+    sound: {fileID: 8300000, guid: d00d4204f2876234da1e9dd69e16f1f4, type: 3}
+  - tag: region_claim
+    sound: {fileID: 8300000, guid: 0d4cb706b5c10ab49b2db5131a044861, type: 3}
   soundVolume: 0
 --- !u!82 &1247736753
 AudioSource:

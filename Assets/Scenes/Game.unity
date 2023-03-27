@@ -2222,6 +2222,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 267347266}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SoundPlay
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlaySound, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: button_click
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 7850253227157647218, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -0.99998474
@@ -4555,6 +4579,30 @@ PrefabInstance:
     - target: {fileID: 5220993871451566082, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 267347266}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SoundPlay
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlaySound, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: button_click
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7919723781345240014, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -8826,6 +8874,7 @@ MonoBehaviour:
     scores: 0
     isLocalClient: 0
     isLose: 0
+  playSound: {fileID: 267347266}
   isHaveRightAnswer: 0
 --- !u!225 &602341283
 CanvasGroup:
@@ -14039,6 +14088,30 @@ PrefabInstance:
     - target: {fileID: 5220993871451566082, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 267347266}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SoundPlay
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlaySound, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: button_click
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7850253227157647218, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -26021,6 +26094,30 @@ PrefabInstance:
     - target: {fileID: 5220993871451566082, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 267347266}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SoundPlay
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlaySound, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: button_click
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545835873683249868, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7850253227157647218, guid: 372cb83cfb4d3184581b9996c4039da7, type: 3}
       propertyPath: m_AnchoredPosition.y

@@ -1,3 +1,5 @@
+using ExitGames.Client.Photon.StructWrapping;
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,6 +26,7 @@ public class TableMenu : MonoBehaviour
     public IconsContent iconsContent;
     public List<Player> table;
     public Player winner;
+    [SerializeField] private PlaySound playSound;
 
     public bool isHaveRightAnswer = false;
 
@@ -111,6 +114,11 @@ public class TableMenu : MonoBehaviour
 
             winnerIcon.sprite = iconsContent.icons[table[0].iconId].sprite;
             winnerIcon.color = table[0].color;
+
+            if (winner.id == PhotonNetwork.LocalPlayer.ActorNumber - 1) //todo сломается если игрок кикнут в лобби
+                playSound.SoundPlay("winner");
+            else
+                playSound.SoundPlay("looser");
         }
         else
         {
@@ -121,6 +129,8 @@ public class TableMenu : MonoBehaviour
 
             winnerIcon.sprite = iconsContent.icons[table[0].iconId].sprite;
             winnerIcon.color = new UnityEngine.Color(0, 0, 0, 0); //аватарка типо есть, но она становится прозрачной
+
+            playSound.SoundPlay("looser");
         }
     }
 

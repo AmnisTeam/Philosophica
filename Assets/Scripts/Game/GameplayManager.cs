@@ -355,6 +355,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         firstStageHint.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         firstStageHintTimer = 0;
+        playSound.SoundPlay("new_stage");
     }
 
     public void FirstStageHintUpdate()
@@ -612,7 +613,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     Region region = hit.collider.gameObject.GetComponent<Region>();
 
                     if (region) {
-                        playSound.SoundPlay("button_click");
+                        playSound.SoundPlay("region_claim");
                         for (int k = 0; k < regionIndexes.Count; k++) {
                             if (regionSystem.regionSerds[regionIndexes[k]].region == region) {
                                 pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionIndexes[k], winner.id, "GrantRegionToWinnerByMouseClick()");
@@ -705,6 +706,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         secondStageHint.SetActive(true);
         secondStageHint.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+        playSound.SoundPlay("new_stage");
     }
 
     public void SecondStageHintUpdate()
