@@ -80,6 +80,7 @@ public class PhotonLobbyManager : MonoBehaviourPunCallbacks {
 
     public void StartGameFunc() {
         PhotonNetwork.LoadLevel("Game");
+        PhotonNetwork.CurrentRoom.IsOpen = false;
     }
 
     public void UpdateList() {

@@ -88,8 +88,8 @@ public class QuestionManager : MonoBehaviourPunCallbacks
         endQuestion = false;
         
         //selectionQuestions.setVisibleButtons();
-        selectionQuestions.HideAllBordersWithoutAnimation();
-        selectionQuestions.MarkAllAnswersAsDefaultWithoutAnimation();
+        //selectionQuestions.HideAllBordersWithoutAnimation();
+        //selectionQuestions.MarkAllAnswersAsDefaultWithoutAnimation();
     }
 
     public void setQuestion(int id)
