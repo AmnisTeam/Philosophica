@@ -30,16 +30,24 @@ public class TableMenu : MonoBehaviour
 
     public bool isHaveRightAnswer = false;
 
-    public void Awake()
-    {
-        
-    }
-
     public void compileTheTable(List<PlayerAnswerData> playerAnswerData)
     {
         table = new List<Player>();
         for (int x = 0; x < playersManager.players.count; x++)
             table.Add(playersManager.players.get(x));
+
+        // Проверка на переполнение при клике после окончании таймера
+        for (int i = 0; i < playerAnswerData.Count; i++)
+        {
+            if (playerAnswerData[i].timeToAnswer.Equals(float.NaN)
+                || playerAnswerData[i].timeToAnswer < 0 
+                || playerAnswerData[i].timeToAnswer > gameplayManager.questionSession.
+                GetCurrentQuestion().timeToQuestion)
+            {
+                playerAnswerData[i].timeToAnswer = gameplayManager.questionSession.
+                    GetCurrentQuestion().timeToQuestion;
+            }
+        }
 
         table.Sort((Player x, Player y) => {
             PlayerAnswerData answerDataX = null;
