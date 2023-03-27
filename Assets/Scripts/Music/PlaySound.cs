@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class PlaySound : MonoBehaviour
 {
-    public string createdTag;
+    GameObject obj;
+    SoundEffects se;
 
-    public void PlayTapOnButtonClick()
+    private void Start()
     {
-        GameObject obj = GameObject.FindWithTag(this.createdTag);
-        SoundEffects se = obj.GetComponent<SoundEffects>();
-        se.PlayTapOnButtonClick();
+        obj = GameObject.FindWithTag("SOUND_EFFECTS_TAG");
+        se = obj.GetComponent<SoundEffects>();
     }
+
+    public void SoundPlay(string tag)
+    {
+        se.PlaySound(tag);
+    }
+
 }

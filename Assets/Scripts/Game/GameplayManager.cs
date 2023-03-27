@@ -165,6 +165,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public GameObject loadingScreen;
     public GameObject endGameMenu;
 
+    [SerializeField] private PlaySound playSound;
+
     public StateMachine gameStateMachine = new StateMachine();
 
     public System.Random random;
@@ -610,6 +612,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     Region region = hit.collider.gameObject.GetComponent<Region>();
 
                     if (region) {
+                        playSound.SoundPlay("button_click");
                         for (int k = 0; k < regionIndexes.Count; k++) {
                             if (regionSystem.regionSerds[regionIndexes[k]].region == region) {
                                 pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionIndexes[k], winner.id, "GrantRegionToWinnerByMouseClick()");
