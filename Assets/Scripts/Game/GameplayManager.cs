@@ -407,7 +407,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionMenu1.GetComponent<AskQuestionInQuestionMenu>().timer = 0;
 
         //askQuestionStateIsEnded.state = false;
-        wasRpcSent = false;
     }
 
     public void AskQuestionUpdate()
@@ -494,6 +493,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             toast.showText(regionSelectionToast);
 
             regionSelectionTimer = 0;
+            wasRpcSent = false;
         }
     }
 
@@ -521,7 +521,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         if (regionSelectionTimer >= regionSelectionMaxTime || !questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
             if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
-                GrantRandomFreeRegionToPlayer(winner);
+                if (winner.isLocalClient) {
+                    GrantRandomFreeRegionToPlayer(winner);
+                }
             }
             stateEnded = true;
         }
@@ -548,11 +550,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     }
     
     [PunRPC]
-    public void RPC_RegionWasChosen(int regionId, int playerId, string source) {
+    public void RPC_RegionWasChosen(int regionId, int playerColorId, string source) {
         //Debug.LogError($"Player {playerId} has claimed region {regionId}");
 
         Region region = regionSystem.regionSerds[regionId].region;
-        Player player = playersManager.players.get(playerId);
+        Player player = null;
+
+        for (int i = 0; i < playersManager.players.count; i++) {
+            if (playersManager.players.get(i).colorId == playerColorId) {
+                player = playersManager.players.get(i);
+                break;
+            }
+        }
 
         player.ClaimRegion(region);
         regionIndexes.Remove(regionId);
@@ -572,6 +581,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             //pv.RPC("RPC_MoveCameraToChoosenRegion", RpcTarget.All, regionCenter.x, regionCenter.y);
             Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
         }
+
+        wasRpcSent = false;
     }
 
     /*[PunRPC]
@@ -598,27 +609,23 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void GrantRandomFreeRegionToPlayer(Player player) {
         if (!wasRpcSent) {
             int randRegIdx = random.Next(0, regionIndexes.Count);
-            pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionIndexes[randRegIdx], player.id, "GrantRandomFreeRegionToPlayer()");
+            pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionIndexes[randRegIdx], player.colorId, "GrantRandomFreeRegionToPlayer()");
             wasRpcSent = true;
         }
     }
 
     public void GrantRegionToWinnerByMouseClick() {
         if (Input.GetMouseButtonDown(0)) {
-            if (!wasRpcSent) {
-                Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit hit;
+            Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit hit;
 
-                if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit)) {
-                    Region region = hit.collider.gameObject.GetComponent<Region>();
-
-                    if (region) {
-                        playSound.SoundPlay("region_claim");
-                        for (int k = 0; k < regionIndexes.Count; k++) {
-                            if (regionSystem.regionSerds[regionIndexes[k]].region == region) {
-                                pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionIndexes[k], winner.id, "GrantRegionToWinnerByMouseClick()");
-                                wasRpcSent = true;
-                            }
+            if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit)) {
+                Region region = hit.collider.gameObject.GetComponent<Region>();
+                if (region) {
+                    playSound.SoundPlay("region_claim");
+                    for (int k = 0; k < regionIndexes.Count; k++) {
+                        if (regionSystem.regionSerds[regionIndexes[k]].region == region) {
+                            pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionIndexes[k], winner.colorId, "GrantRegionToWinnerByMouseClick()");
                         }
                     }
                 }
