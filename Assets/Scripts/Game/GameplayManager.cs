@@ -732,8 +732,28 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) 
-    {
+    public void UpdateRegionIndicies(Player player) {
+        for (int i = 0; i < regionSystem.regionSerds.Count; i++) {
+            for (int j = 0; j < player.claimedRegions.Count; j++) {
+                if (player.claimedRegions[j] == regionSystem.regionSerds[i].region) {
+                    regionIndexes.Add(i);
+                    player.LoseRegion(regionSystem.regionSerds[i].region);
+                    regionSystem.regionSerds[i].region.Init(regionSystem);    // костыль ли это?
+                }
+            }
+        }
+
+        //Debug.LogError($"Player has left and regions {string.Join(" ", regionIndexes)} are orphaned now");
+    }
+
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) {
+        for (int i = 0; i < playersManager.players.count; i++) {
+            if (playersManager.players.get(i).colorId == (int)otherPlayer.CustomProperties["playerColorIndex"]) {
+                UpdateRegionIndicies(playersManager.players.get(i));
+                break;
+            }
+        }
+
         playersManager.disconnect(otherPlayer.ActorNumber-1);
     }
 
