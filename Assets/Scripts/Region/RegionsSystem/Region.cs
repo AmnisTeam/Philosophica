@@ -12,6 +12,7 @@ using UnityEngine;
 public class Region : MonoBehaviour
 {
     float aspect = 0;
+    public Player hostPlayer = null;
 
     public void Init(RegionsSystem regionsSystem)
     {
@@ -99,6 +100,7 @@ public class Region : MonoBehaviour
 
     public void Awake()
     {
+        hostPlayer = null;
         SetOutlineColorToRegionColor();
     }
 
@@ -108,7 +110,7 @@ public class Region : MonoBehaviour
 
     public void Start()
     {
-
+        
     }
 
 
