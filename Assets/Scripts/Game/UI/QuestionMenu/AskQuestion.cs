@@ -18,6 +18,7 @@ public class AskQuestion : MonoBehaviourPunCallbacks
 
     public QuestionManager.Question question;
 
+    public Button[] answerButtons;
     public TextMeshProUGUI[] answers;
     public Image[] answersBackgrounds;
     public Image[] answersBorders;
@@ -28,6 +29,8 @@ public class AskQuestion : MonoBehaviourPunCallbacks
 
     public void Init(QuestionManager.Question question)
     {
+        changeButtonClickability(true);
+
         pv = GetComponent<PhotonView>();
         this.questionText.text = question.question;
         this.question = question;
@@ -36,10 +39,13 @@ public class AskQuestion : MonoBehaviourPunCallbacks
             answers[a].text = question.answer[a];
         timer = 0;
         ResetAnswersWithoutAnimation();
+
     }
 
     public virtual void ShowCorrectAnswer()
     {
+        changeButtonClickability(false);
+
         MarkAnswerAsCorrect(question.idRightAnswer);
     }
 
@@ -76,5 +82,11 @@ public class AskQuestion : MonoBehaviourPunCallbacks
 
         answersBorders[buttonId].GetComponent<CanvasGroup>().LeanAlpha(1, buttonsChangeTime).setEaseOutSine();
     }
+
+    public void changeButtonClickability(bool state)
+    {
+        for (int i = 0; i < answerButtons.Length; i++)
+            answerButtons[i].enabled = state;
+    } 
 
 }

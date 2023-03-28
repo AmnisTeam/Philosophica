@@ -1,3 +1,5 @@
+using ExitGames.Client.Photon.StructWrapping;
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,22 +23,32 @@ public class TableMenu : MonoBehaviour
 
     public PlayersManager playersManager;
     public GameplayManager gameplayManager;
-    public IconsContent iconsContent;
+    //public IconsContent iconsContent;
     public List<Player> table;
     public Player winner;
+    [SerializeField] private PlaySound playSound;
+    public Icons iconsSprite;
 
     public bool isHaveRightAnswer = false;
-
-    public void Awake()
-    {
-        
-    }
 
     public void compileTheTable(List<PlayerAnswerData> playerAnswerData)
     {
         table = new List<Player>();
         for (int x = 0; x < playersManager.players.count; x++)
             table.Add(playersManager.players.get(x));
+
+        // ѕроверка на переполнение при клике после окончании таймера
+        for (int i = 0; i < playerAnswerData.Count; i++)
+        {
+            if (playerAnswerData[i].timeToAnswer.Equals(float.NaN)
+                || playerAnswerData[i].timeToAnswer < 0 
+                || playerAnswerData[i].timeToAnswer > gameplayManager.questionSession.
+                GetCurrentQuestion().timeToQuestion)
+            {
+                playerAnswerData[i].timeToAnswer = gameplayManager.questionSession.
+                    GetCurrentQuestion().timeToQuestion;
+            }
+        }
 
         table.Sort((Player x, Player y) => {
             PlayerAnswerData answerDataX = null;
@@ -83,7 +95,7 @@ public class TableMenu : MonoBehaviour
             else
                 answer[x].color = Color.white;
 
-            icons[x].sprite = iconsContent.icons[table[x].iconId].sprite;
+            icons[x].sprite = iconsSprite.GetIconsSpriteByID(table[x].iconId);
             icons[x].color = table[x].color;
         }
 
@@ -109,8 +121,13 @@ public class TableMenu : MonoBehaviour
             winnerNickname.SetText(winner.nickname);
             drawText.text = "";
 
-            winnerIcon.sprite = iconsContent.icons[table[0].iconId].sprite;
+            winnerIcon.sprite = iconsSprite.GetIconsSpriteByID(table[0].iconId);
             winnerIcon.color = table[0].color;
+
+            if (winner.id == PhotonNetwork.LocalPlayer.ActorNumber - 1) //todo сломаетс€ если игрок кикнут в лобби
+                playSound.SoundPlay("winner");
+            else
+                playSound.SoundPlay("loser");
         }
         else
         {
@@ -119,8 +136,10 @@ public class TableMenu : MonoBehaviour
             winnerNickname.SetText("");
             drawText.text = "Ќикто не дал верный ответ";
 
-            winnerIcon.sprite = iconsContent.icons[table[0].iconId].sprite;
+            winnerIcon.sprite = iconsSprite.GetIconsSpriteByID(table[0].iconId);
             winnerIcon.color = new UnityEngine.Color(0, 0, 0, 0); //аватарка типо есть, но она становитс€ прозрачной
+
+            playSound.SoundPlay("loser");
         }
     }
 
