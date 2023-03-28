@@ -72,6 +72,7 @@ public class PlayersManager : MonoBehaviour
     public void connected(Player player)
     {
         players.add(player);
+        //oldPlayersCount++;
         playerAnswerData.addwid(new PlayerAnswerData(), player);
         //Debug.Log("Player " + player.nickname + " has been connected!");
         //tabMenuManager.updateTabMenu();
@@ -124,6 +125,18 @@ public class PlayersManager : MonoBehaviour
 
         return roomPlayer;
     }
+
+    //public void UpdateOldPlayersCount()
+    //{
+    //    oldPlayersCount = players.count;
+    //}
+
+    //public bool DidAnyPlayerLeave()
+    //{
+    //    bool playerLeaved = players.count < oldPlayersCount;
+
+    //    return players.count < oldPlayersCount;
+    //}
 
     private void Awake()
     {

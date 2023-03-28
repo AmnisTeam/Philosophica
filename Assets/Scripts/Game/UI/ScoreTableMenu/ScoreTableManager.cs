@@ -113,8 +113,13 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
 
     public void RemovePlayer(int id)
     {
-        PhotonNetwork.Destroy(rows[id].row);
-        rows.RemoveAt(id);
+        for (int i = 0; i < rows.Count; i++)
+            if (rows[i].player.id == id)
+            {
+                PhotonNetwork.Destroy(rows[i].row);
+                rows.RemoveAt(i);
+                break;
+            }
     }
 
     public void RecreateTable() {
@@ -203,6 +208,7 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
                     id = y;
                     break;
                 }
+
 
             RowMoveableContainer temp = rows[x];
             rows[x] = rows[id];
