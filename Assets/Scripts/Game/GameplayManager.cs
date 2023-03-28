@@ -985,6 +985,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         roundResults.notification.GetComponent<CanvasGroup>().alpha = 0;
         roundResults.notification.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine().setDelay((float)battleRoundResultsNotificationDelay);
         roundIsEnded.state = false;
+
+        battle.currentQuestion++;
     }
 
     public void BattleRoundResultsUpdate()
@@ -1002,8 +1004,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             {
                 battleRoundResults.SetActive(false);
             });
-
-            battle.currentQuestion++;
 
             GlobalVariables.Delay(battleRoundResultsDisappearingTime + menusTransitionDelayTime, () =>
             {
