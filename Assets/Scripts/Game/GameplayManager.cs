@@ -528,7 +528,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             stateEnded = true;
         }
 
-        if (stateEnded && !onceAddSteps) {
+        /*if (stateEnded && !onceAddSteps) {
             onceAddSteps = true;
             steps++;
             SetStepsText(steps, maxSteps);
@@ -546,7 +546,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             {
                 firstStageIsEnded.state = true;
             }
-        }
+        }*/
     }
     
     [PunRPC]
@@ -582,7 +582,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
         }
 
-        wasRpcSent = false;
+        steps++;
+        SetStepsText(steps, maxSteps);
+
+        if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
+            regionSelectionToast.isDone = true;
+        }
+
+        if (GetFreeRegionsCount() > 0) {
+            regionSelectionStateIsEnded.state = true;
+        } else {
+            firstStageIsEnded.state = true;
+        }
     }
 
     /*[PunRPC]
@@ -1537,7 +1548,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
 
         int freeRegions = regionSystem.regionSerds.Count - claimedRegions;*/
-
         return regionIndexes.Count;
     }
 
