@@ -8,9 +8,10 @@ public class QuestionSession
     public int currentQuestion = 0;
     public PlayersManager playersManager;
     public List<PlayerAnswerData> playerAnswerData;
+    private System.Random randomSequence;
 
     public QuestionSession(PlayersManager playersManager)
-    {
+    {      
         questionLoader = new QuestionLoader();
         questionLoader.LoadQuestions();
 
@@ -29,6 +30,11 @@ public class QuestionSession
             answerData.id = playersManager.players.get(x).id;
             playerAnswerData.Add(answerData);
         }
+    }
+
+    public void InitQuestionRandom(int questionsSeed)
+    {
+        randomSequence = new System.Random(questionsSeed);
     }
 
     /*
@@ -52,7 +58,9 @@ public class QuestionSession
 
     public void NextQuestion()
     {
-        currentQuestion = (currentQuestion + 1) % questionLoader.questions.Count;
+        int randQuestionId = randomSequence.Next() % questionLoader.questions.Count;
+        //currentQuestion = (currentQuestion + 1) % questionLoader.questions.Count;
+        currentQuestion = randQuestionId;
         UpdateCountPlayerAnswerData();
     }
 

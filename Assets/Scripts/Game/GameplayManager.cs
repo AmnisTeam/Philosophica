@@ -355,6 +355,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void FirstStageHintStart()
     {
+        if (PhotonNetwork.IsMasterClient)
+            //pv.RPC("RPC_InitQuestionSession", RpcTarget.All, 1);
+            pv.RPC("RPC_InitQuestionSession", RpcTarget.All, (int)((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds());
+
         firstStageHint.SetActive(true);
         firstStageHint.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
@@ -404,6 +408,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         //questionManager.setQuestion(currentQuestion);
 
+        questionSession.NextQuestion();
         questionSession.UpdateCountPlayerAnswerData();
         questionMenu1.SetActive(true);
         questionMenu1.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
@@ -421,8 +426,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         AskQuestionInQuestionMenu askQuestionInQuestionMenu = questionMenu1.GetComponent<AskQuestionInQuestionMenu>();
         askQuestionInQuestionMenu.timer += Time.deltaTime;
         float timeLeft = (float)(questionSession.GetCurrentQuestion().timeToQuestion - askQuestionInQuestionMenu.timer);
-        if(timeLeft >= 0)
-            askQuestionInQuestionMenu.timerText.text = (timeLeft / 60).ToString("00") + ":" + (timeLeft % 60).ToString("00");
+        if (timeLeft >= 0)
+            askQuestionInQuestionMenu.timerText.text = GlobalVariables.GetTimeStr(timeLeft);             
+                //(timeLeft / 60).ToString("00") + ":" + (timeLeft % 60).ToString("00");
 
         if(askQuestionInQuestionMenu.timer >= questionSession.GetCurrentQuestion().timeToQuestion)
         {
@@ -1357,8 +1363,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
+    public void RPC_InitQuestionSession(int questionsSeed)
+    {
+        questionSession.InitQuestionRandom(questionsSeed);
+    }
+
+
     public void Start()
     {
+        //if (PhotonNetwork.IsMasterClient)
+        //    pv.RPC("RPC_InitQuestionSession", RpcTarget.All, (int)((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds());
+
         questionSession = new QuestionSession(playersManager);
         questionSession.UpdateCountPlayerAnswerData();
 
