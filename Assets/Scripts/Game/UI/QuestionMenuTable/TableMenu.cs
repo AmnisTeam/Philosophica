@@ -23,10 +23,11 @@ public class TableMenu : MonoBehaviour
 
     public PlayersManager playersManager;
     public GameplayManager gameplayManager;
-    public IconsContent iconsContent;
+    //public IconsContent iconsContent;
     public List<Player> table;
     public Player winner;
     [SerializeField] private PlaySound playSound;
+    public Icons iconsSprite;
 
     public bool isHaveRightAnswer = false;
 
@@ -94,7 +95,7 @@ public class TableMenu : MonoBehaviour
             else
                 answer[x].color = Color.white;
 
-            icons[x].sprite = iconsContent.icons[table[x].iconId].sprite;
+            icons[x].sprite = iconsSprite.GetIconsSpriteByID(table[x].iconId);
             icons[x].color = table[x].color;
         }
 
@@ -120,7 +121,7 @@ public class TableMenu : MonoBehaviour
             winnerNickname.SetText(winner.nickname);
             drawText.text = "";
 
-            winnerIcon.sprite = iconsContent.icons[table[0].iconId].sprite;
+            winnerIcon.sprite = iconsSprite.GetIconsSpriteByID(table[0].iconId);
             winnerIcon.color = table[0].color;
 
             if (winner.id == PhotonNetwork.LocalPlayer.ActorNumber - 1) //todo сломается если игрок кикнут в лобби
@@ -135,7 +136,7 @@ public class TableMenu : MonoBehaviour
             winnerNickname.SetText("");
             drawText.text = "Никто не дал верный ответ";
 
-            winnerIcon.sprite = iconsContent.icons[table[0].iconId].sprite;
+            winnerIcon.sprite = iconsSprite.GetIconsSpriteByID(table[0].iconId);
             winnerIcon.color = new UnityEngine.Color(0, 0, 0, 0); //аватарка типо есть, но она становится прозрачной
 
             playSound.SoundPlay("loser");
