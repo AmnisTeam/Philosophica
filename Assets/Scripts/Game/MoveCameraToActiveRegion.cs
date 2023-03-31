@@ -20,11 +20,18 @@ public class MoveCameraToActiveRegion : MonoBehaviour
         {
             this.target = target;
             this.onComplete = onComplete;
+            GetComponent<CameraTransformation>().isDrag = false;
             isMove = true;
-            GetComponent<CameraTransformation>().isLocked = true;
             return true;
         }
         return false;
+    }
+
+    public void UnsetTarget()
+    {
+        isMove = false;
+        if(onComplete != null)
+            onComplete();
     }
 
     private void Start()
@@ -46,10 +53,7 @@ public class MoveCameraToActiveRegion : MonoBehaviour
             distance = Vector2.Distance(target, transform.position);
             if(distance < minDistanceToStopMove)
             {
-                isMove = false;
-                GetComponent<CameraTransformation>().isLocked = false;
-                if(onComplete != null)
-                    onComplete();
+                UnsetTarget();
             }
         }
     }
