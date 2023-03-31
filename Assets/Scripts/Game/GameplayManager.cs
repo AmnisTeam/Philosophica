@@ -2242,7 +2242,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void SetStepsText(int steps, int maxSteps)
     {
-        stepsText.text = $"{steps}/{maxSteps}";
+        stepsText.text = $"Шаги: {steps}/{maxSteps}";
     }
 
     public int GetFreeRegionsCount()
