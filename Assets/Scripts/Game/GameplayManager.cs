@@ -442,12 +442,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionMenu1.GetComponent<AskQuestionInQuestionMenu>().Init(questionSession.GetCurrentQuestion());
         questionMenu1.GetComponent<AskQuestionInQuestionMenu>().timer = 0;
 
+        Button[] buttons = questionMenu1.GetComponent<AskQuestionInQuestionMenu>().answerButtons;
+        Image[] backgrounds = questionMenu1.GetComponent<AskQuestionInQuestionMenu>().answersBackgrounds;
         // какая-то неведомая херня, работает или нет – неизвестно (тип вырубить кнопки ответа спектатору и поменять цвет на серый (кнопка не активна))
         for (int i = 0; i < playersManager.players.count; i++) {
             if (playersManager.players.get(i).isLose && playersManager.players.get(i).isLocalClient) {
-                Button[] buttons = questionMenu1.GetComponent<AskQuestionInQuestionMenu>().answerButtons;
                 for (int j = 0; j < buttons.Length; j++) {
-                    buttons[i].enabled = false;
+                    buttons[j].enabled = false;
+                    backgrounds[j].color = new Color32(0x2f, 0x2f, 0x2f, 0xff);
                 }
             }
         }
@@ -696,8 +698,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         foreach (var rec in info) {
             //Debug.LogError($"Player {rec.Key} has claimed region {rec.Value}");
 
+            Player player = null;
+            for (int i = 0; i < playersManager.players.count; i++)
+            {
+                if (rec.Key == playersManager.players.get(i).id)
+                {
+                    player = playersManager.players.get(i); break;
+                }
+            }
+
             Region region = regionSystem.regionSerds[rec.Value].region;
-            Player player = playersManager.players.get(rec.Key);
 
             //player.ClaimRegion(region);
             GiveRegion(player, region);
@@ -1004,9 +1014,19 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) 
     {
-        //Player player = playersManager.players.get(otherPlayer.ActorNumber - 1);
+        int playerIdInList = -1;
+        Player leavingPlayer = null;
+        for (int i = 0; i < playersManager.players.count; i++)
+        {
+            if (otherPlayer.ActorNumber - 1 == playersManager.players.get(i).id)
+            {
+                leavingPlayer = playersManager.players.get(i);
+                playerIdInList = i;
+                break;
+            }
+        }
 
-        Player leavingPlayer = playersManager.players.get(otherPlayer.ActorNumber - 1);
+        //Player leavingPlayer = playersManager.players.get(otherPlayer.ActorNumber - 1);
 
         for (int i = 0; i < regionSystem.regionSerds.Count; i++)
         {
@@ -1017,7 +1037,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         if (winner == leavingPlayer)
             winner = null;
-        playersManager.disconnect(otherPlayer.ActorNumber-1);
+
+        playersManager.disconnect(playerIdInList);
         UpdateRegionIndices();
     }
 
@@ -1303,6 +1324,28 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         askQuestionInBattleIsEnded.Set(false);
         fromAskQuestionInBattleToBackToStageOne.Set(false);
+
+        Player me = null;
+        for (int i = 0; i < playersManager.players.count; i++) {
+            if (playersManager.players.get(i).isLocalClient) {
+                me = playersManager.players.get(i);
+                break;
+            }
+        }
+
+        Button[] buttons = askQuestionInBattle.GetComponent<AskQuestionInBattle>().answerButtons;
+        Image[] backgrounds = askQuestionInBattle.GetComponent<AskQuestionInBattle>().answersBackgrounds;
+        // какая-то неведомая херня, работает или нет – неизвестно (тип вырубить кнопки ответа спектатору и поменять цвет на серый (кнопка не активна))
+        for (int i = 0; i < playersManager.players.count; i++) {
+            if (playersManager.players.get(i).isLocalClient &&
+               (playersManager.players.get(i).isLose || (battle.opponents[0].player != me && battle.opponents[1].player != me)))
+            {
+                for (int j = 0; j < buttons.Length; j++) {
+                    buttons[j].enabled = false;
+                    backgrounds[j].color = new Color32(0x4f, 0x4f, 0x4f, 0xff);
+                }
+            }
+        }
     }
 
     public void AskQuestionInBattleUpdate()

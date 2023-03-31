@@ -45,6 +45,10 @@ public class BaseTable<T> where T : BaseRaw
     //id - индкес элемента в массиве list
     public T get(int id)
     {
+        if (id >= list.Count)
+        {
+            return null;
+        }
         return list[id];
     }
 }
