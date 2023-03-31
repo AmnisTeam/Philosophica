@@ -1080,7 +1080,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
         askQuestionInBattleComponent.timer += Time.deltaTime;
-        askQuestionInBattleComponent.timerText.text = GlobalVariables.GetTimeStr(askQuestionInBattleTime - askQuestionInBattleComponent.timer);
+        int time = (int)(askQuestionInBattleTime - askQuestionInBattleComponent.timer);
+        askQuestionInBattleComponent.timerText.text = GlobalVariables.GetTimeStr(time < 0 ? 0 : time);
 
         if (askQuestionInBattleComponent.timer >= askQuestionInBattleTime)
         {    
