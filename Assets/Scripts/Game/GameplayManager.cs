@@ -2261,24 +2261,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Opponent opponent2 = new Opponent(player2, playersMaxHealth, playersMaxHealth, 0);
         Battle newBattle = new Battle(opponent1, opponent2, region);
 
+        // Данная проверка навряд ли нужна, тк вопросы заново загружаются, если они закончилсь
         if (roundsCount > questionSession.questionLoader.GetQuestionsSize())
             roundsCount = questionSession.questionLoader.GetQuestionsSize();
 
-        /*int idsCount = questionSession.questionLoader.questions.Count();
-        int[] ids = new int[idsCount];
-        for (int i = 0; i < idsCount; i++)
-            ids[i] = i;
-
-        System.Random rnd = new System.Random(12345);*/
         for (int i = 0; i < roundsCount; i++)
         {
-            //int randInt = rnd.Next(0, idsCount);
-            //QuestionManager.Question randQuestion = questionSession.questionLoader.questions[ids[randInt]];
             QuestionManager.Question randQuestion = questionSession.questionLoader.GetRandQuestionWithRemove();
 
-            //ids[randInt] = ids[idsCount - 1];
-            //idsCount--;
             Debug.Log(randQuestion.question.ToString());
+
             newBattle.questions.Add(randQuestion);
         }
 

@@ -100,8 +100,6 @@ public class QuestionLoader
         QuestionManager.Question q = questions[rand];
         currentQuestion = q;
 
-        Debug.Log("Остаось " + questions.Count);
-
         questions.RemoveAt(rand);
 
         if (questions.Count == 0)
