@@ -184,6 +184,7 @@ public class BattleRoundResults : MonoBehaviour
     {
         int loserId = 1 - battle.winnerId;
         double resultingHealth = battle.opponents[loserId].health - GetWinnersDamage();
+        battle.GetWinner().player.scores += (int)(GetWinnersDamage());
         battle.opponents[loserId].health = resultingHealth < 0 ? 0 : resultingHealth;
     }
 

@@ -325,6 +325,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public SynchronizedBoolCondition fromBattleRoundResultsToBackToStageOne;
     public SynchronizedBoolCondition fromBattleResultsToBackToStageOne;
 
+    public int scoresForGetRegion = 100;
+    public float scoreFactorForDamage = 1;
+
     [PunRPC]
     public void RPC_SynchronizedPlayers(bool state, bool wantToSynchronized, int conditionId, PhotonMessageInfo info)
     {
@@ -502,6 +505,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 else if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
                 {
                     fromShowResultsInAskQuestionToRegionSelection.Set(true);
+                    questionMenuTable.GetComponent<TableMenu>().table[0].scores += scoresForGetRegion;
+                    scoreTableManager.UpdateTable();
                     SetSteps(steps + 1);
                 }
                 else
@@ -648,9 +653,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         regionIndexes.Remove(regionId);
         //Debug.LogError($"Free regions: {string.Join(" ", regionIndexes)} ({GetFreeRegionsCount()})");
-
-        player.scores += countScoresForRegion;
-        scoreTableManager.UpdateTable();
 
         if (region && questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
             Vector2 regionCenter = Vector2.zero;
@@ -1407,6 +1409,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             {
                 playSound.SoundPlay("damage");
                 battleRoundResults.GetComponent<BattleRoundResults>().InflictDamageOnLoser();
+                scoreTableManager.UpdateTable();
             }
             battleRoundResults.GetComponent<BattleRoundResults>().UpdateOpponentsHealthGradudally(opponentsHealthUpdatingTime);
             battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setDelay(battleRoundResultsDisappearingTime).
