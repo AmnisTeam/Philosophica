@@ -637,6 +637,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_RegionWasChosen(int regionId, int playerColorId, string source) {
         //Debug.LogError($"Player {playerId} has claimed region {regionId}");
+        playSound.SoundPlay("region_claim");
 
         Region region = regionSystem.regionSerds[regionId].region;
         Player player = null;
@@ -744,8 +745,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
                 if (region && region.hostPlayer == null)
                 {
-                    playSound.SoundPlay("region_claim");
-
                     int regionId = GetRegionId(region);
                     pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionId, winner.colorId, "GrantRegionToWinnerByMouseClick()");
                     wasRpcSent = true;
