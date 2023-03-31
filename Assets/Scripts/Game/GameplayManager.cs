@@ -1002,12 +1002,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) 
     {
+        int playerIdInList = -1;
         Player leavingPlayer = null;
         for (int i = 0; i < playersManager.players.count; i++)
         {
             if (otherPlayer.ActorNumber - 1 == playersManager.players.get(i).id)
             {
-                leavingPlayer = playersManager.players.get(i); break;
+                leavingPlayer = playersManager.players.get(i);
+                playerIdInList = i;
+                break;
             }
         }
 
@@ -1022,7 +1025,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         if (winner == leavingPlayer)
             winner = null;
-        playersManager.disconnect(otherPlayer.ActorNumber-1);
+
+        playersManager.disconnect(playerIdInList);
         UpdateRegionIndices();
     }
 
