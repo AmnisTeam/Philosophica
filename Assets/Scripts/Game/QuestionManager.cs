@@ -94,7 +94,7 @@ public class QuestionManager : MonoBehaviourPunCallbacks
 
     public void setQuestion(int id)
     {
-        setQuestion(questionLoader.questions[id % questionLoader.questions.Count()]);
+        setQuestion(questionLoader.GetRandQuestionWithRemove());
     }
 
     public void ShowTable(bool toShowTable)

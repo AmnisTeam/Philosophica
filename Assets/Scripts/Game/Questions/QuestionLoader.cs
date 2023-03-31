@@ -8,7 +8,7 @@ using static QuestionManager;
 [Serializable]
 public class QuestionLoader
 {
-    public List<QuestionManager.Question> questions;
+    private List<QuestionManager.Question> questions;
     public QuestionManager.Question currentQuestion;
 
     public QuestionLoader()
@@ -87,5 +87,10 @@ public class QuestionLoader
             LoadQuestions();
 
         return q;
+    }
+
+    public int GetQuestionsSize()
+    {
+        return questions.Count;
     }
 }

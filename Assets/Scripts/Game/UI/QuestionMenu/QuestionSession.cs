@@ -5,7 +5,7 @@ using UnityEngine;
 public class QuestionSession
 {
     public QuestionLoader questionLoader;
-    public int currentQuestion = 0;
+    //public int currentQuestion = 0;
     public PlayersManager playersManager;
     public List<PlayerAnswerData> playerAnswerData;
     private System.Random randomSequence;
@@ -58,9 +58,9 @@ public class QuestionSession
 
     public void NextQuestion()
     {
-        int randQuestionId = randomSequence.Next() % questionLoader.questions.Count;
+        int randQuestionId = randomSequence.Next() % questionLoader.GetQuestionsSize();
         //currentQuestion = (currentQuestion + 1) % questionLoader.questions.Count;
-        currentQuestion = randQuestionId;
+        //currentQuestion = randQuestionId;
         UpdateCountPlayerAnswerData();
     }
 

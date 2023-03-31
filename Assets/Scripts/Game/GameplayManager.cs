@@ -395,7 +395,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
             //pv.RPC("RPC_InitQuestionSession", RpcTarget.All, 1);
-            pv.RPC("RPC_InitQuestionSession", RpcTarget.All, (int)((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds());
+            pv.RPC("RPC_InitQuestionSession", RpcTarget.All, 12345); // (int)((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds()
 
         firstStageHint.SetActive(true);
         firstStageHint.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
@@ -927,7 +927,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (preparationTimer >= preparationTime)
         {
             preparationStateIsEnded.state = true;
-            currentQuestion = (currentQuestion + 1) % questionSession.questionLoader.questions.Count();
+            currentQuestion = (currentQuestion + 1) % questionSession.questionLoader.GetQuestionsSize();
         }
     }
 
@@ -2261,8 +2261,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Opponent opponent2 = new Opponent(player2, playersMaxHealth, playersMaxHealth, 0);
         Battle newBattle = new Battle(opponent1, opponent2, region);
 
-        if (roundsCount > questionSession.questionLoader.questions.Count())
-            roundsCount = questionSession.questionLoader.questions.Count();
+        if (roundsCount > questionSession.questionLoader.GetQuestionsSize())
+            roundsCount = questionSession.questionLoader.GetQuestionsSize();
 
         /*int idsCount = questionSession.questionLoader.questions.Count();
         int[] ids = new int[idsCount];
