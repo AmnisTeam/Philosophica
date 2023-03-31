@@ -1135,6 +1135,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     [PunRPC]
     public void RPC_AttackAnnouncementStart(int firstPlayerId, int secondPlayerId, int regionId, int roundsCount, double playersMaxHealth) {
+        playSound.SoundPlay("attack_on_the_territory");
+        
         Player firstPlayer = null, secondPlayer = null;
         Region region = regionSystem.regionSerds[regionId].region;
 
