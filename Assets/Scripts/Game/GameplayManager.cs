@@ -1418,7 +1418,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         askQuestionInBattle.SetActive(true);
         
-        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], questionSession.questionLoader.GetRandQuestionWithRemove());
+        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], battle.questions[battle.currentQuestion]);
         askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         askQuestionInBattleIsEnded.Set(false);

@@ -32,7 +32,7 @@ public class AskQuestion : MonoBehaviourPunCallbacks
         changeButtonClickability(true);
 
         pv = GetComponent<PhotonView>();
-        this.questionText.text = question.question;
+        this.questionText.text = question.question; //todo12345
         this.question = question;
 
         for (int a = 0; a < answers.Length && a < question.answer.Length; a++)
