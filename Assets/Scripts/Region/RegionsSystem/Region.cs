@@ -18,7 +18,8 @@ public class Region : MonoBehaviour
     {
         gameObject.layer = LayerMask.NameToLayer("Regions");
         SetColor(regionsSystem.nextRegionColor);
-        SetOutlineColorToRegionColor();
+        SetOutlineColor(new Color(1, 0, 0, 0));
+        SetInnerGlowColor(new Color(1, 0, 0, 0));
     }
 
     public void SetColor(UnityEngine.Color color)
@@ -71,6 +72,16 @@ public class Region : MonoBehaviour
         gameObject.GetComponent<Renderer>().materials[0].SetColor("_InnerGlowColor", color);
     }
 
+    public void GraduallyChangeColor(Color color, float time)
+    {
+        Color regionColor = gameObject.GetComponent<Renderer>().materials[0].GetColor("_RegionColor");
+        LeanTween.value(0, 1, time).setOnUpdate((float val) =>
+        {
+            Color currentColor = Color.Lerp(regionColor, color, val);
+            SetColor(currentColor);
+        }).setEaseOutSine();
+    }
+
     public void GraduallyChangeOutlineColor(Color color, float time)
     {
         Color outlineColor = gameObject.GetComponent<Renderer>().materials[0].GetColor("_OutlineColor");
@@ -105,8 +116,8 @@ public class Region : MonoBehaviour
     }
 
 
-    float time = 4;
-    float timer = 0;
+    //float time = 4;
+    //float timer = 0;
 
     public void Start()
     {
@@ -118,12 +129,12 @@ public class Region : MonoBehaviour
     {
         UpdateShaderAspectAndWidth();
 
-        timer += Time.deltaTime;
-        if (timer >= time)
-        {
-            GraduallyChangeOutlineColor(new Color(1, 1, 1), 2);
-            GraduallyChangeInnerGlowColor(new Color(1, 1, 1), 2);
-            timer = float.NaN;
-        }
+        //timer += Time.deltaTime;
+        //if (timer >= time)
+        //{
+        //    GraduallyChangeOutlineColor(new Color(1, 1, 1), 2);
+        //    GraduallyChangeInnerGlowColor(new Color(1, 1, 1), 2);
+        //    timer = float.NaN;
+        //}
     }
 }

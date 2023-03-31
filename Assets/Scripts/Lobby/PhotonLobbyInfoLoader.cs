@@ -17,7 +17,6 @@ public class PhotonLobbyInfoLoader : MonoBehaviourPunCallbacks {
     void Start() {
         lobbyIdText.text = $"#{PhotonNetwork.CurrentRoom.CustomProperties["lobbyId"]}";
         lobbyNameText.text = PhotonNetwork.CurrentRoom.CustomProperties["lobbyName"].ToString();
-        lobbyPasswdText.text = PhotonNetwork.CurrentRoom.CustomProperties["lobbyPasswd"].ToString();
 
         GameObject iconsHolderObject = GameObject.FindGameObjectWithTag(iconsHolderTag);
         IconsContentHolder iconsContentHolderInstance = iconsHolderObject.GetComponent<IconsContentHolder>();
