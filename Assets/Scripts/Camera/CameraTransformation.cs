@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -106,6 +107,7 @@ public class CameraTransformation : MonoBehaviour
     public float scalingSpeedTouch = 0.1f;
     public float minScale = 1;
     public float maxScale = 20;
+    public Vector2 clampingSize;
     public WorkDetector workDetector;
     public Canvas canvas;
     private bool oldIsWord = false;
@@ -156,6 +158,9 @@ public class CameraTransformation : MonoBehaviour
         {
             Vector3 difference = dragOrigin - mouseWorldPos;
             cam.transform.position += difference;
+            cam.transform.position = new Vector3(Mathf.Clamp(cam.transform.position.x, -clampingSize.x, clampingSize.x),
+                                                 Mathf.Clamp(cam.transform.position.y, -clampingSize.y, clampingSize.y),
+                                                 cam.transform.position.z);
         }
     }
 
