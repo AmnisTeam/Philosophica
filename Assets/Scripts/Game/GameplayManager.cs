@@ -653,6 +653,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         //player.ClaimRegion(region);
         GiveRegion(player, region);
+        scoreTableManager.UpdateTable();
 
         regionIndexes.Remove(regionId);
         //Debug.LogError($"Free regions: {string.Join(" ", regionIndexes)} ({GetFreeRegionsCount()})");
