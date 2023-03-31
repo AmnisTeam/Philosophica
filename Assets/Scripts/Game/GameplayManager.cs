@@ -1202,11 +1202,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 battleResultsVictory.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                 {
                     battleResultsVictory.SetActive(false);
-                    if (battle.GetLoser().player.claimedRegions[0] == battle.region)
-                        Debug.Log("They are identical");
-                    battle.GetLoser().player.LoseRegion(battle.region);
-                    //battle.GetWinner().player.ClaimRegion(battle.region);
-                    GiveRegion(battle.GetWinner().player, battle.region);
+                    if (battle.GetDefender().player != battle.GetWinner().player)
+                    {
+                        if (battle.GetLoser().player.claimedRegions[0] == battle.region)
+                            Debug.Log("They are identical");
+                        battle.GetLoser().player.LoseRegion(battle.region);
+                        //battle.GetWinner().player.ClaimRegion(battle.region);
+                        GiveRegion(battle.GetWinner().player, battle.region);
+                    }
                 });
             } 
             else
