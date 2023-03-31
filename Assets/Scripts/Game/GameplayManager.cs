@@ -894,16 +894,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (offensePlayer.isLocalClient)
             StartBattleByMouseClick(roundsCount, maxPlayersHealth);
 
-        if (battle != null) {
-            stateEnded = true;
-        }
-
         if (offensivePlayerSelectionTimer >= offensivePlayerSelectionTime)
         {
             StartBattleWithRandomPlayer(roundsCount, maxPlayersHealth);
+        }
+
+        if (battle != null)
+        {
             stateEnded = true;
         }
-        
+
         if (stateEnded)
         {
             if (offensePlayer.isLocalClient) {
@@ -1237,7 +1237,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     else
                         fromBattleResultsToOffensive.Set(true);
                 }
-            });         
+            });
+
+            battleResultsTimer = float.NaN;
         }
     }
 
@@ -1696,7 +1698,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < roundsCount; i++)
         {
             int randInt = rnd.Next(0, idsCount - 1);
-            QuestionManager.Question randQuestion = questionSession.questionLoader.questions[ids[randInt]];
+            //QuestionManager.Question randQuestion = questionSession.questionLoader.questions[ids[randInt]];
+            QuestionManager.Question randQuestion = questionSession.questionLoader.questions[i];
 
             ids[randInt] = ids[idsCount - 1];
             idsCount--;
