@@ -87,7 +87,7 @@ public class TableMenu : MonoBehaviour
             else
             {
                 answer[x].text = "-";
-                time[x].text = "Нет ответа";
+                time[x].text = "-";
             }
 
             if (answerData.answerId == gameplayManager.questionSession.GetCurrentQuestion().idRightAnswer)
@@ -154,7 +154,7 @@ public class TableMenu : MonoBehaviour
                 PlayerAnswerData answerData = playersManager.playerAnswerData.find(table[x].id);
                 answerData.answerId = -1;
                 answer[x].text = "-";
-                time[x].text = "Нет ответа";
+                time[x].text = "-";
             }
         }
     }

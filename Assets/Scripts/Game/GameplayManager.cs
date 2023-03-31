@@ -269,6 +269,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     private List<int> regionIndexes = new List<int>();
     private bool wasRpcSent = false;
 
+    private bool RPCAttackAnnouncementwasSended = false;
+
     public bool onceAddSteps = false;
     private int winnerRegionsCountAtStartOfSelection;
     private Player winner;
@@ -1034,6 +1036,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void OffensivePlayerSelectionStart()
     {
         Debug.Log("OffensivePlayerSelectionStart");
+        RPCAttackAnnouncementwasSended = false;
 
         offensivePlayerSelectionTimer = 0;
         offenseAnnouncement.SetActive(true);
@@ -1077,8 +1080,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 stateEnded = true;
             }
 
-            if (stateEnded)
+            if (stateEnded && !RPCAttackAnnouncementwasSended)
             {
+                RPCAttackAnnouncementwasSended = true;
                 if (offensePlayer.isLocalClient)
                 {
                     int regionId = 0;
