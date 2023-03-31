@@ -686,8 +686,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         foreach (var rec in info) {
             //Debug.LogError($"Player {rec.Key} has claimed region {rec.Value}");
 
+            Player player = null;
+            for (int i = 0; i < playersManager.players.count; i++)
+            {
+                if (rec.Key == playersManager.players.get(i).id)
+                {
+                    player = playersManager.players.get(i); break;
+                }
+            }
+
             Region region = regionSystem.regionSerds[rec.Value].region;
-            Player player = playersManager.players.get(rec.Key);
 
             //player.ClaimRegion(region);
             GiveRegion(player, region);
@@ -994,9 +1002,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) 
     {
-        //Player player = playersManager.players.get(otherPlayer.ActorNumber - 1);
+        Player leavingPlayer = null;
+        for (int i = 0; i < playersManager.players.count; i++)
+        {
+            if (otherPlayer.ActorNumber - 1 == playersManager.players.get(i).id)
+            {
+                leavingPlayer = playersManager.players.get(i); break;
+            }
+        }
 
-        Player leavingPlayer = playersManager.players.get(otherPlayer.ActorNumber - 1);
+        //Player leavingPlayer = playersManager.players.get(otherPlayer.ActorNumber - 1);
 
         for (int i = 0; i < regionSystem.regionSerds.Count; i++)
         {
