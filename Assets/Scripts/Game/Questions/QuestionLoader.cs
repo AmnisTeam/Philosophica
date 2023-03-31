@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -73,14 +74,34 @@ public class QuestionLoader
             id = (id + 1) % 8;
             line = reader.ReadLine();
         }
+        //ShuffleQuestions();
     }
+
+    /*public void ShuffleQuestions()
+    {
+        System.Random sr = new System.Random((int)PhotonNetwork.CurrentRoom.CustomProperties["seed"]);
+
+        for (int i = 0; i < questions.Count; i++)
+        {
+            int rand1 = sr.Next(0, questions.Count);
+            int rand2 = sr.Next(0, questions.Count);
+            Question q1 = questions[rand1];
+            Question q2 = questions[rand2];
+
+            questions[rand1] = q2;
+            questions[rand2] = q1;
+        }
+    }*/
 
     public QuestionManager.Question GetRandQuestionWithRemove()
     {
-        System.Random sr = new System.Random(12345);
+        System.Random sr = new System.Random((int)PhotonNetwork.CurrentRoom.CustomProperties["seed"]);
         int rand = sr.Next(0, questions.Count);
         QuestionManager.Question q = questions[rand];
         currentQuestion = q;
+
+        Debug.Log("Остаось " + questions.Count);
+
         questions.RemoveAt(rand);
 
         if (questions.Count == 0)
@@ -88,6 +109,18 @@ public class QuestionLoader
 
         return q;
     }
+
+    /*public QuestionManager.Question GetQuestion()
+    {
+        if (questions.Count == 0)
+            LoadQuestions();
+
+        QuestionManager.Question q = questions[0];
+        currentQuestion = q;
+        questions.RemoveAt(0);
+
+        return q;
+    }*/
 
     public int GetQuestionsSize()
     {

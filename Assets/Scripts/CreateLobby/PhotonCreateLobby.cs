@@ -14,12 +14,16 @@ public class PhotonCreateLobby : MonoBehaviourPunCallbacks {
 
         // TODO: use lobby code
         string roomId = rand.Next(100000, 999999).ToString();
+        int randomSeed = rand.Next();
+        //int randomSeed = (int)((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
+
         roomOptions.MaxPlayers = 4;
-        roomOptions.CustomRoomPropertiesForLobby = new string[]{"lobbyId", "lobbyName", "lobbyPasswd", "lobbyIconId"};
+        roomOptions.CustomRoomPropertiesForLobby = new string[]{"lobbyId", "lobbyName", "lobbyPasswd", "lobbyIconId", "seed"};
         roomOptions.CustomRoomProperties = new Hashtable{
             {"lobbyId", roomId},
             {"lobbyName", lobbyNameInput.text},
-            {"lobbyIconId", lobbyIconScroller.selectedId}
+            {"lobbyIconId", lobbyIconScroller.selectedId},
+            {"seed", randomSeed}
         };
 
         PhotonNetwork.CreateRoom(lobbyNameInput.text, roomOptions);

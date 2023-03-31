@@ -395,7 +395,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
             //pv.RPC("RPC_InitQuestionSession", RpcTarget.All, 1);
-            pv.RPC("RPC_InitQuestionSession", RpcTarget.All, 12345); // (int)((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds()
+            pv.RPC("RPC_InitQuestionSession", RpcTarget.All, (int)PhotonNetwork.CurrentRoom.CustomProperties["seed"]); // (int)((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds()
 
         firstStageHint.SetActive(true);
         firstStageHint.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
@@ -1821,7 +1821,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
         pv = GetComponent<PhotonView>();
 
-        random = new System.Random(12345);
+        random = new System.Random((int)PhotonNetwork.CurrentRoom.CustomProperties["seed"]);
         regionIndexes.AddRange(Enumerable.Range(0, regionSystem.regionSerds.Count));
           
         int idx = 0;
@@ -2384,9 +2384,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         (ids[player1Id], ids[idsCount - 1]) = (ids[idsCount - 1], ids[player1Id]);
         idsCount--;
 
-        System.Random rnd = new System.Random(12345);
+        System.Random rnd = new System.Random((int)PhotonNetwork.CurrentRoom.CustomProperties["seed"]);
 
-        
+
         Player randomPlayer = null;
         while (idsCount > 0)
         {

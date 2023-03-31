@@ -92,10 +92,10 @@ public class QuestionManager : MonoBehaviourPunCallbacks
         //selectionQuestions.MarkAllAnswersAsDefaultWithoutAnimation();
     }
 
-    public void setQuestion(int id)
+    /*public void setQuestion(int id)
     {
         setQuestion(questionLoader.GetRandQuestionWithRemove());
-    }
+    }*/
 
     public void ShowTable(bool toShowTable)
     {    
