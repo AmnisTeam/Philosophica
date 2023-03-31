@@ -163,6 +163,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public GameObject battleRoundResults;
     public GameObject battleResultsVictory;
     public GameObject battleResultsDraw;
+    public GameObject backToStageOne;
+
+    public TextMeshProUGUI backToStageOneText;
 
     public GameObject uiInterface;
     public GameObject endGameAnnouncment;
@@ -230,6 +233,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     private double questionNumberAnnouncementTimer = 0;
     public double questionNumberAnnouncementTime;
 
+    private double backToStageOneTimer = 0;
+    private double backToStageOneTime = 5;
+
     public double askQuestionInBattleTime;
 
     private double correctAnsewerRevealingTimer;
@@ -275,6 +281,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public BoolToastMessage preparationToast;
 
 
+    public SynchronizedBoolCondition offensivePlayerSelectionCond;
+
     //public BoolCondition fromGameBegginingToAskQuestion;
     public SynchronizedBoolCondition fromFirstStageHintToAskQuestion;
     public SynchronizedBoolCondition fromGameBegginingToFirstStageHint;
@@ -282,6 +290,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public SynchronizedBoolCondition fromAskQuestionToRightAnswer;
     public SynchronizedBoolCondition fromRightAnswerToShowResultsInAskQuestion;
     public SynchronizedBoolCondition fromShowResultsInAskQuestionToRegionSelection;
+    public SynchronizedBoolCondition fromShowResultsInAskQuestionToAskQuestion;
     public SynchronizedBoolCondition viewResultsStateIsEnded;
     public SynchronizedBoolCondition regionSelectionStateIsEnded;
     public SynchronizedBoolCondition preparationStateIsEnded;
@@ -302,6 +311,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public SynchronizedBoolCondition fromBattleResultsToLosePlayer;
     public SynchronizedBoolCondition fromLosePlayerToEndGame;
     public SynchronizedBoolCondition fromLosePlayerToOffensive;
+
+    public SynchronizedBoolCondition fromStageTwoAnnouncementToBackToStageOne;
+    public SynchronizedBoolCondition fromBackToStageOneToPreparation;
+    public SynchronizedBoolCondition fromSecondStageHintToBackToStageOne;
+    public SynchronizedBoolCondition fromOffensivePlayerSelectionToBackToStageOne;
+    public SynchronizedBoolCondition fromAttackAnnouncementToBackToStageOne;
+    public SynchronizedBoolCondition fromOpponentsAnnouncementToBackToStageOne;
+    public SynchronizedBoolCondition fromQuestionNumberAnnouncementToBackToStageOne;
+    public SynchronizedBoolCondition fromAskQuestionInBattleToBackToStageOne;
+    public SynchronizedBoolCondition fromCorrectAnsewerRevealingInBattleToBackToStageOne;
+    public SynchronizedBoolCondition fromBattleRoundResultsToBackToStageOne;
+    public SynchronizedBoolCondition fromBattleResultsToBackToStageOne;
 
     [PunRPC]
     public void RPC_SynchronizedPlayers(bool state, bool wantToSynchronized, int conditionId, PhotonMessageInfo info)
@@ -480,7 +501,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         {
             questionMenuTable.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { 
                 questionMenuTable.SetActive(false);
-                fromShowResultsInAskQuestionToRegionSelection.Set(true);
+                if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+                    fromShowResultsInAskQuestionToRegionSelection.Set(true);
+                else
+                    fromShowResultsInAskQuestionToAskQuestion.Set(true);
             });
             timerToShowTableMenu = float.NaN;
         }
@@ -632,7 +656,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
             regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
 
-            //pv.RPC("RPC_MoveCameraToChoosenRegion", RpcTarget.All, regionCenter.x, regionCenter.y);
             Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
         }
 
@@ -706,7 +729,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             {
                 Region region = hit.collider.gameObject.GetComponent<Region>();
 
-                if (region)
+                if (region && region.hostPlayer == null)
                 {
                     playSound.SoundPlay("region_claim");
 
@@ -791,6 +814,45 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void BackToStageOneStart()
+    {
+        Player leavedPlayer = playersManager.leavedPlayersQueue.Dequeue();
+        String hex = leavedPlayer.color.ToHexString();
+        String playerName = $"<color=#{ hex }>{leavedPlayer.nickname}</color>";
+        String firstStageStr = $"<color=#00a2ff>первого этапа</color>";
+
+        backToStageOneText.text = "Из-за того, что игрок " +
+                                  playerName +
+                                  " покинул игру, " +
+                                  "на карте снова появились свободные территории, поэтому игра снова " +
+                                  "переходит в состояние " +
+                                  firstStageStr +
+                                  ".";
+        playersManager.leavedPlayersQueue.Clear();
+        playersManager.RefreshSomeoneLeaveState();
+
+        backToStageOne.SetActive(true);
+        backToStageOne.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
+    }
+
+    public void BackToStageOneUpdate()
+    {
+        backToStageOneTimer += Time.deltaTime;
+
+        if (backToStageOneTimer >= backToStageOneTime)
+        {
+            backToStageOne.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                backToStageOne.SetActive(false);
+            });
+
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                fromBackToStageOneToPreparation.Set(true);
+            });        
+        }
+    }
+
     //public void stageTwoAnnouncementStart()
     //{
     //    stageTwoAnnoucment.SetActive(true);
@@ -811,17 +873,85 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     //    }
     //}
 
+    public void stageTwoAnnouncementStart()
+    {
+        onceAddSteps = false;
+        stageTwoAnnoucment.SetActive(true);
+        stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+        stageTwoAnnouncmentTimer = 0;
+        offensivePlayerSelectionCond.Set(false);
+        fromStageTwoAnnouncementToSecondStageHint.Set(false);
+        fromStageTwoAnnouncementToBackToStageOne.Set(false);
+    }
+
+    public void stageTwoAnnouncementUpdate()
+    {
+        if (!playersManager.DidSomeoneLeave())
+        {
+            stageTwoAnnouncmentTimer += Time.deltaTime;
+
+            if (stageTwoAnnouncmentTimer >= stageTwoAnnouncmentTime)
+            {
+                stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                {
+                    stageTwoAnnoucment.SetActive(false);
+                });
+
+                GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+                {
+                    if (playersManager.DidSomeoneLeave())
+                        fromStageTwoAnnouncementToBackToStageOne.Set(true);
+                    else
+                        fromStageTwoAnnouncementToSecondStageHint.Set(true);
+                });
+            }
+        }
+        else
+        {
+            stageTwoAnnoucment.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                stageTwoAnnoucment.SetActive(false);
+            });
+
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                fromStageTwoAnnouncementToBackToStageOne.Set(true);
+            });
+        }
+    }
+
     public void SecondStageHintStart()
     {
         secondStageHint.SetActive(true);
         secondStageHint.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
         playSound.SoundPlay("new_stage");
+        fromSecondStageHintToBackToStageOne.Set(false);
+        fromSecondStageHintToOffensivePlayerSelection.Set(false);
+        secondStageHintTimer = 0;
     }
 
     public void SecondStageHintUpdate()
     {
-        secondStageHintTimer += Time.deltaTime;
-        if (secondStageHintTimer >= secondStageHintTime)
+        if (!playersManager.DidSomeoneLeave())
+        {
+            secondStageHintTimer += Time.deltaTime;
+            if (secondStageHintTimer >= secondStageHintTime)
+            {
+                secondStageHint.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                {
+                    secondStageHint.SetActive(false);
+                });
+                GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+                {
+
+                    if (playersManager.DidSomeoneLeave())
+                        fromSecondStageHintToBackToStageOne.Set(true);
+                    else
+                        fromSecondStageHintToOffensivePlayerSelection.Set(true);
+                });
+            }
+        }
+        else
         {
             secondStageHint.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
             {
@@ -829,9 +959,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             });
             GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
             {
-                fromSecondStageHintToOffensivePlayerSelection.Set(true);
+                fromSecondStageHintToBackToStageOne.Set(true);
             });
         }
+
     }
 
     public void UpdateRegionIndices() // Very unoptimized code
@@ -896,54 +1027,75 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime);
         battle = null;
-        offensivePlayerSelectionIsEnded.state = false;
+        offensivePlayerSelectionIsEnded.Set(false);
+        fromOffensivePlayerSelectionToBackToStageOne.Set(false);
     }
 
     public void OffensivePlayerSelectionUpdate()
     {
-        int roundsCount = 3;
-        double maxPlayersHealth = 100;
-        bool stateEnded = false;
-        offensivePlayerSelectionTimer += Time.deltaTime;
-        offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime - offensivePlayerSelectionTimer);
-
-        if (offensePlayer.isLocalClient)
-            StartBattleByMouseClick(roundsCount, maxPlayersHealth);
-
-        if (battle != null) {
-            stateEnded = true;
-        }
-
-        if (offensivePlayerSelectionTimer >= offensivePlayerSelectionTime)
+        if (!playersManager.DidSomeoneLeave())
         {
-            StartBattleWithRandomPlayer(roundsCount, maxPlayersHealth);
-            stateEnded = true;
-        }
-        
-        if (stateEnded)
-        {
-            if (offensePlayer.isLocalClient) {
-                int regionId = 0;
+            int roundsCount = 3;
+            double maxPlayersHealth = 100;
+            bool stateEnded = false;
+            offensivePlayerSelectionTimer += Time.deltaTime;
+            offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime - offensivePlayerSelectionTimer);
 
-                for (int i = 0; i < regionSystem.regionSerds.Count; i++) {
-                    if (regionSystem.regionSerds[i].region == battle.region) {
-                        regionId = i;
-                        break;
-                    };
-                }
+            if (offensePlayer.isLocalClient)
+                StartBattleByMouseClick(roundsCount, maxPlayersHealth);
 
-                pv.RPC("RPC_AttackAnnouncementStart", RpcTarget.All, battle.opponents[0].player.id, battle.opponents[1].player.id, regionId, battle.questions.Count, battle.opponents[0].maxHealh);
+            if (offensivePlayerSelectionTimer >= offensivePlayerSelectionTime)
+            {
+                StartBattleWithRandomPlayer(roundsCount, maxPlayersHealth);
             }
 
-            offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() => 
-            { 
-                offenseAnnouncement.SetActive(false); 
-            });
-            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () => 
+            if (battle != null)
             {
-                offensivePlayerSelectionIsEnded.state = true;
+                stateEnded = true;
+            }
+
+            if (stateEnded)
+            {
+                if (offensePlayer.isLocalClient)
+                {
+                    int regionId = 0;
+
+                    for (int i = 0; i < regionSystem.regionSerds.Count; i++)
+                    {
+                        if (regionSystem.regionSerds[i].region == battle.region)
+                        {
+                            regionId = i;
+                            break;
+                        };
+                    }
+
+                    pv.RPC("RPC_AttackAnnouncementStart", RpcTarget.All, battle.opponents[0].player.id, battle.opponents[1].player.id, regionId, battle.questions.Count, battle.opponents[0].maxHealh);
+                }
+
+                offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                {
+                    offenseAnnouncement.SetActive(false);
+                });
+                GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+                {
+                    if (playersManager.DidSomeoneLeave())
+                        fromOffensivePlayerSelectionToBackToStageOne.Set(true);
+                    else
+                        offensivePlayerSelectionIsEnded.Set(true);
+                });
+                //Wait(0.5f);
+            }
+        }
+        else
+        {
+            offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                offenseAnnouncement.SetActive(false);
             });
-            //Wait(0.5f);
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                fromOffensivePlayerSelectionToBackToStageOne.Set(true);
+            });
         }
     }
 
@@ -954,14 +1106,24 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         attackAnnouncementText.text = $"<color=#{battle.opponents[0].player.color.ToHexString()}>{battle.opponents[0].player.nickname}</color> напал на " +
                                       $"<color=#{battle.opponents[1].player.color.ToHexString()}>{battle.opponents[1].player.nickname}</color>";
         attackAnnouncementTimer = 0;
-        attackAnnouncementIsEnded.state = false;
+        attackAnnouncementIsEnded.Set(false);
+        fromAttackAnnouncementToBackToStageOne.Set(false);
     }
 
     [PunRPC]
     public void RPC_AttackAnnouncementStart(int firstPlayerId, int secondPlayerId, int regionId, int roundsCount, double playersMaxHealth) {
         Player firstPlayer = null, secondPlayer = null;
         Region region = regionSystem.regionSerds[regionId].region;
-        
+
+        Vector2 regionCenter = Vector2.zero;
+        for (int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++)
+        {
+            regionCenter += region.GetComponent<MeshFilter>().mesh.vertices[x].ToXY();
+        }
+
+        regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
+        Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
+
         for (int i = 0; i < playersManager.players.count; i++) {
             if (playersManager.players.get(i).id == firstPlayerId) {
                 firstPlayer = playersManager.players.get(i);
@@ -979,19 +1141,36 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void AttackAnnouncementUpdate()
     {
-        attackAnnouncementTimer += Time.deltaTime;
-
-        if (attackAnnouncementTimer >= attackAnnouncementTime)
+        if (!playersManager.DidSomeoneLeave())
         {
-            attackAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() => 
-            { 
-                attackAnnouncement.SetActive(false); 
+            attackAnnouncementTimer += Time.deltaTime;
+
+            if (attackAnnouncementTimer >= attackAnnouncementTime)
+            {
+                attackAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                {
+                    attackAnnouncement.SetActive(false);
+                });
+                GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+                {
+                    if (playersManager.DidSomeoneLeave())
+                        fromAttackAnnouncementToBackToStageOne.Set(true);
+                    else
+                        attackAnnouncementIsEnded.Set(true);
+                });
+                //Wait(0.5f);
+            }
+        }
+        else
+        {
+            attackAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                attackAnnouncement.SetActive(false);
             });
             GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
             {
-                attackAnnouncementIsEnded.state = true;
-            });          
-            //Wait(0.5f);
+                fromAttackAnnouncementToBackToStageOne.Set(true);
+            });
         }
     }
 
@@ -1018,22 +1197,40 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         opponentsAnnouncementOpponent2Nickname.text = player2.nickname;
         opponentsAnnouncementOpponent2Nickname.color = player2.color;
         
-        opponentsAnnouncementIsEnded.state = false;
+        opponentsAnnouncementIsEnded.Set(false);
+        fromOpponentsAnnouncementToBackToStageOne.Set(false);
     }
 
     public void OpponentsAnnouncementUpdate()
     {
-        OpponentsAnnouncementTimer += Time.deltaTime;
-
-        if (OpponentsAnnouncementTimer >= OpponentsAnnouncementTime)
+        if (!playersManager.DidSomeoneLeave())
         {
-            opponentsAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() => 
-            { 
-                opponentsAnnouncement.SetActive(false); 
+            OpponentsAnnouncementTimer += Time.deltaTime;
+
+            if (OpponentsAnnouncementTimer >= OpponentsAnnouncementTime)
+            {
+                opponentsAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                {
+                    opponentsAnnouncement.SetActive(false);
+                });
+                GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+                {
+                    if (playersManager.DidSomeoneLeave())
+                        fromOpponentsAnnouncementToBackToStageOne.Set(true);
+                    else
+                        opponentsAnnouncementIsEnded.Set(true);
+                });
+            }
+        }
+        else
+        {
+            opponentsAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                opponentsAnnouncement.SetActive(false);
             });
             GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
             {
-                opponentsAnnouncementIsEnded.state = true;
+                fromOpponentsAnnouncementToBackToStageOne.Set(true);
             });
         }
     }
@@ -1044,24 +1241,44 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionNumberAnnouncement.SetActive(true);
         questionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
         questionNumberAnnouncementText.text = $"Вопрос {battle.currentQuestion + 1}";
-        questionNumberAnnouncementIsEnded.state = false;
+        questionNumberAnnouncementIsEnded.Set(false);
+        fromQuestionNumberAnnouncementToBackToStageOne.Set(false);
     }
 
     public void QuestionNumberAnnouncementUpdate()
     {
-        questionNumberAnnouncementTimer += Time.deltaTime;
+        //fromQuestionNumberAnnouncementToBackToStageOne
+        if (!playersManager.DidSomeoneLeave())
+        {
+            questionNumberAnnouncementTimer += Time.deltaTime;
 
-        if (questionNumberAnnouncementTimer >= questionNumberAnnouncementTime)
-        {     
-            questionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() => 
+            if (questionNumberAnnouncementTimer >= questionNumberAnnouncementTime)
+            {
+                questionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                {
+                    questionNumberAnnouncement.SetActive(false);
+                });
+                GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+                {
+                    if (playersManager.DidSomeoneLeave())
+                        fromQuestionNumberAnnouncementToBackToStageOne.Set(true);
+                    else
+                        questionNumberAnnouncementIsEnded.Set(true);
+                });
+            }
+        }
+        else
+        {
+            questionNumberAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
             {
                 questionNumberAnnouncement.SetActive(false);
             });
             GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
             {
-                questionNumberAnnouncementIsEnded.state = true;
+                fromQuestionNumberAnnouncementToBackToStageOne.Set(true);
             });
         }
+
     }
 
     public void AskQuestionInBattleStart()
@@ -1071,18 +1288,36 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], battle.questions[battle.currentQuestion]);
         askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
-        askQuestionInBattleIsEnded.state = false;
+        askQuestionInBattleIsEnded.Set(false);
+        fromAskQuestionInBattleToBackToStageOne.Set(false);
     }
 
     public void AskQuestionInBattleUpdate()
     {
-        AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
-        askQuestionInBattleComponent.timer += Time.deltaTime;
-        askQuestionInBattleComponent.timerText.text = GlobalVariables.GetTimeStr(askQuestionInBattleTime - askQuestionInBattleComponent.timer);
+        //fromAskQuestionInBattleToBackToStageOne
+        if (!playersManager.DidSomeoneLeave())
+        {
+            AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
+            askQuestionInBattleComponent.timer += Time.deltaTime;
+            int time = (int)(askQuestionInBattleTime - askQuestionInBattleComponent.timer);
+            askQuestionInBattleComponent.timerText.text = GlobalVariables.GetTimeStr(time < 0 ? 0 : time);
 
-        if (askQuestionInBattleComponent.timer >= askQuestionInBattleTime)
-        {    
-            askQuestionInBattleIsEnded.state = true;
+            if (askQuestionInBattleComponent.timer >= askQuestionInBattleTime)
+            {
+                askQuestionInBattleIsEnded.Set(true);
+            }
+        }
+        else
+        {
+            battle = null;
+            askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+            {
+                askQuestionInBattle.SetActive(false);
+            });
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+            {
+                fromAskQuestionInBattleToBackToStageOne.Set(true);
+            });
         }
     }
 
@@ -1091,23 +1326,41 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
         askQuestionInBattleComponent.ShowCorrectAnswer();
 
-        correctAnsewerRevealingInBattleIsEnded.state = false;
+        correctAnsewerRevealingInBattleIsEnded.Set(false);
+        fromCorrectAnsewerRevealingInBattleToBackToStageOne.Set(false);
         correctAnsewerRevealingTimer = 0;
     }
 
     public void CorrectAnsewerRevealingInBattleUpdate()
     {
-        correctAnsewerRevealingTimer += Time.deltaTime;
+        if (!playersManager.DidSomeoneLeave())
+        {
+            correctAnsewerRevealingTimer += Time.deltaTime;
 
-        if (correctAnsewerRevealingTimer >= correctAnsewerRevealingTime)
+            if (correctAnsewerRevealingTimer >= correctAnsewerRevealingTime)
+            {
+                askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                {
+                    askQuestionInBattle.SetActive(false);
+                });
+                GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
+                {
+                    if (playersManager.DidSomeoneLeave())
+                        fromCorrectAnsewerRevealingInBattleToBackToStageOne.Set(true);
+                    else
+                        correctAnsewerRevealingInBattleIsEnded.Set(true);
+                });
+            }
+        }
+        else
         {
             askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
             {
                 askQuestionInBattle.SetActive(false);
-            });         
+            });
             GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
             {
-                correctAnsewerRevealingInBattleIsEnded.state = true;
+                fromCorrectAnsewerRevealingInBattleToBackToStageOne.Set(true);
             });
         }
     }
@@ -1133,7 +1386,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         
         roundResults.notification.GetComponent<CanvasGroup>().alpha = 0;
         roundResults.notification.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine().setDelay((float)battleRoundResultsNotificationDelay);
-        roundIsEnded.state = false;
+        roundIsEnded.Set(false);
+        fromBattleRoundResultsToBackToStageOne.Set(false);
 
         battle.currentQuestion++;
     }
@@ -1153,22 +1407,27 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             }
             battleRoundResults.GetComponent<BattleRoundResults>().UpdateOpponentsHealthGradudally(opponentsHealthUpdatingTime);
             battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setDelay(battleRoundResultsDisappearingTime).
-                setOnComplete(() => 
+                setOnComplete(() =>
             {
                 battleRoundResults.SetActive(false);
             });
 
             GlobalVariables.Delay(battleRoundResultsDisappearingTime + menusTransitionDelayTime, () =>
             {
-                bool runOutOfQuestions = battle.currentQuestion >= battle.questions.Count;
-                bool someoneDied = battle.GetDeadCount() > 0;
-                if (runOutOfQuestions || someoneDied)
-                    battleCond.Set(true);
+                if (playersManager.DidSomeoneLeave())
+                {
+                    fromBattleRoundResultsToBackToStageOne.Set(true);
+                }
                 else
-                    roundIsEnded.Set(true);
+                {
+                    bool runOutOfQuestions = battle.currentQuestion >= battle.questions.Count;
+                    bool someoneDied = battle.GetDeadCount() > 0;
+                    if (runOutOfQuestions || someoneDied)
+                        battleCond.Set(true);
+                    else
+                        roundIsEnded.Set(true);
+                }
             });
-
-            
             damageDealingDelayTimer = double.NaN;
         }
     }
@@ -1193,28 +1452,98 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
         closeBattleResultsTimer = 0;
         battleResultsTimer = 0;
+        fromBattleResultsToBackToStageOne.Set(false);
     }
 
     public void BattleResultsUpdate()
     {
-        battleResultsTimer += Time.deltaTime;
-        closeBattleResultsTimer += Time.deltaTime;
-
-        if (closeBattleResultsTimer >= closeBattleResultsTime)
+        if (!playersManager.DidSomeoneLeave())
         {
+            battleResultsTimer += Time.deltaTime;
+            closeBattleResultsTimer += Time.deltaTime;
 
+            if (closeBattleResultsTimer >= closeBattleResultsTime)
+            {
+
+                if (battleResultsVictory.activeSelf)
+                {
+                    battleResultsVictory.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                    {
+                        battleResultsVictory.SetActive(false);
+                        if (!playersManager.DidSomeoneLeave())
+                        {
+                            if (battle.GetDefender().player != battle.GetWinner().player)
+                            {
+                                if (battle.GetLoser().player.claimedRegions[0] == battle.region)
+                                    Debug.Log("They are identical");
+                                battle.GetLoser().player.LoseRegion(battle.region);
+                                //battle.GetWinner().player.ClaimRegion(battle.region);
+                                GiveRegion(battle.GetWinner().player, battle.region);
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    battleResultsDraw.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                    {
+                        battleResultsDraw.SetActive(false);
+                    });
+                }
+                closeBattleResultsTimer = double.NaN;
+            }
+
+
+            if (battleResultsTimer >= battleResultsTime)
+            {
+                GlobalVariables.Delay(menusTransitionDelayTime, () =>
+                {
+                    steps++;
+                    do
+                    {
+                        currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
+                    } while (playersManager.players.get(currentOffensivePlayer).isLose);
+                    //Debug.Log("Количесто оставшихся территорий у проигравшено = " + battle.GetLoser().player.claimedRegions.Count);
+
+                    if (battle != null && !battle.IsDraw())
+                    {
+                        if (battle.GetLoser().player.claimedRegions.Count == 0)
+                            fromBattleResultsToLosePlayer.Set(true);
+                        else if (steps >= maxSteps)
+                            fromBattleResultsToEndGame.Set(true);
+                        else
+                            fromBattleResultsToOffensive.Set(true);
+
+                        scoreTableManager.UpdateTable();
+                    }
+                    else
+                    {
+                        // а так правильно?
+                        if (steps >= maxSteps)
+                            fromBattleResultsToEndGame.Set(true);
+                        else
+                        {
+                            if (playersManager.DidSomeoneLeave())
+                                fromBattleResultsToBackToStageOne.Set(true);
+                            else
+                                fromBattleResultsToOffensive.Set(true);
+                        }
+                            
+                    }
+                });
+
+                battleResultsTimer = float.NaN;
+            }
+        }
+        else
+        {
             if (battleResultsVictory.activeSelf)
             {
                 battleResultsVictory.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                 {
                     battleResultsVictory.SetActive(false);
-                    if (battle.GetLoser().player.claimedRegions[0] == battle.region)
-                        Debug.Log("They are identical");
-                    battle.GetLoser().player.LoseRegion(battle.region);
-                    //battle.GetWinner().player.ClaimRegion(battle.region);
-                    GiveRegion(battle.GetWinner().player, battle.region);
                 });
-            } 
+            }
             else
             {
                 battleResultsDraw.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
@@ -1222,38 +1551,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     battleResultsDraw.SetActive(false);
                 });
             }
-            closeBattleResultsTimer = double.NaN;
-        }
-
-
-        if (battleResultsTimer >= battleResultsTime)
-        {
-            GlobalVariables.Delay(menusTransitionDelayTime, () =>
+            GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
             {
-                steps++;
-                do
-                {
-                    currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
-                } while (playersManager.players.get(currentOffensivePlayer).isLose);
-                //Debug.Log("Количесто оставшихся территорий у проигравшено = " + battle.GetLoser().player.claimedRegions.Count);
-                
-                if (battle != null && !battle.IsDraw()) {
-                    if (battle.GetLoser().player.claimedRegions.Count == 0)
-                        fromBattleResultsToLosePlayer.Set(true);
-                    else if (steps >= maxSteps)
-                        fromBattleResultsToEndGame.Set(true);
-                    else
-                        fromBattleResultsToOffensive.Set(true);
-
-                    scoreTableManager.UpdateTable();
-                } else {
-                    // а так правильно?
-                    if (steps >= maxSteps)
-                        fromBattleResultsToEndGame.Set(true);
-                    else
-                        fromBattleResultsToOffensive.Set(true);
-                }
-            });         
+                battle = null;
+                fromBattleResultsToBackToStageOne.Set(true);
+            });
         }
     }
 
@@ -1270,10 +1572,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         return winner;
     }
 
-    public WinnerPerson GetWinnerWithTheMostTerritories()
+    public WinnerPerson GetWinnerWithTheMostTerritories(out int maxClaimedRegions)
     {
         Player winnerPlayer = null;
-        int maxClaimedRegions = -1;
+        maxClaimedRegions = -1;
         for(int x = 0; x < playersManager.players.count; x++)
             if(playersManager.players.get(x).claimedRegions.Count > maxClaimedRegions)
             {
@@ -1294,8 +1596,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int x = 0; x < playersManager.players.count; x++)
             players.Add(playersManager.players.get(x));
 
+        int maxClaimedRegions = -1;
+        WinnerPerson fastedWinnerLocal = GetFastedWinner();
+        WinnerPerson winnerWithTheMostTerritories = GetWinnerWithTheMostTerritories(out maxClaimedRegions);
+
         EndMenuManager endMenuManager = endGameMenu.GetComponent<EndMenuManager>();
-        endMenuManager.SetEndMenuData(players, GetFastedWinner(), GetWinnerWithTheMostTerritories());
+        endMenuManager.SetEndMenuData(players, fastedWinnerLocal, winnerWithTheMostTerritories);
+
+        endMenuManager.resultPanel.topWordWinner.prizeWinner.points.text = Math.Round(fastedWinner.timeToAnswer, 1).ToString();
+        endMenuManager.resultPanel.longestWordWinner.prizeWinner.points.text = maxClaimedRegions.ToString();
     }
 
     public void EndGameStart()
@@ -1455,6 +1764,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         fromShowResultsInAskQuestionToRegionSelection = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(fromShowResultsInAskQuestionToRegionSelection, showResultsInAskQuestionState, regionSelectionState, gameStateMachine));
 
+        fromShowResultsInAskQuestionToAskQuestion = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromShowResultsInAskQuestionToAskQuestion, showResultsInAskQuestionState, askQuestionState, gameStateMachine));
+        
 
         //viewResultsStateIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
         //gameStateMachine.AddTransition(new Transition(viewResultsStateIsEnded, viewResultsState, regionSelectionState, gameStateMachine));
@@ -1475,11 +1787,20 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         //stageTwoAnnouncementState.updateEvents += stageTwoAnnouncementUpdate;
         //gameStateMachine.states.Add(stageTwoAnnouncementState);
 
-        StageTwoAnnouncementState stageTwoAnnouncementState = new StageTwoAnnouncementState(this, stageTwoAnnoucment,
-                                                                        stageTwoAnnouncmentTimer,
-                                                                        stageTwoAnnouncmentTime,
-                                                                        menusTransitionTime,
-                                                                        menusTransitionDelayTime);
+        State backToStageOneState = new State();
+        backToStageOneState.startEvents += BackToStageOneStart;
+        backToStageOneState.updateEvents += BackToStageOneUpdate;
+        gameStateMachine.states.Add(backToStageOneState);
+
+        //StageTwoAnnouncementState stageTwoAnnouncementState = new StageTwoAnnouncementState(this, stageTwoAnnoucment,
+        //                                                                stageTwoAnnouncmentTimer,
+        //                                                                stageTwoAnnouncmentTime,
+        //                                                                menusTransitionTime,
+        //                                                                menusTransitionDelayTime);
+
+        State stageTwoAnnouncementState = new State();
+        stageTwoAnnouncementState.startEvents += stageTwoAnnouncementStart;
+        stageTwoAnnouncementState.updateEvents += stageTwoAnnouncementUpdate;
         gameStateMachine.states.Add(stageTwoAnnouncementState);
 
         firstStageIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
@@ -1490,11 +1811,32 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         secondStageHintState.updateEvents += SecondStageHintUpdate;
         gameStateMachine.states.Add(secondStageHintState);
 
-        //fromStageTwoAnnouncementToSecondStageHint = new BoolCondition();
-        gameStateMachine.AddTransition(new Transition(stageTwoAnnouncementState.fromStageTwoAnnouncementToSecondStageHint, stageTwoAnnouncementState, secondStageHintState, gameStateMachine));
-
+        fromStageTwoAnnouncementToSecondStageHint = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromStageTwoAnnouncementToSecondStageHint, 
+                                                      stageTwoAnnouncementState, 
+                                                      secondStageHintState, 
+                                                      gameStateMachine));
 
         
+
+        fromStageTwoAnnouncementToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromStageTwoAnnouncementToBackToStageOne,
+                                                      stageTwoAnnouncementState,
+                                                      backToStageOneState,
+                                                      gameStateMachine));
+
+        fromSecondStageHintToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromSecondStageHintToBackToStageOne,
+                                                      secondStageHintState,
+                                                      backToStageOneState,
+                                                      gameStateMachine));
+
+        fromBackToStageOneToPreparation = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromBackToStageOneToPreparation,
+                                              backToStageOneState,
+                                              preparationState,
+                                              gameStateMachine));
+
         State offensivePlayerSelectionState = new State(); // 5
         offensivePlayerSelectionState.startEvents += OffensivePlayerSelectionStart;
         offensivePlayerSelectionState.updateEvents += OffensivePlayerSelectionUpdate;
@@ -1503,11 +1845,17 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         fromSecondStageHintToOffensivePlayerSelection = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(fromSecondStageHintToOffensivePlayerSelection, secondStageHintState, offensivePlayerSelectionState, gameStateMachine));
 
-        //stageTwoAnnouncementIsEnded = new BoolCondition();
-        gameStateMachine.AddTransition(new Transition(stageTwoAnnouncementState.offensivePlayerSelectionCond, 
+        offensivePlayerSelectionCond = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(offensivePlayerSelectionCond, 
                                                         stageTwoAnnouncementState, 
                                                         offensivePlayerSelectionState, 
                                                         gameStateMachine));
+
+        fromOffensivePlayerSelectionToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromOffensivePlayerSelectionToBackToStageOne,
+                                              offensivePlayerSelectionState,
+                                              backToStageOneState,
+                                              gameStateMachine));
 
         State attackAnnouncementState = new State(); // 6
         attackAnnouncementState.startEvents += AttackAnnouncementStart;
@@ -1517,6 +1865,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         offensivePlayerSelectionIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(offensivePlayerSelectionIsEnded, offensivePlayerSelectionState, attackAnnouncementState, gameStateMachine));
 
+        fromAttackAnnouncementToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromAttackAnnouncementToBackToStageOne,
+                                      attackAnnouncementState,
+                                      backToStageOneState,
+                                      gameStateMachine));
+
         State opponentsAnnouncementState = new State(); // 7
         opponentsAnnouncementState.startEvents += OpponentsAnnouncementStart;
         opponentsAnnouncementState.updateEvents += OpponentsAnnouncementUpdate;
@@ -1524,6 +1878,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         attackAnnouncementIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(attackAnnouncementIsEnded, attackAnnouncementState, opponentsAnnouncementState, gameStateMachine));
+
+        fromOpponentsAnnouncementToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromOpponentsAnnouncementToBackToStageOne,
+                              opponentsAnnouncementState,
+                              backToStageOneState,
+                              gameStateMachine));
 
         State questionNumberAnnouncementState = new State(); // 8
         questionNumberAnnouncementState.startEvents += QuestionNumberAnnouncementStart;
@@ -1533,6 +1893,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         opponentsAnnouncementIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(opponentsAnnouncementIsEnded, opponentsAnnouncementState, questionNumberAnnouncementState, gameStateMachine));
 
+        fromQuestionNumberAnnouncementToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromQuestionNumberAnnouncementToBackToStageOne,
+                              questionNumberAnnouncementState,
+                              backToStageOneState,
+                              gameStateMachine));
+
         State askQuestionInBattleState = new State(); // 9
         askQuestionInBattleState.startEvents += AskQuestionInBattleStart;
         askQuestionInBattleState.updateEvents += AskQuestionInBattleUpdate;
@@ -1541,6 +1907,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionNumberAnnouncementIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(questionNumberAnnouncementIsEnded, questionNumberAnnouncementState, askQuestionInBattleState, gameStateMachine));
 
+        fromAskQuestionInBattleToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromAskQuestionInBattleToBackToStageOne,
+                              askQuestionInBattleState,
+                              backToStageOneState,
+                              gameStateMachine));
+
         State correctAnsewerRevealingInBattleState = new State(); // 10
         correctAnsewerRevealingInBattleState.startEvents += CorrectAnsewerRevealingInBattleStart;
         correctAnsewerRevealingInBattleState.updateEvents += CorrectAnsewerRevealingInBattleUpdate;
@@ -1548,6 +1920,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         askQuestionInBattleIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(askQuestionInBattleIsEnded, askQuestionInBattleState, correctAnsewerRevealingInBattleState, gameStateMachine));
+
+        fromCorrectAnsewerRevealingInBattleToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromCorrectAnsewerRevealingInBattleToBackToStageOne,
+                              correctAnsewerRevealingInBattleState,
+                              backToStageOneState,
+                              gameStateMachine));
 
         State battleRoundResultsState = new State(); // 11
         battleRoundResultsState.startEvents += BattleRoundResultsStart;
@@ -1560,6 +1938,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                                                         battleRoundResultsState, 
                                                         gameStateMachine));
 
+        fromBattleRoundResultsToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromBattleRoundResultsToBackToStageOne,
+                                                        battleRoundResultsState,
+                                                        backToStageOneState,
+                                                        gameStateMachine));
+
         roundIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(roundIsEnded, battleRoundResultsState, questionNumberAnnouncementState, gameStateMachine));
 
@@ -1567,6 +1951,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         battleResultsState.startEvents += BattleResultsStart;
         battleResultsState.updateEvents += BattleResultsUpdate;
         gameStateMachine.states.Add(battleResultsState);
+
+        fromBattleResultsToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromBattleResultsToBackToStageOne,
+                                                        battleResultsState,
+                                                        backToStageOneState,
+                                                        gameStateMachine));
 
         State endGameState = new State();
         endGameState.startEvents += EndGameStart;
@@ -1722,7 +2112,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < roundsCount; i++)
         {
             int randInt = rnd.Next(0, idsCount - 1);
-            QuestionManager.Question randQuestion = questionSession.questionLoader.questions[ids[randInt]];
+            //QuestionManager.Question randQuestion = questionSession.questionLoader.questions[ids[randInt]];
+            QuestionManager.Question randQuestion = questionSession.questionLoader.questions[i];
 
             ids[randInt] = ids[idsCount - 1];
             idsCount--;

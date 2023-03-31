@@ -68,6 +68,8 @@ public class PlayersManager : MonoBehaviour
     public ConfigTemp config;
     public ScoreTableManager scoreTableManager;
     public ToastShower toastShower;
+    public Queue<Player> leavedPlayersQueue;
+    private bool someoneLeaved = false;
     
     public void connected(Player player)
     {
@@ -88,6 +90,7 @@ public class PlayersManager : MonoBehaviour
                 break;
             }
         toastShower.showText($"Игрок <color=#{player.color.ToHexString()}>{player.nickname}</color> покинул игру.");
+        leavedPlayersQueue.Enqueue(player);
         players.list.RemoveAt(id);
         scoreTableManager.RemovePlayer(id);
         //tabMenuManager.disconnectPlayer(id);
@@ -96,8 +99,10 @@ public class PlayersManager : MonoBehaviour
     public void disconnect(int id)
     {
         toastShower.showText($"Игрок <color=#{players.get(id).color.ToHexString()}>{players.get(id).nickname}</color> покинул игру.");
+        leavedPlayersQueue.Enqueue(players.get(id));
         players.list.RemoveAt(id);
         scoreTableManager.RemovePlayer(id);
+        someoneLeaved = true;
         //tabMenuManager.disconnectPlayer(id);
     }
 
@@ -126,6 +131,16 @@ public class PlayersManager : MonoBehaviour
         return roomPlayer;
     }
 
+    public bool DidSomeoneLeave()
+    {
+        return someoneLeaved;
+    }
+
+    public void RefreshSomeoneLeaveState()
+    {
+        someoneLeaved = false;
+    }
+
     //public void UpdateOldPlayersCount()
     //{
     //    oldPlayersCount = players.count;
@@ -140,6 +155,7 @@ public class PlayersManager : MonoBehaviour
 
     private void Awake()
     {
+        leavedPlayersQueue = new Queue<Player>();
         //tabMenuManager = GetComponent<TabMenuManager>();
         playerAnswerData = new BaseTable<PlayerAnswerData>();
        /* scoreTableManager = GameObject.FindGameObjectWithTag("SCORE_TABLE_TAG").GetComponent<ScoreTableManager>();
