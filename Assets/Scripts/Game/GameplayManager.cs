@@ -626,7 +626,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
             regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
 
-            //pv.RPC("RPC_MoveCameraToChoosenRegion", RpcTarget.All, regionCenter.x, regionCenter.y);
             Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
         }
 
@@ -955,7 +954,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void RPC_AttackAnnouncementStart(int firstPlayerId, int secondPlayerId, int regionId, int roundsCount, double playersMaxHealth) {
         Player firstPlayer = null, secondPlayer = null;
         Region region = regionSystem.regionSerds[regionId].region;
-        
+
+        Vector2 regionCenter = Vector2.zero;
+        for (int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++)
+        {
+            regionCenter += region.GetComponent<MeshFilter>().mesh.vertices[x].ToXY();
+        }
+
+        regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
+        Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
+
         for (int i = 0; i < playersManager.players.count; i++) {
             if (playersManager.players.get(i).id == firstPlayerId) {
                 firstPlayer = playersManager.players.get(i);
