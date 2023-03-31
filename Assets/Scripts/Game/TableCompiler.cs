@@ -57,7 +57,7 @@ public class TableCompiler : MonoBehaviour
             else
             {
                 answer[x].text = "-";
-                time[x].text = "Нет ответа";
+                time[x].text = "-";
                 questionManager.selectionQuestions.activeSelection = -1;
             }
 
@@ -118,7 +118,7 @@ public class TableCompiler : MonoBehaviour
                 answerData.answerId = -1;
                 questionManager.selectionQuestions.activeSelection = -1;
                 answer[x].text = "-";
-                time[x].text = "Нет ответа";
+                time[x].text = "-";
             }
         }
     }

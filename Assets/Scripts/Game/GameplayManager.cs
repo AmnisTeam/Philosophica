@@ -8,7 +8,7 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
@@ -414,6 +414,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionMenu1.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
         questionMenu1.GetComponent<AskQuestionInQuestionMenu>().Init(questionSession.GetCurrentQuestion());
         questionMenu1.GetComponent<AskQuestionInQuestionMenu>().timer = 0;
+
+        // какая-то неведомая херня, работает или нет – неизвестно (тип вырубить кнопки ответа спектатору и поменять цвет на серый (кнопка не активна))
+        for (int i = 0; i < playersManager.players.count; i++) {
+            if (playersManager.players.get(i).isLose && playersManager.players.get(i).isLocalClient) {
+                Button[] buttons = questionMenu1.GetComponent<AskQuestionInQuestionMenu>().answerButtons;
+                for (int j = 0; j < buttons.Length; j++) {
+                    buttons[i].enabled = false;
+                }
+            }
+        }
 
         //askQuestionStateIsEnded.state = false;
     }
