@@ -1277,10 +1277,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         return winner;
     }
 
-    public WinnerPerson GetWinnerWithTheMostTerritories()
+    public WinnerPerson GetWinnerWithTheMostTerritories(out int maxClaimedRegions)
     {
         Player winnerPlayer = null;
-        int maxClaimedRegions = -1;
+        maxClaimedRegions = -1;
         for(int x = 0; x < playersManager.players.count; x++)
             if(playersManager.players.get(x).claimedRegions.Count > maxClaimedRegions)
             {
@@ -1301,8 +1301,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int x = 0; x < playersManager.players.count; x++)
             players.Add(playersManager.players.get(x));
 
+        int maxClaimedRegions = -1;
+        WinnerPerson fastedWinnerLocal = GetFastedWinner();
+        WinnerPerson winnerWithTheMostTerritories = GetWinnerWithTheMostTerritories(out maxClaimedRegions);
+
         EndMenuManager endMenuManager = endGameMenu.GetComponent<EndMenuManager>();
-        endMenuManager.SetEndMenuData(players, GetFastedWinner(), GetWinnerWithTheMostTerritories());
+        endMenuManager.SetEndMenuData(players, fastedWinnerLocal, winnerWithTheMostTerritories);
+
+        endMenuManager.resultPanel.topWordWinner.prizeWinner.points.text = Math.Round(fastedWinner.timeToAnswer, 1).ToString();
+        endMenuManager.resultPanel.longestWordWinner.prizeWinner.points.text = maxClaimedRegions.ToString();
     }
 
     public void EndGameStart()
