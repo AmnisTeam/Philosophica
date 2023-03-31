@@ -282,6 +282,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public SynchronizedBoolCondition fromAskQuestionToRightAnswer;
     public SynchronizedBoolCondition fromRightAnswerToShowResultsInAskQuestion;
     public SynchronizedBoolCondition fromShowResultsInAskQuestionToRegionSelection;
+    public SynchronizedBoolCondition fromShowResultsInAskQuestionToAskQuestion;
     public SynchronizedBoolCondition viewResultsStateIsEnded;
     public SynchronizedBoolCondition regionSelectionStateIsEnded;
     public SynchronizedBoolCondition preparationStateIsEnded;
@@ -470,7 +471,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         {
             questionMenuTable.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { 
                 questionMenuTable.SetActive(false);
-                fromShowResultsInAskQuestionToRegionSelection.Set(true);
+                if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+                    fromShowResultsInAskQuestionToRegionSelection.Set(true);
+                else
+                    fromShowResultsInAskQuestionToAskQuestion.Set(true);
             });
             timerToShowTableMenu = float.NaN;
         }
@@ -1447,6 +1451,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         fromShowResultsInAskQuestionToRegionSelection = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(fromShowResultsInAskQuestionToRegionSelection, showResultsInAskQuestionState, regionSelectionState, gameStateMachine));
 
+        fromShowResultsInAskQuestionToAskQuestion = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromShowResultsInAskQuestionToAskQuestion, showResultsInAskQuestionState, askQuestionState, gameStateMachine));
+        
 
         //viewResultsStateIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
         //gameStateMachine.AddTransition(new Transition(viewResultsStateIsEnded, viewResultsState, regionSelectionState, gameStateMachine));

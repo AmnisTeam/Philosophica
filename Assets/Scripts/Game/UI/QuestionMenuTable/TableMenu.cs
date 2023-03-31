@@ -124,6 +124,8 @@ public class TableMenu : MonoBehaviour
             winnerIcon.sprite = iconsSprite.GetIconsSpriteByID(table[0].iconId);
             winnerIcon.color = table[0].color;
 
+            
+
             if (winner.id == PhotonNetwork.LocalPlayer.ActorNumber - 1) //todo сломается если игрок кикнут в лобби
                 playSound.SoundPlay("winner");
             else
