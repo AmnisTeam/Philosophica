@@ -700,7 +700,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             {
                 Region region = hit.collider.gameObject.GetComponent<Region>();
 
-                if (region)
+                if (region && region.hostPlayer == null)
                 {
                     playSound.SoundPlay("region_claim");
 
