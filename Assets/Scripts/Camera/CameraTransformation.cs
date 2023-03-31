@@ -144,6 +144,7 @@ public class CameraTransformation : MonoBehaviour
         {
             dragOrigin = mouseWorldPos;
             isDrag = true;
+            GetComponent<MoveCameraToActiveRegion>().UnsetTarget();
         }
 
         if (Input.GetMouseButtonUp(0))

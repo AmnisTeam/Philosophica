@@ -290,6 +290,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public SynchronizedBoolCondition fromAskQuestionToRightAnswer;
     public SynchronizedBoolCondition fromRightAnswerToShowResultsInAskQuestion;
     public SynchronizedBoolCondition fromShowResultsInAskQuestionToRegionSelection;
+    public SynchronizedBoolCondition fromShowResultsInAskQuestionToAskQuestion;
     public SynchronizedBoolCondition viewResultsStateIsEnded;
     public SynchronizedBoolCondition regionSelectionStateIsEnded;
     public SynchronizedBoolCondition preparationStateIsEnded;
@@ -490,7 +491,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         {
             questionMenuTable.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { 
                 questionMenuTable.SetActive(false);
-                fromShowResultsInAskQuestionToRegionSelection.Set(true);
+                if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+                    fromShowResultsInAskQuestionToRegionSelection.Set(true);
+                else
+                    fromShowResultsInAskQuestionToAskQuestion.Set(true);
             });
             timerToShowTableMenu = float.NaN;
         }
@@ -642,7 +646,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
             regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
 
-            //pv.RPC("RPC_MoveCameraToChoosenRegion", RpcTarget.All, regionCenter.x, regionCenter.y);
             Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
         }
 
@@ -716,7 +719,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             {
                 Region region = hit.collider.gameObject.GetComponent<Region>();
 
-                if (region)
+                if (region && region.hostPlayer == null)
                 {
                     playSound.SoundPlay("region_claim");
 
@@ -1101,7 +1104,16 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void RPC_AttackAnnouncementStart(int firstPlayerId, int secondPlayerId, int regionId, int roundsCount, double playersMaxHealth) {
         Player firstPlayer = null, secondPlayer = null;
         Region region = regionSystem.regionSerds[regionId].region;
-        
+
+        Vector2 regionCenter = Vector2.zero;
+        for (int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++)
+        {
+            regionCenter += region.GetComponent<MeshFilter>().mesh.vertices[x].ToXY();
+        }
+
+        regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
+        Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
+
         for (int i = 0; i < playersManager.players.count; i++) {
             if (playersManager.players.get(i).id == firstPlayerId) {
                 firstPlayer = playersManager.players.get(i);
@@ -1277,7 +1289,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         {
             AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
             askQuestionInBattleComponent.timer += Time.deltaTime;
-            askQuestionInBattleComponent.timerText.text = GlobalVariables.GetTimeStr(askQuestionInBattleTime - askQuestionInBattleComponent.timer);
+            int time = (int)(askQuestionInBattleTime - askQuestionInBattleComponent.timer);
+            askQuestionInBattleComponent.timerText.text = GlobalVariables.GetTimeStr(time < 0 ? 0 : time);
 
             if (askQuestionInBattleComponent.timer >= askQuestionInBattleTime)
             {
@@ -1449,11 +1462,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                         battleResultsVictory.SetActive(false);
                         if (!playersManager.DidSomeoneLeave())
                         {
-                            if (battle.GetLoser().player.claimedRegions[0] == battle.region)
-                                Debug.Log("They are identical");
-                            battle.GetLoser().player.LoseRegion(battle.region);
-                            //battle.GetWinner().player.ClaimRegion(battle.region);
-                            GiveRegion(battle.GetWinner().player, battle.region);
+                            if (battle.GetDefender().player != battle.GetWinner().player)
+                            {
+                                if (battle.GetLoser().player.claimedRegions[0] == battle.region)
+                                    Debug.Log("They are identical");
+                                battle.GetLoser().player.LoseRegion(battle.region);
+                                //battle.GetWinner().player.ClaimRegion(battle.region);
+                                GiveRegion(battle.GetWinner().player, battle.region);
+                            }
                         }
                     });
                 }
@@ -1546,10 +1562,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         return winner;
     }
 
-    public WinnerPerson GetWinnerWithTheMostTerritories()
+    public WinnerPerson GetWinnerWithTheMostTerritories(out int maxClaimedRegions)
     {
         Player winnerPlayer = null;
-        int maxClaimedRegions = -1;
+        maxClaimedRegions = -1;
         for(int x = 0; x < playersManager.players.count; x++)
             if(playersManager.players.get(x).claimedRegions.Count > maxClaimedRegions)
             {
@@ -1570,8 +1586,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int x = 0; x < playersManager.players.count; x++)
             players.Add(playersManager.players.get(x));
 
+        int maxClaimedRegions = -1;
+        WinnerPerson fastedWinnerLocal = GetFastedWinner();
+        WinnerPerson winnerWithTheMostTerritories = GetWinnerWithTheMostTerritories(out maxClaimedRegions);
+
         EndMenuManager endMenuManager = endGameMenu.GetComponent<EndMenuManager>();
-        endMenuManager.SetEndMenuData(players, GetFastedWinner(), GetWinnerWithTheMostTerritories());
+        endMenuManager.SetEndMenuData(players, fastedWinnerLocal, winnerWithTheMostTerritories);
+
+        endMenuManager.resultPanel.topWordWinner.prizeWinner.points.text = Math.Round(fastedWinner.timeToAnswer, 1).ToString();
+        endMenuManager.resultPanel.longestWordWinner.prizeWinner.points.text = maxClaimedRegions.ToString();
     }
 
     public void EndGameStart()
@@ -1731,6 +1754,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         fromShowResultsInAskQuestionToRegionSelection = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(fromShowResultsInAskQuestionToRegionSelection, showResultsInAskQuestionState, regionSelectionState, gameStateMachine));
 
+        fromShowResultsInAskQuestionToAskQuestion = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromShowResultsInAskQuestionToAskQuestion, showResultsInAskQuestionState, askQuestionState, gameStateMachine));
+        
 
         //viewResultsStateIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
         //gameStateMachine.AddTransition(new Transition(viewResultsStateIsEnded, viewResultsState, regionSelectionState, gameStateMachine));
