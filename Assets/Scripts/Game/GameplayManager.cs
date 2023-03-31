@@ -444,7 +444,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionSession.UpdateCountPlayerAnswerData();
         questionMenu1.SetActive(true);
         questionMenu1.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
-        questionMenu1.GetComponent<AskQuestionInQuestionMenu>().Init(questionSession.GetCurrentQuestion());
+        questionMenu1.GetComponent<AskQuestionInQuestionMenu>().Init(questionSession.questionLoader.GetRandQuestionWithRemove());
         questionMenu1.GetComponent<AskQuestionInQuestionMenu>().timer = 0;
 
         //askQuestionStateIsEnded.state = false;
@@ -490,7 +490,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void ShowResultsInAskQuestionStart()
     {
         questionMenuTable.SetActive(true);
-        questionMenuTable.GetComponent<TableMenu>().compileTheTable(questionSession.playerAnswerData);
+        questionMenuTable.GetComponent<TableMenu>().compileTheTable(questionSession.playerAnswerData, questionSession.questionLoader.currentQuestion);
         questionMenuTable.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
         timerToShowTableMenu = 0;
     }
@@ -1314,8 +1314,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void AskQuestionInBattleStart()
     {
         askQuestionInBattle.SetActive(true);
-
-        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], battle.questions[battle.currentQuestion]);
+        
+        askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], questionSession.questionLoader.GetRandQuestionWithRemove());
         askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
         askQuestionInBattleIsEnded.Set(false);
@@ -1696,7 +1696,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
         pv = GetComponent<PhotonView>();
 
-        random = new System.Random();
+        random = new System.Random(12345);
         regionIndexes.AddRange(Enumerable.Range(0, regionSystem.regionSerds.Count));
           
         int idx = 0;
@@ -2135,21 +2135,21 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (roundsCount > questionSession.questionLoader.questions.Count())
             roundsCount = questionSession.questionLoader.questions.Count();
 
-        int idsCount = questionSession.questionLoader.questions.Count();
+        /*int idsCount = questionSession.questionLoader.questions.Count();
         int[] ids = new int[idsCount];
         for (int i = 0; i < idsCount; i++)
             ids[i] = i;
 
-        System.Random rnd = new System.Random();
+        System.Random rnd = new System.Random(12345);*/
         for (int i = 0; i < roundsCount; i++)
         {
-            int randInt = rnd.Next(0, idsCount - 1);
+            //int randInt = rnd.Next(0, idsCount);
             //QuestionManager.Question randQuestion = questionSession.questionLoader.questions[ids[randInt]];
-            QuestionManager.Question randQuestion = questionSession.questionLoader.questions[i];
+            QuestionManager.Question randQuestion = questionSession.questionLoader.GetRandQuestionWithRemove();
 
-            ids[randInt] = ids[idsCount - 1];
-            idsCount--;
-
+            //ids[randInt] = ids[idsCount - 1];
+            //idsCount--;
+            Debug.Log(randQuestion.question.ToString());
             newBattle.questions.Add(randQuestion);
         }
 
@@ -2255,7 +2255,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         (ids[player1Id], ids[idsCount - 1]) = (ids[idsCount - 1], ids[player1Id]);
         idsCount--;
 
-        System.Random rnd = new System.Random();
+        System.Random rnd = new System.Random(12345);
 
         
         Player randomPlayer = null;

@@ -66,6 +66,6 @@ public class QuestionSession
 
     public QuestionManager.Question GetCurrentQuestion()
     {
-        return questionLoader.questions[currentQuestion];
+        return questionLoader.currentQuestion;
     }
 }

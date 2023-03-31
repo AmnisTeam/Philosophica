@@ -31,7 +31,7 @@ public class TableMenu : MonoBehaviour
 
     public bool isHaveRightAnswer = false;
 
-    public void compileTheTable(List<PlayerAnswerData> playerAnswerData)
+    public void compileTheTable(List<PlayerAnswerData> playerAnswerData, QuestionManager.Question question)
     {
         table = new List<Player>();
         for (int x = 0; x < playersManager.players.count; x++)
@@ -42,11 +42,9 @@ public class TableMenu : MonoBehaviour
         {
             if (playerAnswerData[i].timeToAnswer.Equals(float.NaN)
                 || playerAnswerData[i].timeToAnswer < 0 
-                || playerAnswerData[i].timeToAnswer > gameplayManager.questionSession.
-                GetCurrentQuestion().timeToQuestion)
+                || playerAnswerData[i].timeToAnswer > question.timeToQuestion)
             {
-                playerAnswerData[i].timeToAnswer = gameplayManager.questionSession.
-                    GetCurrentQuestion().timeToQuestion;
+                playerAnswerData[i].timeToAnswer = question.timeToQuestion;
             }
         }
 
@@ -62,8 +60,8 @@ public class TableMenu : MonoBehaviour
                     answerDataY = playerAnswerData[i];
             }
 
-            if (answerDataX.answerId == gameplayManager.questionSession.GetCurrentQuestion().idRightAnswer && answerDataY.answerId != gameplayManager.questionSession.GetCurrentQuestion().idRightAnswer) return -1;
-            else if (answerDataX.answerId != gameplayManager.questionSession.GetCurrentQuestion().idRightAnswer && answerDataY.answerId == gameplayManager.questionSession.GetCurrentQuestion().idRightAnswer) return 1;
+            if (answerDataX.answerId == question.idRightAnswer && answerDataY.answerId != question.idRightAnswer) return -1;
+            else if (answerDataX.answerId != question.idRightAnswer && answerDataY.answerId == question.idRightAnswer) return 1;
             else if (answerDataX.timeToAnswer < answerDataY.timeToAnswer) return -1;
             else return 1;
         });
@@ -81,7 +79,7 @@ public class TableMenu : MonoBehaviour
             nickname[x].text = table[x].nickname;
             if (answerData.answerId >= 0)
             {
-                answer[x].text = gameplayManager.questionSession.GetCurrentQuestion().answer[answerData.answerId];
+                answer[x].text = question.answer[answerData.answerId];
                 time[x].text = GetTimeStr(answerData.timeToAnswer);
             }
             else
@@ -90,7 +88,7 @@ public class TableMenu : MonoBehaviour
                 time[x].text = "-";
             }
 
-            if (answerData.answerId == gameplayManager.questionSession.GetCurrentQuestion().idRightAnswer)
+            if (answerData.answerId == question.idRightAnswer)
                 answer[x].color = colorRightAnswer;
             else
                 answer[x].color = Color.white;
@@ -108,7 +106,7 @@ public class TableMenu : MonoBehaviour
         isHaveRightAnswer = false; // ѕроверка есть ли хот€ бы 1 правильный ответ
         foreach (PlayerAnswerData a in playerAnswerData)
         {
-            if (a.answerId == gameplayManager.questionSession.GetCurrentQuestion().idRightAnswer)
+            if (a.answerId == question.idRightAnswer)
             {
                 isHaveRightAnswer = true; break;
             }

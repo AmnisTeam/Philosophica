@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using static QuestionManager;
 
+[Serializable]
 public class QuestionLoader
 {
     public List<QuestionManager.Question> questions;
+    public QuestionManager.Question currentQuestion;
 
     public QuestionLoader()
     {
@@ -69,5 +73,19 @@ public class QuestionLoader
             id = (id + 1) % 8;
             line = reader.ReadLine();
         }
+    }
+
+    public QuestionManager.Question GetRandQuestionWithRemove()
+    {
+        System.Random sr = new System.Random(12345);
+        int rand = sr.Next(0, questions.Count);
+        QuestionManager.Question q = questions[rand];
+        currentQuestion = q;
+        questions.RemoveAt(rand);
+
+        if (questions.Count == 0)
+            LoadQuestions();
+
+        return q;
     }
 }
