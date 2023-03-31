@@ -26725,8 +26725,9 @@ MonoBehaviour:
   speed: 1
   scalingSpeed: 1
   scalingSpeedTouch: 0.1
-  minScale: 1
-  maxScale: 20
+  minScale: 5
+  maxScale: 5
+  clampingSize: {x: 20, y: 20}
   canvas: {fileID: 32189311}
   isDrag: 0
   isLocked: 0

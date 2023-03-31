@@ -290,6 +290,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public SynchronizedBoolCondition fromAskQuestionToRightAnswer;
     public SynchronizedBoolCondition fromRightAnswerToShowResultsInAskQuestion;
     public SynchronizedBoolCondition fromShowResultsInAskQuestionToRegionSelection;
+    public SynchronizedBoolCondition fromShowResultsInAskQuestionToEndGameMenu;
     public SynchronizedBoolCondition fromShowResultsInAskQuestionToAskQuestion;
     public SynchronizedBoolCondition viewResultsStateIsEnded;
     public SynchronizedBoolCondition regionSelectionStateIsEnded;
@@ -349,6 +350,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         condition.playersConditions[playerId].SetWantToSynchronized(wantToSynchronized);
     }
 
+    public void SetSteps(int steps)
+    {
+        this.steps = steps;
+        SetStepsText(steps, maxSteps);
+    }
 
     public void GameBegginingStart()
     {
@@ -491,10 +497,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         {
             questionMenuTable.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { 
                 questionMenuTable.SetActive(false);
-                if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+                if (steps >= maxSteps)
+                    fromShowResultsInAskQuestionToEndGameMenu.Set(true);
+                else if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+                {
                     fromShowResultsInAskQuestionToRegionSelection.Set(true);
+                    SetSteps(steps + 1);
+                }
                 else
+                {
                     fromShowResultsInAskQuestionToAskQuestion.Set(true);
+                    SetSteps(steps + 1);
+                }
             });
             timerToShowTableMenu = float.NaN;
         }
@@ -649,7 +663,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
         }
 
-        steps++;
         SetStepsText(steps, maxSteps);
 
         if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
@@ -1488,7 +1501,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             {
                 GlobalVariables.Delay(menusTransitionDelayTime, () =>
                 {
-                    steps++;
+                    SetSteps(steps + 1);
                     do
                     {
                         currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
@@ -1518,7 +1531,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                             else
                                 fromBattleResultsToOffensive.Set(true);
                         }
-                            
                     }
                 });
 
@@ -1756,7 +1768,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         fromShowResultsInAskQuestionToAskQuestion = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(fromShowResultsInAskQuestionToAskQuestion, showResultsInAskQuestionState, askQuestionState, gameStateMachine));
-        
 
         //viewResultsStateIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
         //gameStateMachine.AddTransition(new Transition(viewResultsStateIsEnded, viewResultsState, regionSelectionState, gameStateMachine));
@@ -1957,6 +1968,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         losePlayerState.startEvents += LosePlayerStart;
         losePlayerState.updateEvents += LosePlayerUpdate;
         gameStateMachine.states.Add(losePlayerState);
+
+        fromShowResultsInAskQuestionToEndGameMenu = new SynchronizedBoolCondition(playersManager, pv, true);
+        gameStateMachine.AddTransition(new Transition(fromShowResultsInAskQuestionToEndGameMenu, showResultsInAskQuestionState, endGameState, gameStateMachine));
 
         battleCond = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(battleCond, battleRoundResultsState, battleResultsState, gameStateMachine));
