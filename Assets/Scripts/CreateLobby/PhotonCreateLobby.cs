@@ -19,7 +19,6 @@ public class PhotonCreateLobby : MonoBehaviourPunCallbacks {
         roomOptions.CustomRoomProperties = new Hashtable{
             {"lobbyId", roomId},
             {"lobbyName", lobbyNameInput.text},
-            {"lobbyPasswd", lobbyPasswdInput.text},
             {"lobbyIconId", lobbyIconScroller.selectedId}
         };
 

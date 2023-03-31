@@ -44405,7 +44405,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 715864332}
-  - component: {fileID: 715864331}
+  - component: {fileID: 715864333}
   m_Layer: 0
   m_Name: PhotonCreateLobbyManager
   m_TagString: Untagged
@@ -44413,21 +44413,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &715864331
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 715864330}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81184eae4cc59bb4c9b93c7e03e6f66d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lobbyNameInput: {fileID: 299048232}
-  lobbyPasswdInput: {fileID: 1444878641}
-  lobbyIconScroller: {fileID: 878558054}
 --- !u!4 &715864332
 Transform:
   m_ObjectHideFlags: 0
@@ -44443,6 +44428,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &715864333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715864330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95b2749131703a742b6a610afb0c8759, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lobbyNameInput: {fileID: 299048232}
+  lobbyPasswdInput: {fileID: 0}
+  lobbyIconScroller: {fileID: 878558054}
 --- !u!224 &734905460 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6272426525592203181, guid: 6ccc55419878d6a48a5bd94884545c3d, type: 3}
@@ -70154,7 +70154,7 @@ PrefabInstance:
     - target: {fileID: 596018239386280912, guid: 298965fb5d9f6aa4cb8f333124e0412b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
-      objectReference: {fileID: 715864331}
+      objectReference: {fileID: 715864333}
     - target: {fileID: 596018239386280912, guid: 298965fb5d9f6aa4cb8f333124e0412b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 0
