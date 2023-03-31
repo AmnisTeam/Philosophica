@@ -148,7 +148,7 @@ public class QuestionManager : MonoBehaviourPunCallbacks
         //questions[1].answer[3] = "«елЄнка";
         //questions[1].timeToQuestion = 10;
         //questions[1].idRightAnswer = 1;
-        questionLoader.LoadQuestions();
+        //questionLoader.LoadQuestions();
     }
 
     public void checkSelectAnswer()

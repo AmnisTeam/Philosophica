@@ -276,6 +276,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     private bool wasRpcSent = false;
 
     private bool RPCAttackAnnouncementwasSended = false;
+    private bool battleWasStarted = false;
 
     public bool onceAddSteps = false;
     private int winnerRegionsCountAtStartOfSelection;
@@ -1141,6 +1142,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("OffensivePlayerSelectionStart");
         RPCAttackAnnouncementwasSended = false;
+        battleWasStarted = false;
 
         offensivePlayerSelectionTimer = 0;
         offenseAnnouncement.SetActive(true);
@@ -1267,7 +1269,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             }
         }
 
-        battle = StartBattle(firstPlayer, secondPlayer, region, roundsCount, playersMaxHealth);
+        if (!battleWasStarted)
+        {
+            battleWasStarted = true;
+            battle = StartBattle(firstPlayer, secondPlayer, region, roundsCount, playersMaxHealth);
+        }
 
         //AttackAnnouncementStart();
     }
@@ -2265,6 +2271,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (roundsCount > questionSession.questionLoader.GetQuestionsSize())
             roundsCount = questionSession.questionLoader.GetQuestionsSize();
 
+        Debug.Log("ЗАШЁЛ");
         for (int i = 0; i < roundsCount; i++)
         {
             QuestionManager.Question randQuestion = questionSession.questionLoader.GetRandQuestionWithRemove();
@@ -2316,7 +2323,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                             if (regionHost != null)
                                 break;
                         }
-                        battle = StartBattle(offensePlayer, regionHost, region, roundsCount, playersMaxHealth);
+                        if (!battleWasStarted)
+                        {
+                            battleWasStarted = true;
+                            battle = StartBattle(offensePlayer, regionHost, region, roundsCount, playersMaxHealth);
+                        }
                     }
 
                 }
@@ -2396,6 +2407,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         int randomRegionId = rnd.Next(0, randomPlayer.claimedRegions.Count - 1);
         Region randomPlayerRegion = randomPlayer.claimedRegions[randomRegionId];
 
-        battle = StartBattle(offensePlayer, randomPlayer, randomPlayerRegion, roundsCount, playersMaxHealth);
+        if (!battleWasStarted)
+        {
+            battleWasStarted = true;
+            battle = StartBattle(offensePlayer, randomPlayer, randomPlayerRegion, roundsCount, playersMaxHealth);
+        }
     }
 }

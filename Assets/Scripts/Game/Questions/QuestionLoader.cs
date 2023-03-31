@@ -100,6 +100,8 @@ public class QuestionLoader
         QuestionManager.Question q = questions[rand];
         currentQuestion = q;
 
+        Debug.Log("Остаось " + questions.Count);
+
         questions.RemoveAt(rand);
 
         if (questions.Count == 0)
@@ -107,18 +109,6 @@ public class QuestionLoader
 
         return q;
     }
-
-    /*public QuestionManager.Question GetQuestion()
-    {
-        if (questions.Count == 0)
-            LoadQuestions();
-
-        QuestionManager.Question q = questions[0];
-        currentQuestion = q;
-        questions.RemoveAt(0);
-
-        return q;
-    }*/
 
     public int GetQuestionsSize()
     {
