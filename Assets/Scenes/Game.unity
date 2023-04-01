@@ -25953,6 +25953,9 @@ MonoBehaviour:
   canvas: {fileID: 32189311}
   isDrag: 0
   isLocked: 0
+  velocity: {x: 0, y: 0, z: 0}
+  velocityFactor: 100
+  friction: 0.8
 --- !u!114 &1926198292
 MonoBehaviour:
   m_ObjectHideFlags: 0
