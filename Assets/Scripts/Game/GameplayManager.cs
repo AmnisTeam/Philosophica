@@ -126,6 +126,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public Camera cam;
     public FastedWinner fastedWinner;
 
+    public Color selectedRegionColor;
     public Color unclaimedRegionColor;
 
     public IconsContentHolder iconsContent;
@@ -150,7 +151,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public UnityEngine.UI.Image opponentsAnnouncementOpponent2Icon;
     public TextMeshProUGUI opponentsAnnouncementOpponent2Nickname;
 
-
     public GameObject gameBeggining;
     public GameObject firstStageHint;
     public GameObject questionMenu;
@@ -174,6 +174,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public GameObject captureButton;
     public Region regionToCapture;
+    public List<Region> selectedRegions;
     public bool captureButtonState = false;
 
     [SerializeField] private PlaySound playSound;
@@ -613,6 +614,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     {
                         if (region.hostPlayer == null)
                         {
+                            UnselectAllSelectedRegionsWithAnimation();
+                            SelectRegionWithAnimation(region);
                             regionToCapture = region;
                             if (!captureButton.activeSelf)
                             {
@@ -626,6 +629,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
             if (captureButtonState)
             {
+                UnselectAllSelectedRegionsWithAnimation();
+
                 int regionId = GetRegionId(regionToCapture);
                 pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionId, winner.colorId, "GrantRegionToWinnerByMouseClick()");
                 wasRpcSent = true;
@@ -659,12 +664,22 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         else
         {
             stateEnded = true;
-        }  
+        }
 
-        /*if (stateEnded && !onceAddSteps) {
+        if (stateEnded && !onceAddSteps)
+        {
             onceAddSteps = true;
             steps++;
             SetStepsText(steps, maxSteps);
+            UnselectAllSelectedRegionsWithAnimation();
+            if (captureButton.GetComponent<CanvasGroup>().alpha > 0 || captureButton.activeSelf)
+            {
+                captureButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                {
+                    captureButton.SetActive(false);
+                    stateEnded = true;
+                });
+            }
 
             if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
             {
@@ -680,7 +695,21 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             {
                 firstStageIsEnded.state = true;
             }
-        }*/
+        }
+    }
+
+    public void UnselectAllSelectedRegionsWithAnimation()
+    {
+        for (int i = 0; i < selectedRegions.Count; i++)
+            UpdateRegionColorGradually(selectedRegions[i]);
+        selectedRegions.Clear();
+    }
+
+    public void SelectRegionWithAnimation(Region region)
+    {
+        selectedRegions.Add(region);
+        region.GraduallyChangeInnerGlowColor(selectedRegionColor, regionChangingColorTime);
+        region.GraduallyChangeOutlineColor(selectedRegionColor, regionChangingColorTime);
     }
 
     public void GiveRegion(Player player, Region region)
@@ -703,17 +732,23 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         for (int i = 0; i < regions.Count; i++)
         {
-            if (regions[i].hostPlayer == null)
-            {
-                regions[i].GraduallyChangeColor(unclaimedRegionColor, regionChangingColorTime);
-                regions[i].GraduallyChangeOutlineColor(unclaimedRegionColor, regionChangingColorTime);
-            }
-            else
-            {
-                regions[i].GraduallyChangeColor(regions[i].hostPlayer.color, regionChangingColorTime);
-                regions[i].GraduallyChangeOutlineColor(regions[i].hostPlayer.color, regionChangingColorTime);
-            }      
+            UpdateRegionColorGradually(regions[i]);
         }
+    }
+
+    public void UpdateRegionColorGradually(Region region)
+    {
+        if (region.hostPlayer == null)
+        {
+            region.GraduallyChangeColor(unclaimedRegionColor, regionChangingColorTime);
+            region.GraduallyChangeOutlineColor(unclaimedRegionColor, regionChangingColorTime);
+        }
+        else
+        {
+            region.GraduallyChangeColor(region.hostPlayer.color, regionChangingColorTime);
+            region.GraduallyChangeOutlineColor(region.hostPlayer.color, regionChangingColorTime);
+        }
+        region.GraduallyChangeInnerGlowColor(new Color(0, 0, 0, 0), regionChangingColorTime);
     }
     
     public void UpdatePlayersRegions(Player player)
@@ -759,17 +794,17 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
         }
 
-        SetStepsText(steps, maxSteps);
+        //SetStepsText(steps, maxSteps);
 
-        if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
-            regionSelectionToast.isDone = true;
-        }
+        //if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
+        //    regionSelectionToast.isDone = true;
+        //}
 
-        if (GetFreeRegionsCount() > 0) {
-            regionSelectionStateIsEnded.state = true;
-        } else {
-            firstStageIsEnded.state = true;
-        }
+        //if (GetFreeRegionsCount() > 0) {
+        //    regionSelectionStateIsEnded.state = true;
+        //} else {
+        //    firstStageIsEnded.state = true;
+        //}
     }
 
     /*[PunRPC]
@@ -1843,6 +1878,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             idx++;
 
         }
+
+        selectedRegions = new List<Region>();
     }
 
     [PunRPC]

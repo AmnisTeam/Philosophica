@@ -18,8 +18,8 @@ public class Region : MonoBehaviour
     {
         gameObject.layer = LayerMask.NameToLayer("Regions");
         SetColor(regionsSystem.nextRegionColor);
-        SetOutlineColor(new Color(1, 0, 0, 0));
-        SetInnerGlowColor(new Color(1, 0, 0, 0));
+        SetOutlineColor(new Color(0, 0, 0, 0));
+        SetInnerGlowColor(new Color(0, 0, 0, 0));
     }
 
     public void SetColor(UnityEngine.Color color)
