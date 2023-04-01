@@ -42,16 +42,19 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
         for (int x = 0; x < rows.Count; x++)
         {
             RowMoveableContainer row = rows[x];
+            if (rows[x].row != null)
+            {
+                float upPos = 0;
+                if (x > 0)
+                    if(rows[x - 1].row != null)
+                        upPos = rows[x - 1].row.transform.localPosition.y - (rows[x - 1].row.GetComponent<RectTransform>().rect.height + offset);
 
-            float upPos = 0;
-            if (x > 0)
-                upPos = rows[x - 1].row.transform.localPosition.y - (rows[x - 1].row.GetComponent<RectTransform>().rect.height + offset);
+                float pos = rows[x].row.transform.localPosition.y;
+                float distance = Mathf.Abs(upPos - pos);
 
-            float pos = rows[x].row.transform.localPosition.y;
-            float distance = Mathf.Abs(upPos - pos);
-
-            float velocity = Mathf.Sign(upPos - pos) * curve.Evaluate((distanceToLerp - distance) / distanceToLerp) * vel;
-            row.row.transform.localPosition = new Vector2(0, row.row.transform.localPosition.y + velocity);
+                float velocity = Mathf.Sign(upPos - pos) * curve.Evaluate((distanceToLerp - distance) / distanceToLerp) * vel;
+                row.row.transform.localPosition = new Vector2(0, row.row.transform.localPosition.y + velocity);
+            }
         }
     }
 

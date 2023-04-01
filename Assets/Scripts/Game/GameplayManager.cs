@@ -389,7 +389,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
             {
                 fromGameBegginingToFirstStageHint.Set(true);
-            });       
+            });
+
+            gameBegginingTimer = float.NaN;
         }
     }
 
