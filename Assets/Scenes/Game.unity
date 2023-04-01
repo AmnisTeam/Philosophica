@@ -3932,7 +3932,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchorMax.x
@@ -6097,7 +6097,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchorMax.x
@@ -6798,7 +6798,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_RootOrder
-      value: 12
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchorMax.x
@@ -21881,7 +21881,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_RootOrder
-      value: 11
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9141936856200439786, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchorMax.x
@@ -26085,6 +26085,9 @@ MonoBehaviour:
   canvas: {fileID: 32189311}
   isDrag: 0
   isLocked: 0
+  velocity: {x: 0, y: 0, z: 0}
+  velocityFactor: 100
+  friction: 0.8
 --- !u!114 &1926198292
 MonoBehaviour:
   m_ObjectHideFlags: 0

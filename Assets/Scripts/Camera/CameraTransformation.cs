@@ -115,12 +115,17 @@ public class CameraTransformation : MonoBehaviour
 
     private Camera cam;
     private Vector3 dragOrigin;
+    private Vector3 oldPosition;
 
     public bool isLocked = false;
 
     private Vector2 f0Start, f1Start;
     private float oldTouchScaling = 0;
     private int oldCountTouch;
+
+    public Vector3 velocity;
+    public float velocityFactor;
+    public float friction;
 
     private void Awake()
     {
@@ -130,6 +135,7 @@ public class CameraTransformation : MonoBehaviour
     private void Start()
     {
         cam = gameObject.GetComponent<Camera>();
+        oldPosition = cam.transform.position;
     }
 
     private void cameraMovementByMouse()
@@ -147,11 +153,20 @@ public class CameraTransformation : MonoBehaviour
             dragOrigin = mouseWorldPos;
             isDrag = true;
             GetComponent<MoveCameraToActiveRegion>().UnsetTarget();
+            velocity = Vector3.zero;
+            oldPosition = cam.transform.position;
         }
 
         if (Input.GetMouseButtonUp(0))
         {
             isDrag = false;
+            velocity = (cam.transform.position - oldPosition) * velocityFactor;
+            velocity.z = 0;
+        }
+
+        if(Input.GetMouseButton(0))
+        {
+            oldPosition = cam.transform.position;
         }
 
         if (Input.GetMouseButton(0) && isDrag)
@@ -210,6 +225,12 @@ public class CameraTransformation : MonoBehaviour
         oldCountTouch = Input.touchCount;
     }
 
+    public void UpdateVelocity()
+    {
+        cam.transform.position += velocity * Time.deltaTime;
+        velocity *= friction;
+    }
+
     private void HandleCameraTransformationMouse()
     {
         if (workDetector.getPass())
@@ -244,6 +265,7 @@ public class CameraTransformation : MonoBehaviour
     private void Update()
     {
         UpdateIsWork();
+        UpdateVelocity();
         if (!isLocked)
         {
             HandleCameraTransformationMouse();
