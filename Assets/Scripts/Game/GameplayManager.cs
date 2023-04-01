@@ -1267,12 +1267,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 }
                 //StartBattleByMouseClick(roundsCount, maxPlayersHealth);
             }
-                
 
-            if (offensivePlayerSelectionTimer >= offensivePlayerSelectionTime)
+            if (offensePlayer.isLocalClient)
             {
-                StartBattleWithRandomPlayer(roundsCount, maxPlayersHealth);
-            }
+                if (offensivePlayerSelectionTimer >= offensivePlayerSelectionTime)
+                {
+                    StartBattleWithRandomPlayer(roundsCount, maxPlayersHealth);
+                }
+            } 
 
             if (battle != null)
             {
@@ -1375,13 +1377,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             }
         }
 
+        SelectRegionAsAttacked(region);
         if (!battleWasStarted)
         {
-            battleWasStarted = true;
-            battle = StartBattle(firstPlayer, secondPlayer, region, roundsCount, playersMaxHealth);
-            SelectRegionAsAttacked(region);
+            battle = StartBattle(firstPlayer, secondPlayer, region, roundsCount, playersMaxHealth);        
         }
-
         //AttackAnnouncementStart();
     }
 
@@ -1747,10 +1747,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                                     Debug.Log("They are identical");
                                 battle.GetLoser().player.LoseRegion(battle.region);
                                 //battle.GetWinner().player.ClaimRegion(battle.region);
-                                UnselectAttackedRegion();
                                 GiveRegionWithAnimation(battle.GetWinner().player, battle.region);
                             }
                         }
+                        UnselectAttackedRegion();
                     });
                 }
                 else
@@ -1758,8 +1758,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     battleResultsDraw.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                     {
                         battleResultsDraw.SetActive(false);
+                        UnselectAttackedRegion();
                     });
                 }
+                
                 closeBattleResultsTimer = double.NaN;
             }
 
@@ -1811,6 +1813,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 battleResultsVictory.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                 {
                     battleResultsVictory.SetActive(false);
+                    UnselectAttackedRegion();
                 });
             }
             else
@@ -1818,6 +1821,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 battleResultsDraw.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                 {
                     battleResultsDraw.SetActive(false);
+                    UnselectAttackedRegion();
                 });
             }
             GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
@@ -2390,7 +2394,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
             newBattle.questions.Add(randQuestion);
         }
-
+        battleWasStarted = true;
         return newBattle;
     }
 
@@ -2435,7 +2439,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                         }
                         if (!battleWasStarted)
                         {
-                            battleWasStarted = true;
                             battle = StartBattle(offensePlayer, regionHost, region, roundsCount, playersMaxHealth);
                         }
                     }
@@ -2519,7 +2522,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         if (!battleWasStarted)
         {
-            battleWasStarted = true;
             battle = StartBattle(offensePlayer, randomPlayer, randomPlayerRegion, roundsCount, playersMaxHealth);
         }
     }
