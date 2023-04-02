@@ -134,6 +134,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public ColorsHolder colorsHolderInstance;
     public PhotonView pv;
 
+    public Canvas canvas;
+
     public GameObject stageTwoAnnoucment;
 
     public GameObject offenseAnnouncement;
@@ -908,12 +910,21 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit))
+            GraphicRaycaster graphicRaycaster = canvas.GetComponent<GraphicRaycaster>();
+            UnityEngine.EventSystems.PointerEventData eventData = new UnityEngine.EventSystems.PointerEventData(null);
+            eventData.position = Input.mousePosition;
+            List<UnityEngine.EventSystems.RaycastResult> resultAppendList = new List<UnityEngine.EventSystems.RaycastResult>();
+            graphicRaycaster.Raycast(eventData, resultAppendList);
+
+            if (resultAppendList.Count == 0)
             {
-                Region region = hit.collider.gameObject.GetComponent<Region>();
-                return region;
+                Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit))
+                {
+                    Region region = hit.collider.gameObject.GetComponent<Region>();
+                    return region;
+                }
             }
         }
         return null;
