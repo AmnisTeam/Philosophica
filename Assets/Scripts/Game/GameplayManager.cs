@@ -668,6 +668,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     {
                         if (winner.isLocalClient)
                         {
+                            UnselectAllSelectedRegionsWithAnimation();
                             GrantRandomFreeRegionToPlayer(winner);
                             //test12345
                             captureButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
@@ -1329,6 +1330,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 {
                     offenseAnnouncement.SetActive(false);
                 });
+                UnselectAllSelectedRegionsWithAnimation();
                 GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
                 {
                     if (playersManager.DidSomeoneLeave())
@@ -1341,6 +1343,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
         else
         {
+            UnselectAllSelectedRegionsWithAnimation();
             offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
             {
                 offenseAnnouncement.SetActive(false);
