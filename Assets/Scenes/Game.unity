@@ -2772,7 +2772,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!43 &166017891
 Mesh:
   m_ObjectHideFlags: 0
@@ -3886,7 +3885,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &224024200
 GameObject:
   m_ObjectHideFlags: 0
@@ -4597,6 +4595,7 @@ MonoBehaviour:
   iconsContent: {fileID: 0}
   colorsHolderInstance: {fileID: 0}
   pv: {fileID: 0}
+  canvas: {fileID: 32189311}
   stageTwoAnnoucment: {fileID: 2141023604}
   offenseAnnouncement: {fileID: 70853969}
   offenseAnnouncementAvatar: {fileID: 1311414497}
@@ -5044,7 +5043,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 344865939051205480, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 27.118011
+      value: 27.117981
       objectReference: {fileID: 0}
     - target: {fileID: 3405096108269945255, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_Name
@@ -5255,7 +5254,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &299289192
 GameObject:
   m_ObjectHideFlags: 0
@@ -7562,7 +7560,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 344865939051205480, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 27.118011
+      value: 27.117981
       objectReference: {fileID: 0}
     - target: {fileID: 3405096108269945255, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_Name
@@ -8384,7 +8382,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 344865939051205480, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 27.118011
+      value: 27.117981
       objectReference: {fileID: 0}
     - target: {fileID: 3405096108269945255, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_Name
@@ -13613,7 +13611,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &734213492
 GameObject:
   m_ObjectHideFlags: 0
@@ -15517,7 +15514,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &849078985
 GameObject:
   m_ObjectHideFlags: 0
@@ -16004,7 +16000,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &877348186
 GameObject:
   m_ObjectHideFlags: 0
@@ -22434,7 +22429,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1411831727
 GameObject:
   m_ObjectHideFlags: 0
@@ -24926,7 +24920,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1561734423
 GameObject:
   m_ObjectHideFlags: 0
@@ -26816,7 +26809,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 344865939051205480, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 27.118011
+      value: 27.117981
       objectReference: {fileID: 0}
     - target: {fileID: 3405096108269945255, guid: 412aec85f7f615943a2c5febf920d25c, type: 3}
       propertyPath: m_Name
@@ -28366,7 +28359,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1755836282
 GameObject:
   m_ObjectHideFlags: 0
@@ -30845,7 +30837,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &1898887546 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 787162923219038593, guid: e66a38329877c884cb6aa4600a307500, type: 3}
@@ -35982,7 +35973,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2142768906
 GameObject:
   m_ObjectHideFlags: 0
