@@ -669,6 +669,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                         if (winner.isLocalClient)
                         {
                             GrantRandomFreeRegionToPlayer(winner);
+                            //test12345
+                            captureButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                            {
+                                captureButton.SetActive(false);
+                            });
+                            captureButtonState = false;
+                            //test12345
                         }
                     }
                     stateEnded = true;
@@ -1307,6 +1314,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                             break;
                         };
                     }
+
+                    //test12345
+                    attackButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                    {
+                        attackButton.SetActive(false);
+                    });
+                    //test12345
 
                     pv.RPC("RPC_AttackAnnouncementStart", RpcTarget.All, battle.opponents[0].player.id, battle.opponents[1].player.id, regionId, battle.questions.Count, battle.opponents[0].maxHealh);
                 }

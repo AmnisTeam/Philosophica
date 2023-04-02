@@ -10,7 +10,7 @@ public class IconScroller : MonoBehaviour
     public Image[] icons;
     public float offset = 20;
     public Vector2 dragPoint;
-    public float value;
+    public float value = 10000;
     public float valueVelocity = 0;
     public float friction = 0.01f;
     public float gravityVelCof = 0;
@@ -69,7 +69,6 @@ public class IconScroller : MonoBehaviour
     void Start()
     {
         oldMousePos = Input.mousePosition;
-        value = sprites.Length * 1000;
     }
 
     void Update()
