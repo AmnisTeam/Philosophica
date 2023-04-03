@@ -829,6 +829,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
         else
         {
+            playersManager.RefreshSomeoneLeaveState();
+            playersManager.leavedPlayersQueue.Clear();
             firstStageIsEnded.state = true;
         }
     }
