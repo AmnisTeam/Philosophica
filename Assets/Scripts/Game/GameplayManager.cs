@@ -127,11 +127,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public FastedWinner fastedWinner;
 
     public Color selectedRegionColor;
+    public Color attackedRegionColor;
     public Color unclaimedRegionColor;
 
     public IconsContentHolder iconsContent;
     public ColorsHolder colorsHolderInstance;
     public PhotonView pv;
+
+    public Canvas canvas;
 
     public GameObject stageTwoAnnoucment;
 
@@ -174,6 +177,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public GameObject captureButton;
     public Region regionToCapture;
+
+    public GameObject attackButton;
+    public Region regionToAttack;
+    public bool attackButtonState;
+    public Region attackedRegion;
+
     public List<Region> selectedRegions;
     public bool captureButtonState = false;
 
@@ -596,106 +605,118 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         bool stateEnded = false;
         regionSelectionTimer += Time.deltaTime;
-
-        if (winner != null)
+        if (!stateEnded)
         {
-            if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+            if (winner != null)
             {
-                regionSelectionToast.message = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию: {(int)(regionSelectionMaxTime - regionSelectionTimer)}";
-            }
 
-            if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
-            {
-                if (winner.isLocalClient)
+                if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
                 {
-                    //GrantRegionToWinnerByMouseClick();
-                    Region region = GetRegionByMouseClick();
-                    if (region != null)
+                    regionSelectionToast.message = $"<color=#{winner.color.ToHexString()}>{winner.nickname}</color> выбирает территорию: {(int)(regionSelectionMaxTime - regionSelectionTimer)}";
+                }
+
+                if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+                {
+                    if (winner.isLocalClient)
                     {
-                        if (region.hostPlayer == null)
+                        //GrantRegionToWinnerByMouseClick();
+                        Region region = GetRegionByMouseClick();
+                        if (region != null)
+                        {
+                            if (region.hostPlayer == null)
+                            {
+                                UnselectAllSelectedRegionsWithAnimation();
+                                SelectRegionWithAnimation(region);
+                                regionToCapture = region;
+                                if (!captureButton.activeSelf)
+                                {
+                                    captureButton.SetActive(true);
+                                    captureButton.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (captureButtonState)
+                {
+                    UnselectAllSelectedRegionsWithAnimation();
+                    captureButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                    {
+                        captureButton.SetActive(false);
+                    });
+                    captureButtonState = false;
+
+                    int regionId = GetRegionId(regionToCapture);
+                    pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionId, winner.colorId, "GrantRegionToWinnerByMouseClick()");
+                    wasRpcSent = true;
+                    stateEnded = true;
+                }
+
+
+                //if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+                //{
+                //    if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection)
+                //    {
+                //        stateEnded = true;
+                //    }
+                //}
+
+                if (regionSelectionTimer >= regionSelectionMaxTime || !questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+                {
+                    if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+                    {
+                        if (winner.isLocalClient)
                         {
                             UnselectAllSelectedRegionsWithAnimation();
-                            SelectRegionWithAnimation(region);
-                            regionToCapture = region;
-                            if (!captureButton.activeSelf)
+                            GrantRandomFreeRegionToPlayer(winner);
+                            //test12345
+                            captureButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                             {
-                                captureButton.SetActive(true);
-                                captureButton.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
-                            }
-                        }          
+                                captureButton.SetActive(false);
+                            });
+                            captureButtonState = false;
+                            //test12345
+                        }
                     }
-                }
-            }
-
-            if (captureButtonState)
-            {
-                UnselectAllSelectedRegionsWithAnimation();
-
-                int regionId = GetRegionId(regionToCapture);
-                pv.RPC("RPC_RegionWasChosen", RpcTarget.All, regionId, winner.colorId, "GrantRegionToWinnerByMouseClick()");
-                wasRpcSent = true;
-
-                captureButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
-                {
-                    captureButton.SetActive(false);
                     stateEnded = true;
-                });
-                captureButtonState = false;
-            }
-
-
-            //if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
-            //{
-            //    if (winner.claimedRegions.Count > winnerRegionsCountAtStartOfSelection)
-            //    {
-            //        stateEnded = true;
-            //    }
-            //}
-
-            if (regionSelectionTimer >= regionSelectionMaxTime || !questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
-                if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
-                    if (winner.isLocalClient) {
-                        GrantRandomFreeRegionToPlayer(winner);
-                    }
                 }
-                stateEnded = true;
-            }
-        }
-        else
-        {
-            stateEnded = true;
-        }
-
-        if (stateEnded && !onceAddSteps)
-        {
-            onceAddSteps = true;
-            steps++;
-            SetStepsText(steps, maxSteps);
-            UnselectAllSelectedRegionsWithAnimation();
-            if (captureButton.GetComponent<CanvasGroup>().alpha > 0 || captureButton.activeSelf)
-            {
-                captureButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
-                {
-                    captureButton.SetActive(false);
-                    stateEnded = true;
-                });
-            }
-
-            if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
-            {
-                if (regionSelectionToast != null)
-                    regionSelectionToast.isDone = true;
-            }
-
-            if (GetFreeRegionsCount() > 0)
-            {
-                regionSelectionStateIsEnded.state = true;
             }
             else
             {
-                firstStageIsEnded.state = true;
+                stateEnded = true;
             }
         }
+        //if (stateEnded && !onceAddSteps)
+        //{
+        //    onceAddSteps = true;
+        //    steps++;
+        //    SetStepsText(steps, maxSteps);
+        //    UnselectAllSelectedRegionsWithAnimation();
+        //    if (captureButton.GetComponent<CanvasGroup>().alpha > 0 || captureButton.activeSelf)
+        //    {
+        //        captureButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+        //        {
+        //            captureButton.SetActive(false);
+        //            stateEnded = true;
+        //        });
+        //    }
+
+        //    if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+        //    {
+        //        if (regionSelectionToast != null)
+        //            regionSelectionToast.isDone = true;
+        //    }
+
+        //    if (GetFreeRegionsCount() > 0)
+        //    {
+        //        regionSelectionStateIsEnded.state = true;
+        //    }
+        //    else
+        //    {
+        //        firstStageIsEnded.state = true;
+        //    }
+        //}
     }
 
     public void UnselectAllSelectedRegionsWithAnimation()
@@ -794,17 +815,22 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
         }
 
-        //SetStepsText(steps, maxSteps);
+        SetStepsText(steps, maxSteps);
+        UnselectAllSelectedRegionsWithAnimation();
 
-        //if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
-        //    regionSelectionToast.isDone = true;
-        //}
+        if (questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+        {
+            regionSelectionToast.isDone = true;
+        }
 
-        //if (GetFreeRegionsCount() > 0) {
-        //    regionSelectionStateIsEnded.state = true;
-        //} else {
-        //    firstStageIsEnded.state = true;
-        //}
+        if (GetFreeRegionsCount() > 0)
+        {
+            regionSelectionStateIsEnded.state = true;
+        }
+        else
+        {
+            firstStageIsEnded.state = true;
+        }
     }
 
     /*[PunRPC]
@@ -892,12 +918,21 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit))
+            GraphicRaycaster graphicRaycaster = canvas.GetComponent<GraphicRaycaster>();
+            UnityEngine.EventSystems.PointerEventData eventData = new UnityEngine.EventSystems.PointerEventData(null);
+            eventData.position = Input.mousePosition;
+            List<UnityEngine.EventSystems.RaycastResult> resultAppendList = new List<UnityEngine.EventSystems.RaycastResult>();
+            graphicRaycaster.Raycast(eventData, resultAppendList);
+
+            if (resultAppendList.Count == 0)
             {
-                Region region = hit.collider.gameObject.GetComponent<Region>();
-                return region;
+                Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(new Ray(mouseWorldPos, Vector3.forward), out hit))
+                {
+                    Region region = hit.collider.gameObject.GetComponent<Region>();
+                    return region;
+                }
             }
         }
         return null;
@@ -1200,6 +1235,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         fromOffensivePlayerSelectionToBackToStageOne.Set(false);
     }
 
+    public void SetAttackButtonState(bool state)
+    {
+        attackButtonState = state;
+    }
+
     public void OffensivePlayerSelectionUpdate()
     {
         if (!playersManager.DidSomeoneLeave())
@@ -1211,12 +1251,49 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             offenseAnnouncementTimerText.text = GlobalVariables.GetTimeStr(offensivePlayerSelectionTime - offensivePlayerSelectionTimer);
 
             if (offensePlayer.isLocalClient)
-                StartBattleByMouseClick(roundsCount, maxPlayersHealth);
-
-            if (offensivePlayerSelectionTimer >= offensivePlayerSelectionTime)
             {
-                StartBattleWithRandomPlayer(roundsCount, maxPlayersHealth);
+                Region region = GetRegionByMouseClick();
+                if (region != null)
+                {
+                    if (region.hostPlayer != offensePlayer)
+                    {
+                        regionToAttack = region;
+                        UnselectAllSelectedRegionsWithAnimation();
+                        SelectRegionWithAnimation(region);
+                        if (!attackButton.activeSelf || attackButton.GetComponent<CanvasGroup>().alpha < 1)
+                        {
+                            attackButton.SetActive(true);
+                            attackButton.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
+                        }        
+                    }                  
+                }
+
+                if (regionToAttack != null)
+                {
+                    if (attackButtonState)
+                    {
+                        battle = StartBattle(offensePlayer, regionToAttack.hostPlayer, regionToAttack, roundsCount, maxPlayersHealth);
+                        UnselectAllSelectedRegionsWithAnimation();
+                        
+
+                        attackButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                        {
+                            attackButton.SetActive(false);
+                        });
+
+                        attackButtonState = false;
+                    }
+                }
+                //StartBattleByMouseClick(roundsCount, maxPlayersHealth);
             }
+
+            if (offensePlayer.isLocalClient)
+            {
+                if (offensivePlayerSelectionTimer >= offensivePlayerSelectionTime)
+                {
+                    StartBattleWithRandomPlayer(roundsCount, maxPlayersHealth);
+                }
+            } 
 
             if (battle != null)
             {
@@ -1239,6 +1316,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                         };
                     }
 
+                    //test12345
+                    attackButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
+                    {
+                        attackButton.SetActive(false);
+                    });
+                    //test12345
+
                     pv.RPC("RPC_AttackAnnouncementStart", RpcTarget.All, battle.opponents[0].player.id, battle.opponents[1].player.id, regionId, battle.questions.Count, battle.opponents[0].maxHealh);
                 }
 
@@ -1246,6 +1330,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 {
                     offenseAnnouncement.SetActive(false);
                 });
+                UnselectAllSelectedRegionsWithAnimation();
                 GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
                 {
                     if (playersManager.DidSomeoneLeave())
@@ -1258,6 +1343,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
         else
         {
+            UnselectAllSelectedRegionsWithAnimation();
             offenseAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
             {
                 offenseAnnouncement.SetActive(false);
@@ -1267,6 +1353,19 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 fromOffensivePlayerSelectionToBackToStageOne.Set(true);
             });
         }
+    }
+
+    public void SelectRegionAsAttacked(Region region)
+    {
+        attackedRegion = region;
+        attackedRegion.GraduallyChangeInnerGlowColor(attackedRegionColor, regionChangingColorTime);
+        attackedRegion.GraduallyChangeOutlineColor(attackedRegionColor, regionChangingColorTime);
+    }
+
+    public void UnselectAttackedRegion()
+    {
+        UpdateRegionColorGradually(attackedRegion);
+        attackedRegion = null;
     }
 
     public void AttackAnnouncementStart()
@@ -1306,12 +1405,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             }
         }
 
+        SelectRegionAsAttacked(region);
         if (!battleWasStarted)
         {
-            battleWasStarted = true;
-            battle = StartBattle(firstPlayer, secondPlayer, region, roundsCount, playersMaxHealth);
+            battle = StartBattle(firstPlayer, secondPlayer, region, roundsCount, playersMaxHealth);        
         }
-
         //AttackAnnouncementStart();
     }
 
@@ -1680,6 +1778,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                                 GiveRegionWithAnimation(battle.GetWinner().player, battle.region);
                             }
                         }
+                        UnselectAttackedRegion();
                     });
                 }
                 else
@@ -1687,8 +1786,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     battleResultsDraw.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                     {
                         battleResultsDraw.SetActive(false);
+                        UnselectAttackedRegion();
                     });
                 }
+                
                 closeBattleResultsTimer = double.NaN;
             }
 
@@ -1740,6 +1841,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 battleResultsVictory.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                 {
                     battleResultsVictory.SetActive(false);
+                    UnselectAttackedRegion();
                 });
             }
             else
@@ -1747,6 +1849,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 battleResultsDraw.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                 {
                     battleResultsDraw.SetActive(false);
+                    UnselectAttackedRegion();
                 });
             }
             GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
@@ -2319,7 +2422,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
             newBattle.questions.Add(randQuestion);
         }
-
+        battleWasStarted = true;
         return newBattle;
     }
 
@@ -2364,7 +2467,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                         }
                         if (!battleWasStarted)
                         {
-                            battleWasStarted = true;
                             battle = StartBattle(offensePlayer, regionHost, region, roundsCount, playersMaxHealth);
                         }
                     }
@@ -2448,7 +2550,6 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         if (!battleWasStarted)
         {
-            battleWasStarted = true;
             battle = StartBattle(offensePlayer, randomPlayer, randomPlayerRegion, roundsCount, playersMaxHealth);
         }
     }

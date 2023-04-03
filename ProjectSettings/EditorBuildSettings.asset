@@ -29,4 +29,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Settings(Stars).unity
     guid: 8213e8a447a0ad14892660a5953236a6
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 2dbcd773fe0bc5646baed11661749889, type: 2}
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: fb19d0e2f8e310443a48a16f279eaecb, type: 2}
