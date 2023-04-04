@@ -21,6 +21,13 @@ public class DestroyOnClick : MonoBehaviour
 
     void OnMouseDown()
     {
+        GameObject obj = GameObject.FindWithTag("SOUND_EFFECTS_TAG");
+        if (obj != null )
+        {
+            SoundEffects se = obj.GetComponent<SoundEffects>();
+            se.PlaySound("break_meteorite");
+        }
+
         destroyObject.ToDestroy();
     }
 

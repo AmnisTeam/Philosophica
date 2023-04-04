@@ -289,6 +289,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     private bool RPCAttackAnnouncementwasSended = false;
     private bool battleWasStarted = false;
+    private bool isRegionWasSelected = false;
 
     public bool onceAddSteps = false;
     private int winnerRegionsCountAtStartOfSelection;
@@ -467,6 +468,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         questionMenu1.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
         questionMenu1.GetComponent<AskQuestionInQuestionMenu>().Init(questionSession.questionLoader.GetRandQuestionWithRemove());
         questionMenu1.GetComponent<AskQuestionInQuestionMenu>().timer = 0;
+
+        isRegionWasSelected = false;
 
         Button[] buttons = questionMenu1.GetComponent<AskQuestionInQuestionMenu>().answerButtons;
         Image[] backgrounds = questionMenu1.GetComponent<AskQuestionInQuestionMenu>().answersBackgrounds;
@@ -647,6 +650,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     {
                         captureButton.SetActive(false);
                     });
+                    isRegionWasSelected = true;
                     captureButtonState = false;
 
                     int regionId = GetRegionId(regionToCapture);
@@ -677,6 +681,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                             {
                                 captureButton.SetActive(false);
                             });
+                            isRegionWasSelected = true;
                             captureButtonState = false;
                             //test12345
                         }
@@ -920,7 +925,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public Region GetRegionByMouseClick()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !isRegionWasSelected) //test12345
         {
             GraphicRaycaster graphicRaycaster = canvas.GetComponent<GraphicRaycaster>();
             UnityEngine.EventSystems.PointerEventData eventData = new UnityEngine.EventSystems.PointerEventData(null);
@@ -1268,7 +1273,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                         {
                             attackButton.SetActive(true);
                             attackButton.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
-                        }        
+                        }
                     }                  
                 }
 
@@ -1284,7 +1289,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                         {
                             attackButton.SetActive(false);
                         });
-
+                        isRegionWasSelected = true;
                         attackButtonState = false;
                     }
                 }
@@ -1325,6 +1330,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     {
                         attackButton.SetActive(false);
                     });
+                    isRegionWasSelected = true;
                     //test12345
 
                     pv.RPC("RPC_AttackAnnouncementStart", RpcTarget.All, battle.opponents[0].player.id, battle.opponents[1].player.id, regionId, battle.questions.Count, battle.opponents[0].maxHealh);
@@ -2426,6 +2432,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
             newBattle.questions.Add(randQuestion);
         }
+        isRegionWasSelected = false;
         battleWasStarted = true;
         return newBattle;
     }
