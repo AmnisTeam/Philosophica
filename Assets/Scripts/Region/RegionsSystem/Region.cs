@@ -13,13 +13,16 @@ public class Region : MonoBehaviour
 {
     float aspect = 0;
     public Player hostPlayer = null;
+    private float selectionOffset = 0;
+    public GameplayManager gameplayManager;
 
-    public void Init(RegionsSystem regionsSystem)
+    public void Init(RegionsSystem regionsSystem, GameplayManager gameplayManager)
     {
         gameObject.layer = LayerMask.NameToLayer("Regions");
         SetColor(regionsSystem.nextRegionColor);
         SetOutlineColor(new Color(0, 0, 0, 0));
         SetInnerGlowColor(new Color(0, 0, 0, 0));
+        this.gameplayManager = gameplayManager;
     }
 
     public void SetColor(UnityEngine.Color color)
@@ -72,6 +75,17 @@ public class Region : MonoBehaviour
         gameObject.GetComponent<Renderer>().materials[0].SetColor("_InnerGlowColor", color);
     }
 
+    public void SetSelectionColor(Color color)
+    {
+        gameObject.GetComponent<Renderer>().materials[0].SetColor("_SelectionColor", color);
+    }
+
+    public void SetSelectionOffset(float offset)
+    {
+        gameObject.GetComponent<Renderer>().materials[0].SetFloat("_SelectionOffset", offset);
+    }
+
+
     public void GraduallyChangeColor(Color color, float time)
     {
         Color regionColor = gameObject.GetComponent<Renderer>().materials[0].GetColor("_RegionColor");
@@ -102,6 +116,22 @@ public class Region : MonoBehaviour
         }).setEaseOutSine();
     }
 
+    public void GraduallyChangeSelectionColor(Color color, float time)
+    {
+        Color selectionColor = gameObject.GetComponent<Renderer>().materials[0].GetColor("_SelectionColor");
+        LeanTween.value(0, 1, time).setOnUpdate((float val) =>
+        {
+            Color currentColor = Color.Lerp(selectionColor, color, val);
+            SetSelectionColor(currentColor);
+        }).setEaseOutSine();
+    }
+
+    public void UpdateSelectionMove()
+    {
+        selectionOffset += gameplayManager.selectionOffsetSpeed * Time.deltaTime;
+        SetSelectionOffset(selectionOffset);
+    }
+
     public void UpdateShaderAspectAndWidth()
     {
         Vector3 size = GetComponent<Renderer>().bounds.size;
@@ -128,6 +158,7 @@ public class Region : MonoBehaviour
     public void Update()
     {
         UpdateShaderAspectAndWidth();
+        UpdateSelectionMove();
 
         //timer += Time.deltaTime;
         //if (timer >= time)

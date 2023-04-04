@@ -130,6 +130,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public Color attackedRegionColor;
     public Color unclaimedRegionColor;
 
+    public float selectionOffsetSpeed = 1;
+
     public IconsContentHolder iconsContent;
     public ColorsHolder colorsHolderInstance;
     public PhotonView pv;
@@ -729,7 +731,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void SelectRegionWithAnimation(Region region)
     {
         selectedRegions.Add(region);
-        region.GraduallyChangeInnerGlowColor(selectedRegionColor, regionChangingColorTime);
+        //region.GraduallyChangeInnerGlowColor(selectedRegionColor, regionChangingColorTime);
+        //region.GraduallyChangeOutlineColor(selectedRegionColor, regionChangingColorTime);
+        region.GraduallyChangeSelectionColor(selectedRegionColor, regionChangingColorTime);
         region.GraduallyChangeOutlineColor(selectedRegionColor, regionChangingColorTime);
     }
 
@@ -769,7 +773,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             region.GraduallyChangeColor(region.hostPlayer.color, regionChangingColorTime);
             region.GraduallyChangeOutlineColor(region.hostPlayer.color, regionChangingColorTime);
         }
-        region.GraduallyChangeInnerGlowColor(new Color(0, 0, 0, 0), regionChangingColorTime);
+        region.GraduallyChangeSelectionColor(new Color(0, 0, 0, 0), regionChangingColorTime);
     }
     
     public void UpdatePlayersRegions(Player player)
@@ -1358,7 +1362,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void SelectRegionAsAttacked(Region region)
     {
         attackedRegion = region;
-        attackedRegion.GraduallyChangeInnerGlowColor(attackedRegionColor, regionChangingColorTime);
+        attackedRegion.GraduallyChangeSelectionColor(attackedRegionColor, regionChangingColorTime);
         attackedRegion.GraduallyChangeOutlineColor(attackedRegionColor, regionChangingColorTime);
     }
 

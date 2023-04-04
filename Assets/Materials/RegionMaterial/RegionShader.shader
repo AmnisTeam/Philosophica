@@ -107,7 +107,14 @@ Shader "Unlit/RegionShader"
         _DrawOutlineColor ("Draw outline color", Range(0,1)) = 0
         _DrawInnerGlowColor ("Draw inner color", Range(0,1)) = 0
         _Aspect ("Aspect", Range(0,1)) = 0
-        _Width ("Width", Range(0, 10000)) = 1
+        _Width ("Width", Float) = 500
+        _SelectionColor ("Selection color", Color) = (1, 1, 1, 1)
+        _Angle ("Selection angle", Range(0, 6.28)) = 0
+        _Thickness ("Selection thickness", Range(0, 1)) = 0.5
+        _Frequency ("Selection frequency", Float) = 100
+        _SelectionOffset ("Selection offset", Float) = 0
+        _DrawOnlySelection ("Draw only selection", Float) = 0
+        
     }
     SubShader
     {
@@ -153,6 +160,12 @@ Shader "Unlit/RegionShader"
             float _DrawInnerGlowColor;
             float _Aspect;
             float _Width;
+            float4 _SelectionColor;
+            float _Angle;
+            float _Thickness;
+            float _Frequency;
+            float _DrawOnlySelection;
+            float _SelectionOffset;
 
             v2f vert (appdata v)
             {
@@ -230,6 +243,16 @@ Shader "Unlit/RegionShader"
                 return color;
             }
 
+            float4 draw_selection(float2 uv, float4 color, float angle, float thickness, float frequency, float offset)
+            {
+                float2 pos = float2(uv.x / ((float)6 / _Width), uv.y / ((float)6 / (_Width * _Aspect)));
+                pos.x += offset;
+                float2 dir = float2(cos(angle), sin(angle));
+                float a = cos((dot(pos * frequency, dir)) / 2);
+
+                return color * (a > thickness * 2 - 1 ? 1 : 0);
+            }
+
             fixed4 frag (v2f i) : SV_Target
             {
                 //float aspect = _ScreenParams.x / _ScreenParams.y;
@@ -262,6 +285,9 @@ Shader "Unlit/RegionShader"
 
                     color *= regionColor * 4;
                 }
+
+                if(_DrawOnlySelection >= 1)
+                    color = draw_selection(i.uv, _SelectionColor, _Angle, _Thickness, _Frequency, _SelectionOffset);
         
                 return color;
             }

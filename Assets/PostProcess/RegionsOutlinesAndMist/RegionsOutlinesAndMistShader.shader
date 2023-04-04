@@ -20,6 +20,7 @@ Shader "Custom/RegionsOutlinesAndMistShader"
             sampler2D _RegionsColorsTexture;
             sampler2D _OutlineTexture;
             sampler2D _InnerGlowTexture;
+            sampler2D _SelectionTexture;
             float2 _MainTex_TexelSize;
 
 
@@ -49,10 +50,13 @@ Shader "Custom/RegionsOutlinesAndMistShader"
 
             float4 Frag(VaryingsDefault i) : SV_Target
             {
-                float4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
+                float4 mainColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
                 float4 regionsOnlyColor = tex2D(_NoShaderTexture, i.texcoord);
                 float4 regionsColor = tex2D(_RegionsColorsTexture, i.texcoord);
                 float4 outlineColor = tex2D(_OutlineTexture, i.texcoord);
+                float4 outline = get_outlines(i.texcoord, _OutlineTexture, 2);
+                float4 selectionColor = tex2D(_SelectionTexture, i.texcoord);
+                float4 color = 0;
 
 
                 // float4 blurColor = (tex2D(_NoShaderTexture, i.texcoord) + 
@@ -64,9 +68,25 @@ Shader "Custom/RegionsOutlinesAndMistShader"
                 if (outlineColor.x >= 0.01 || outlineColor.y >= 0.01 || outlineColor.z >= 0.01)
                     whiteAndBlackColor = 1;
 
+                color += mainColor;
+                color += regionsOnlyColor * 0.2f;
+                color += outline;
+                color += whiteAndBlackColor * tex2D(_InnerGlowTexture, i.texcoord) * 2;
+
+                if (outline.x + outline.y + outline.z > 0.1)
+                    return outline;
+
+                if (selectionColor.x + selectionColor.y + selectionColor.z > 0.1)
+                    return selectionColor;
                 
-                return color + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _OutlineTexture, 2) + whiteAndBlackColor * tex2D(_InnerGlowTexture, i.texcoord) * 2;
+                return color;
+
+                //if (selectionColor.a != 0)
+                //    return selectionColor;
+                //else
+                //    return mainColor + regionsOnlyColor * 0.2f + get_outlines(i.texcoord, _OutlineTexture, 2) + whiteAndBlackColor * tex2D(_InnerGlowTexture, i.texcoord) * 2;
                 //return outlineColor;
+                //return tex2D(_SelectionTexture, i.texcoord);
             }
             ENDHLSL
         }

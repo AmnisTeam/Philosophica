@@ -8,6 +8,7 @@ public class NoRegionShaderTextureScript : MonoBehaviour
     public RenderTexture noShaderTexture;
     public RenderTexture outlineTexture;
     public RenderTexture innerGlowTexture;
+    public RenderTexture selectionTexture;
     public RegionsSystem regionsSystem;
     private int renderTextureDepth = 24;
     void Start()
@@ -15,6 +16,7 @@ public class NoRegionShaderTextureScript : MonoBehaviour
         noShaderTexture = new RenderTexture(Screen.width, Screen.height, renderTextureDepth);
         outlineTexture = new RenderTexture(Screen.width, Screen.height, renderTextureDepth);
         innerGlowTexture = new RenderTexture(Screen.width, Screen.height, renderTextureDepth);
+        selectionTexture = new RenderTexture(Screen.width, Screen.height, renderTextureDepth);
     }
 
     void Update()
@@ -49,12 +51,29 @@ public class NoRegionShaderTextureScript : MonoBehaviour
         // Rendering
         GetComponent<Camera>().Render();
 
+
+        SyncRenderTexture(selectionTexture, renderTextureDepth);
+        GetComponent<Camera>().targetTexture = selectionTexture;
+        SetSelectionStateOnRegions(true);
+
+        // Rendering
+        GetComponent<Camera>().Render();
+        SetSelectionStateOnRegions(false);
+
+
         // Restoring old parametors;
         GetComponent<Camera>().targetTexture = defaultTexture;
         SetDrawOnlyColorToAllRegions(false);
         SetDrawInnerGlowToAllRegions(false);
         GetComponent<PostProcessVolume>().enabled = true;
         GetComponent<Camera>().cullingMask = oldMask;
+    }
+
+    public void SetSelectionStateOnRegions(bool state)
+    {
+        float value = state ? 1 : 0;
+        for(int x = 0; x < regionsSystem.regionSerds.Count; x++)
+            regionsSystem.regionSerds[x].region.GetComponent<Renderer>().materials[0].SetFloat("_DrawOnlySelection", value);
     }
 
     public void SetDrawOnlyColorToAllRegions(bool state)

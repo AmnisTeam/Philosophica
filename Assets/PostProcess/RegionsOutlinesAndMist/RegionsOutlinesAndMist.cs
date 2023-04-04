@@ -25,6 +25,7 @@ public sealed class RegionsOutlinesAndMistRenderer : PostProcessEffectRenderer<R
         RenderTexture noShaderTexture = camera.GetComponent<NoRegionShaderTextureScript>().noShaderTexture;
         RenderTexture outlineTexture = camera.GetComponent<NoRegionShaderTextureScript>().outlineTexture;
         RenderTexture innerGlowTexture = camera.GetComponent<NoRegionShaderTextureScript>().innerGlowTexture;
+        RenderTexture selectionTexture = camera.GetComponent<NoRegionShaderTextureScript>().selectionTexture;
 
 
         Shader outlineShader = Shader.Find("Custom/Outline");
@@ -43,6 +44,7 @@ public sealed class RegionsOutlinesAndMistRenderer : PostProcessEffectRenderer<R
         sheet.properties.SetTexture("_NoShaderTexture", blurredTexture);
         sheet.properties.SetTexture("_OutlineTexture", outlineTexture);
         sheet.properties.SetTexture("_InnerGlowTexture", innerGlowTextureTemp2);
+        sheet.properties.SetTexture("_SelectionTexture", selectionTexture);
         RenderTexture.ReleaseTemporary(blurredTexture);
         RenderTexture.ReleaseTemporary(innerGlowTextureTemp);
         RenderTexture.ReleaseTemporary(innerGlowTextureTemp2);

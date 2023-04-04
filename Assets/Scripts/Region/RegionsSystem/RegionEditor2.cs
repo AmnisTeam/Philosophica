@@ -15,6 +15,8 @@ public class RegionEditor2 : Editor
     public UnityEngine.Color unselectedRegionSerdColor;
     public UnityEngine.Color undermousePointColor;
 
+    public GameplayManager gameplayManager;
+
     private List<RegionSerd> regionSerds;
     private RegionSerd selectedRegionSerd;
 
@@ -40,6 +42,8 @@ public class RegionEditor2 : Editor
 
         Undo.undoRedoPerformed += OnUndoOrRedo;
         Tools.hidden = true;
+
+        gameplayManager = GameObject.FindGameObjectWithTag("MANAGER_OBJECT").GetComponent<GameplayManager>();
     }
 
     private void OnDisable()
@@ -166,6 +170,8 @@ public class RegionEditor2 : Editor
             guiEvent.button == 0 &&
             guiEvent.modifiers == EventModifiers.Shift;
 
+        bool shift = guiEvent.modifiers == EventModifiers.Shift;
+
         if (onlyLeftMouseDown)
             CreatePointOnMousePositionInSelectedRegionSerd();
 
@@ -203,12 +209,32 @@ public class RegionEditor2 : Editor
                 draggedPoint = null;
             }
         }
+
+        if (shift)
+            RecreateRegions();
+    }
+
+    public void RecreateRegions()
+    {
+        for(int x = 0; x < regionSerds.Count; x++)
+        {
+            Mesh mesh = regionSerds[x].region.GetComponent<MeshFilter>().mesh;
+            Destroy(regionSerds[x].region.gameObject);
+
+            Region region = InstantiateNewRegion();
+            region.Init(regionsSystem, gameplayManager);
+            region.GetComponent<MeshFilter>().mesh = mesh;
+
+            regionSerds[x].region = region;
+        }
+
+        QueryGraphicsRepaint();
     }
 
     public RegionSerd CreateRegionSerd()
     {
         Region region = InstantiateNewRegion();
-        region.Init(regionsSystem);
+        region.Init(regionsSystem, gameplayManager);
 
         RegionSerd regionSerd = new RegionSerd(region);
 
