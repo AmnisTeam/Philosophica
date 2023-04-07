@@ -5290,7 +5290,7 @@ MonoBehaviour:
   selectedRegionColor: {r: 1, g: 1, b: 1, a: 1}
   attackedRegionColor: {r: 1, g: 0.23515818, b: 0.16509432, a: 1}
   unclaimedRegionColor: {r: 1, g: 1, b: 1, a: 1}
-  selectionOffsetSpeed: 0.5
+  selectionOffsetSpeed: 0.25
   iconsContent: {fileID: 0}
   colorsHolderInstance: {fileID: 0}
   pv: {fileID: 0}
