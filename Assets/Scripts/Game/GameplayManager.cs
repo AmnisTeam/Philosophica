@@ -1947,7 +1947,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         losePlayerAnnouncement.SetActive(true);
         losePlayerAnnouncementText.text = "Игрок " + "<color=#" + battle.GetLoser().player.color.ToHexString().Substring(0, 6) + ">" + battle.GetLoser().player.nickname + "</color> потерял все территории";
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
-        GlobalVariables.Delay(menusTransitionTime + losePlayerAnnouncmentTime / 2.0, () => { scoreTableManager.FindRowByPlayer(battle.GetLoser().player).GetComponent<ScoreTableRow>().isLose = true; });
+        GlobalVariables.Delay(menusTransitionTime + losePlayerAnnouncmentTime / 2.0, () => { 
+            scoreTableManager.FindRowByPlayer(battle.GetLoser().player).GetComponent<ScoreTableRow>().isLose = true;
+            while(playersManager.players.get(currentOffensivePlayer).isLose)
+                currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
+    });
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime)
             .setDelay((float)(menusTransitionTime + losePlayerAnnouncmentTime))
             .setOnComplete(() => { 

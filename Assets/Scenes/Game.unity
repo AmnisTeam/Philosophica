@@ -1028,6 +1028,38 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 32189312}
     m_Modifications:
+    - target: {fileID: 264928980, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.11001587
+      objectReference: {fileID: 0}
+    - target: {fileID: 1911847111, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1911847111, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1911847111, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1911847111, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1911847111, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 105.869995
+      objectReference: {fileID: 0}
+    - target: {fileID: 1911847111, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 186
+      objectReference: {fileID: 0}
+    - target: {fileID: 1911847111, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 92
+      objectReference: {fileID: 0}
     - target: {fileID: 2090089064792271243, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1118,7 +1150,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4932213922188618693, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4933319902308869500, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
       propertyPath: personsManager
