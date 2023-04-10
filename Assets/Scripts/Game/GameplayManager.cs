@@ -110,8 +110,8 @@ public class SynchronizedBoolCondition : BoolCondition
 public class FastedWinner
 {
     public Player player;
-    public string answer;
-    public float timeToAnswer;
+    public string answer = "";
+    public float timeToAnswer = 0;
 }
 
 public class GameplayManager : MonoBehaviourPunCallbacks
@@ -346,6 +346,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public SynchronizedBoolCondition fromCorrectAnsewerRevealingInBattleToBackToStageOne;
     public SynchronizedBoolCondition fromBattleRoundResultsToBackToStageOne;
     public SynchronizedBoolCondition fromBattleResultsToBackToStageOne;
+
+    public State endGameState;
 
     public int scoresForGetRegion = 100;
     public float scoreFactorForDamage = 1;
@@ -1914,7 +1916,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         EndMenuManager endMenuManager = endGameMenu.GetComponent<EndMenuManager>();
         endMenuManager.SetEndMenuData(players, fastedWinnerLocal, winnerWithTheMostTerritories);
 
-        endMenuManager.resultPanel.topWordWinner.prizeWinner.points.text = Math.Round(fastedWinner.timeToAnswer, 1).ToString();
+        endMenuManager.resultPanel.topWordWinner.prizeWinner.points.text = fastedWinner.timeToAnswer == float.MaxValue ? "-" : Math.Round(fastedWinner.timeToAnswer, 1).ToString();
         endMenuManager.resultPanel.longestWordWinner.prizeWinner.points.text = maxClaimedRegions.ToString();
     }
 
@@ -2274,7 +2276,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                                                         backToStageOneState,
                                                         gameStateMachine));
 
-        State endGameState = new State();
+        endGameState = new State();
         endGameState.startEvents += EndGameStart;
         endGameState.updateEvents += EndGameUpdate;
         gameStateMachine.states.Add(endGameState);
@@ -2315,7 +2317,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     private void ChangeStageIfOnePlayerInGame()
     {
-        if (PhotonNetwork.CountOfPlayers <= 1)
+        if (PhotonNetwork.CurrentRoom.PlayerCount <= 1)
         {
             bool isHaveTransition = false;
             for (int i = 0; i < gameStateMachine.transitions.Count; i++)
@@ -2330,7 +2332,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
             if (isHaveTransition)
             {
-
+                for (int i = 0; i < gameStateMachine.states.Count; i++)
+                {
+                    if (gameStateMachine.states[i] == endGameState)
+                    {
+                        gameStateMachine.activeState = i;
+                        EndGameStart(); 
+                        break;
+                    }
+                }
             }
         }
     }
@@ -2343,6 +2353,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         if (waitTimer >= waiteTime)
         {
+            ChangeStageIfOnePlayerInGame();
             gameStateMachine.UpdateConditions();
             gameStateMachine.UpdateEvents();
             ChangeStageIfOnePlayerInGame();
