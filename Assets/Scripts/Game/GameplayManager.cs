@@ -1087,7 +1087,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void stageTwoAnnouncementUpdate()
     {
-        if (!playersManager.DidSomeoneLeave())
+        if (!(playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose()))
         {
             stageTwoAnnouncmentTimer += Time.deltaTime;
 
@@ -1100,7 +1100,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
                 GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
                 {
-                    if (playersManager.DidSomeoneLeave())
+                    if (playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose())
                         fromStageTwoAnnouncementToBackToStageOne.Set(true);
                     else
                         fromStageTwoAnnouncementToSecondStageHint.Set(true);
@@ -1133,7 +1133,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void SecondStageHintUpdate()
     {
-        if (!playersManager.DidSomeoneLeave())
+        if (!(playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose()))
         {
             secondStageHintTimer += Time.deltaTime;
             if (secondStageHintTimer >= secondStageHintTime)
@@ -1145,7 +1145,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
                 {
 
-                    if (playersManager.DidSomeoneLeave())
+                    if (playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose())
                         fromSecondStageHintToBackToStageOne.Set(true);
                     else
                         fromSecondStageHintToOffensivePlayerSelection.Set(true);
@@ -1253,7 +1253,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void OffensivePlayerSelectionUpdate()
     {
-        if (!playersManager.DidSomeoneLeave())
+        if (!(playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose()))
         {
             int roundsCount = 3;
             double maxPlayersHealth = 100;
@@ -1345,7 +1345,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 UnselectAllSelectedRegionsWithAnimation();
                 GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
                 {
-                    if (playersManager.DidSomeoneLeave())
+                    if (playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose())
                         fromOffensivePlayerSelectionToBackToStageOne.Set(true);
                     else
                         offensivePlayerSelectionIsEnded.Set(true);
@@ -1427,7 +1427,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void AttackAnnouncementUpdate()
     {
-        if (!playersManager.DidSomeoneLeave())
+        if (!(playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose()))
         {
             attackAnnouncementTimer += Time.deltaTime;
 
@@ -1439,7 +1439,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 });
                 GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
                 {
-                    if (playersManager.DidSomeoneLeave())
+                    if (playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose())
                         fromAttackAnnouncementToBackToStageOne.Set(true);
                     else
                         attackAnnouncementIsEnded.Set(true);
@@ -1489,7 +1489,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void OpponentsAnnouncementUpdate()
     {
-        if (!playersManager.DidSomeoneLeave())
+        if (!(playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose()))
         {
             OpponentsAnnouncementTimer += Time.deltaTime;
 
@@ -1501,7 +1501,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 });
                 GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
                 {
-                    if (playersManager.DidSomeoneLeave())
+                    if (playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose())
                         fromOpponentsAnnouncementToBackToStageOne.Set(true);
                     else
                         opponentsAnnouncementIsEnded.Set(true);
@@ -1534,7 +1534,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void QuestionNumberAnnouncementUpdate()
     {
         //fromQuestionNumberAnnouncementToBackToStageOne
-        if (!playersManager.DidSomeoneLeave())
+        if (!(playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose()))
         {
             questionNumberAnnouncementTimer += Time.deltaTime;
 
@@ -1546,7 +1546,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 });
                 GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
                 {
-                    if (playersManager.DidSomeoneLeave())
+                    if (playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose())
                         fromQuestionNumberAnnouncementToBackToStageOne.Set(true);
                     else
                         questionNumberAnnouncementIsEnded.Set(true);
@@ -1603,7 +1603,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void AskQuestionInBattleUpdate()
     {
         //fromAskQuestionInBattleToBackToStageOne
-        if (!playersManager.DidSomeoneLeave())
+        if (!(playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose()))
         {
             AskQuestionInBattle askQuestionInBattleComponent = askQuestionInBattle.GetComponent<AskQuestionInBattle>();
             askQuestionInBattleComponent.timer += Time.deltaTime;
@@ -1641,7 +1641,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void CorrectAnsewerRevealingInBattleUpdate()
     {
-        if (!playersManager.DidSomeoneLeave())
+        if (!(playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose()))
         {
             correctAnsewerRevealingTimer += Time.deltaTime;
 
@@ -1653,7 +1653,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 });
                 GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
                 {
-                    if (playersManager.DidSomeoneLeave())
+                    if (playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose())
                         fromCorrectAnsewerRevealingInBattleToBackToStageOne.Set(true);
                     else
                         correctAnsewerRevealingInBattleIsEnded.Set(true);
@@ -1723,7 +1723,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
             GlobalVariables.Delay(battleRoundResultsDisappearingTime + menusTransitionDelayTime, () =>
             {
-                if (playersManager.DidSomeoneLeave())
+                if (playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose())
                 {
                     fromBattleRoundResultsToBackToStageOne.Set(true);
                 }
@@ -1766,7 +1766,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void BattleResultsUpdate()
     {
-        if (!playersManager.DidSomeoneLeave())
+        if (!(playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose()))
         {
             battleResultsTimer += Time.deltaTime;
             closeBattleResultsTimer += Time.deltaTime;
@@ -1835,7 +1835,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                             fromBattleResultsToEndGame.Set(true);
                         else
                         {
-                            if (playersManager.DidSomeoneLeave())
+                            if (playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose())
                                 fromBattleResultsToBackToStageOne.Set(true);
                             else
                                 fromBattleResultsToOffensive.Set(true);

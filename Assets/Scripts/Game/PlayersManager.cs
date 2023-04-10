@@ -71,6 +71,20 @@ public class PlayersManager : MonoBehaviour
     public Queue<Player> leavedPlayersQueue;
     private bool someoneLeaved = false;
     
+    public bool IsHaveNotLose()
+    {
+        bool haveNotLose = false;
+        foreach (Player leavedPlayer in leavedPlayersQueue)
+        {
+            if (!leavedPlayer.isLose)
+            {
+                haveNotLose = true;
+                break;
+            }
+        }
+        return haveNotLose;
+    }
+
     public void connected(Player player)
     {
         players.add(player);
