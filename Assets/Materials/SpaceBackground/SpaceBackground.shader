@@ -4,7 +4,7 @@ Shader "Unlit/SpaceBackground"
     {
         _BackgroundColor ("Background color", Color) = (0,0,0,1)
         _Offset ("Offset", Vector) = (0,0,0,1)
-        _GridSize ("Grid size", Range(0,0.3)) = 0.2
+        _CellsCount ("Cells count", Range(0,100)) = 10
         _StarsRadius ("Stars radius", Range(0,0.3)) = 0.02
     }
     SubShader
@@ -36,17 +36,12 @@ Shader "Unlit/SpaceBackground"
                 float4 color : COLOR;
             };
 
+            
+
             float4 _BackgroundColor;
             float4 _Offset;
             float _StarsRadius;
-            float _GridSize;
-
-            float2 n22 (float2 p)
-            {
-                float3 a = frac(p.xyx * float3(123.34, 234.34, 345.65));
-                a += dot(a, a + 34.45);
-                return frac(float2(a.x * a.y, a.y * a.z));
-            }
+            float _CellsCount;
 
             v2f vert (appdata v)
             {
@@ -57,34 +52,67 @@ Shader "Unlit/SpaceBackground"
                 return o;
             }
 
-
-
-
-            float4 DrawLayer(float2 uv, float seed, float speed) 
+            float2 n22 (float2 p)
             {
-                uv += _Offset * speed;
+                float3 a = frac(p.xyx * float3(123.34, 234.34, 345.65));
+                a += dot(a, a + 34.45);
+                return frac(float2(a.x * a.y, a.y * a.z));
+            }
 
+            float4 draw_stars_layer(float2 uv, float2 offset, float speed, float cells_count, float stars_radius, float seed) 
+            {
+                uv += offset * speed;
                 float4 color = 0;
-                float cellsCount = 1 / _GridSize;
-
-                float2 gridPos = float2((int)(uv.x / _GridSize),(int)(uv.y / _GridSize) );
-
-                float2 localPos = n22(float2(gridPos.x + seed, gridPos.y + seed));
-
-                float areaSize = _GridSize - _StarsRadius * 2;
-
-                float2 pointPos = float2(gridPos.x, gridPos.y) * _GridSize + _StarsRadius + areaSize * localPos;
-
-                float dist = distance(pointPos, uv);
-
-                if (dist < _StarsRadius)
-                    color = 1;
+                float2 cell_pos_in_grid = floor(uv * cells_count);
+                float2 pos_in_grid = uv * cells_count;
+                float2 local_pos_in_cell = pos_in_grid - cell_pos_in_grid;
+                float2 star_local_pos_in_cell = n22(cell_pos_in_grid + seed);
+                float area_for_star_in_cell = (1 - stars_radius * 2);
+                float2 star_pos_in_grid = cell_pos_in_grid + stars_radius + star_local_pos_in_cell * area_for_star_in_cell;
+                float dist = distance(pos_in_grid, star_pos_in_grid);
+                if (dist <= stars_radius)
+                    color = float4(1, 1, 1, 1);
                 return color;
             }
 
-            float plane(float x, float y, float a, float b, float c, float centerX, float centerY) 
+
+            float2 get_gradient(float2 pos)
             {
-                return (x - centerX) * a + (y - centerY) * b + c;
+                float twoPi = 6.283185;
+                float angle = n22(pos).x * twoPi;
+                return float2(cos(angle), sin(angle));
+            }
+
+
+            float4 perlin_noise(float2 uv, float cells_count)
+            {
+                float2 pos_in_grid = uv * cells_count;
+                float2 cell_pos_in_grid =  floor(pos_in_grid);
+                float2 local_pos_in_cell = (pos_in_grid - cell_pos_in_grid);
+                float2 blend = local_pos_in_cell * local_pos_in_cell * (3.0f - 2.0f * local_pos_in_cell);
+                
+                float2 left_top = cell_pos_in_grid + float2(0, 1);
+                float2 right_top = cell_pos_in_grid + float2(1, 1);
+                float2 left_bottom = cell_pos_in_grid + float2(0, 0);
+                float2 right_bottom = cell_pos_in_grid + float2(1, 0);
+                
+                float left_top_dot = dot(pos_in_grid - left_top, get_gradient(left_top));
+                float right_top_dot = dot(pos_in_grid - right_top,  get_gradient(right_top));
+                float left_bottom_dot = dot(pos_in_grid - left_bottom, get_gradient(left_bottom));
+                float right_bottom_dot = dot(pos_in_grid - right_bottom, get_gradient(right_bottom));
+                
+                float noise_value = lerp(
+                                        lerp(left_bottom_dot, right_bottom_dot, blend.x), 
+                                        lerp(left_top_dot, right_top_dot, blend.x), 
+                                        blend.y);
+            
+                
+                return (0.5 + 0.5 * (noise_value / 0.7));
+            }
+
+            float perlin_noise_extended(float2 uv, float2 offset, float speed, float cells_count, float sharpness = 1) 
+            {
+                return pow(perlin_noise(uv + offset * speed, cells_count), sharpness);
             }
 
             fixed4 frag (v2f i) : SV_Target
@@ -93,56 +121,13 @@ Shader "Unlit/SpaceBackground"
                 float4 color = _BackgroundColor;
                 float2 uv = float2(1 - i.uv.x, 1 - i.uv.y);
 
-                color += DrawLayer(uv, 1 , 0.01);
-                color += (DrawLayer(uv, 5, 0.003) * 0.5f);
-                color += (DrawLayer(uv, 5, 0.001) * 0.2f);
-
-                float cellsCount = 1 / _GridSize;
-                float2 gridPos = float2(floor(uv.x / _GridSize),floor(uv.y / _GridSize) );
-                float2 localPos = (uv - gridPos * _GridSize) / _GridSize;
-
-                // float2 lefttop = float2(gridPos.x, gridPos.y) * _GridSize;
-                // float2 righttop = float2(gridPos.x, gridPos.y) * _GridSize + float2(_GridSize, 0);
-                // float2 rightbottom = float2(gridPos.x, gridPos.y) * _GridSize + _GridSize;
-                // float2 leftbottom = float2(gridPos.x, gridPos.y) * _GridSize + float2(0, _GridSize);
-
-                float2 lefttop = (gridPos + float2(0, 1)) * _GridSize;
-                float2 righttop = (gridPos + float2(1, 1)) * _GridSize;
-                float2 rightbottom = (gridPos + float2(1, 0)) * _GridSize;
-                float2 leftbottom = (gridPos + float2(0, 0)) * _GridSize;
-
-                float PI = 3.14;
-
-                float lefttopRandom = n22(lefttop) * 2 * PI;
-                float righttopRandom = n22(righttop) * 2 * PI;
-                float rightbottomRandom = n22(rightbottom) * 2 * PI;
-                float leftbottomRandom = n22(leftbottom) * 2 * PI;
-
-                float2 lefttopRandVec = float2(cos(lefttopRandom), sin(lefttopRandom));
-                float2 righttopRandVec = float2(cos(righttopRandom), sin(righttopRandom));
-                float2 rightbottomRandVec = float2(cos(rightbottomRandom), sin(rightbottomRandom));
-                float2 leftbottomRandVec = float2(cos(leftbottomRandom), sin(leftbottomRandom));
-
-                float lefttopPlane = dot(lefttopRandVec, (uv - lefttop) / _GridSize);
-                float righttopPlane = dot(righttopRandVec, (uv - righttop) / _GridSize);
-                float rightbottomPlane = dot(rightbottomRandVec, (uv - rightbottom) / _GridSize);
-                float leftbottomPlane = dot(leftbottomRandVec, (uv - leftbottom) / _GridSize);
-
-                // float lefttopPlaneValue = plane(uv.x, uv.y, lefttopRand.x, lefttopRand.y, 0, lefttop.x, lefttop.y);
-                // float righttopPlaneValue = plane(uv.x, uv.y, righttopRand.x, righttopRand.y, 0, righttop.x, righttop.y);
-                // float rightbottomPlaneValue = plane(uv.x, uv.y, rightbottomRand.x, rightbottomRand.y, 0, rightbottom.x, rightbottom.y);
-                // float leftbottomPlaneValue = plane(uv.x, uv.y, leftbottomRand.x, leftbottomRand.y, 0, leftbottom.x, leftbottom.y);
+                color += draw_stars_layer(uv, _Offset, 0.01, _CellsCount, _StarsRadius, 0);
+                color += draw_stars_layer(uv, _Offset, 0.003, _CellsCount, _StarsRadius, 1) * 0.5f;
+                color += draw_stars_layer(uv, _Offset, 0.001, _CellsCount, _StarsRadius, 2) * 0.2f;
                 
-
-                float topT = localPos.x;
-                float topValue = lerp(lefttopPlane, righttopPlane, topT);
-
-                float bottomT = localPos.x;
-                float bottomValue = lerp(leftbottomPlane, rightbottomPlane, bottomT);
-
-                float resultT = localPos.y;
-                float resultValue = lerp(bottomValue, topValue, resultT);
-                
+                color += perlin_noise_extended(uv, _Offset, 0.003, 10) * 
+                         perlin_noise_extended(uv, _Offset, 0.003, 7, 5) * 
+                         float4(0.5, 0.5, 1, 1) * 0.3f;
                 return color;
             }         
             ENDCG

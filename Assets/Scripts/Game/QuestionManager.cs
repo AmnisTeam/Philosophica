@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static QuestionManager;
+using Photon.Pun;
 
-public class QuestionManager : MonoBehaviour
+public class QuestionManager : MonoBehaviourPunCallbacks
 {
     public class Question
     {
@@ -26,10 +26,16 @@ public class QuestionManager : MonoBehaviour
     public TableCompiler tableCompiler;
     public Question activeQuestion;
 
+    public GameObject questionMenu;
+    public GameObject content;
+    public GameObject tableMenu;
+
+    public PhotonView pv;
+
     public float timeToQuestion;
     public float timerToQuestion;
     public int rightAnswer = 0;
-    public int selectedAnswer = 0;
+    public int selectedAnswer = -1;
     public bool haveAnswer = false;
     public bool endQuestion = false;
 
@@ -41,11 +47,20 @@ public class QuestionManager : MonoBehaviour
     public float time = 0.8f;
     private float timer = 0;
 
-    public Animator questionMenuAnimator;
+    private bool isReset = false;
+    public float menusTransitionTime = 0.2f;
+    private bool onceShowTable = false;
 
     public void setQuestion(Question question)
     {
-        ShowTable(false);
+        onceShowTable = false;
+        //ShowTable(false);
+        content.SetActive(true);
+        content.GetComponent<CanvasGroup>().alpha = 1;
+
+        tableMenu.SetActive(false);
+        tableMenu.GetComponent<CanvasGroup>().alpha = 0;
+        
         OpenQuestionMenu();
 
         timeToQuestion = question.timeToQuestion;
@@ -57,14 +72,14 @@ public class QuestionManager : MonoBehaviour
         }
         
         rightAnswer = question.idRightAnswer;
-        selectedAnswer = 0;
+        selectedAnswer = -1;
 
         foreach (Player player in playersManager.players.list) {
-            if (player.isLocalClient) {
-                playersManager.playerAnswerData.find(player.id).answerId = 0;
-                playersManager.playerAnswerData.find(player.id).timeToAnswer = timeToQuestion;
-                break;
-            }
+            //if (player.isLocalClient) {
+            playersManager.playerAnswerData.find(player.id).answerId = -1;
+            playersManager.playerAnswerData.find(player.id).timeToAnswer = timeToQuestion;
+                //break;
+            //}
         }
         
         haveAnswer = false;
@@ -72,28 +87,42 @@ public class QuestionManager : MonoBehaviour
         haveQuestion = true;
         endQuestion = false;
         
-        selectionQuestions.setVisibleButtons();
+        //selectionQuestions.setVisibleButtons();
+        //selectionQuestions.HideAllBordersWithoutAnimation();
+        //selectionQuestions.MarkAllAnswersAsDefaultWithoutAnimation();
     }
 
-    public void setQuestion(int id)
+    /*public void setQuestion(int id)
     {
-        setQuestion(questionLoader.questions[id % questionLoader.questions.Count()]);
-    }
+        setQuestion(questionLoader.GetRandQuestionWithRemove());
+    }*/
 
     public void ShowTable(bool toShowTable)
-    {
-        questionMenuAnimator.SetBool("ShowTable", toShowTable);
+    {    
+        if(toShowTable)
+        {
+            content.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { content.SetActive(false); tableMenu.SetActive(true); });
+            tableMenu.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setDelay(menusTransitionTime);
+        }
+        else
+        {
+            tableMenu.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { tableMenu.SetActive(false); content.SetActive(true); });
+            content.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setDelay(menusTransitionTime);
+        }
+
         showTable = toShowTable;
     }
 
     public void OpenQuestionMenu()
     {
-        questionMenuAnimator.SetTrigger("Open");
+        questionMenu.SetActive(true);
+        questionMenu.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
+        
     }
 
     public void CloseQuestionMenu()
     {
-        questionMenuAnimator.SetTrigger("Close");
+        questionMenu.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { if(questionMenu) questionMenu.SetActive(false); });
     }
 
     public void loadQuestions()
@@ -119,7 +148,7 @@ public class QuestionManager : MonoBehaviour
         //questions[1].answer[3] = "Зелёнка";
         //questions[1].timeToQuestion = 10;
         //questions[1].idRightAnswer = 1;
-        questionLoader.LoadQuestions();
+        //questionLoader.LoadQuestions();
     }
 
     public void checkSelectAnswer()
@@ -133,6 +162,7 @@ public class QuestionManager : MonoBehaviour
                 if (player.isLocalClient) {
                     playersManager.playerAnswerData.find(player.id).answerId = selectedAnswer;
                     playersManager.playerAnswerData.find(player.id).timeToAnswer = timeToQuestion - timerToQuestion;
+                    Debug.Log($">>> checkSelectAnswer() -- {player} answered {selectedAnswer} within {timeToQuestion - timerToQuestion} seconds");
                     break;
                 }
             }
@@ -143,6 +173,8 @@ public class QuestionManager : MonoBehaviour
     {
         questionLoader = new QuestionLoader();
         loadQuestions();
+
+        pv = GetComponent<PhotonView>();
     }
 
     void Start()
@@ -169,21 +201,31 @@ public class QuestionManager : MonoBehaviour
                 endQuestion = true;
                 haveAnswer = true;
                 showTable = true;
-                selectedAnswer = selectionQuestions.activeSelection;
-                timerToShowTable = timeToShowTable;
+                /*selectedAnswer = selectionQuestions.activeSelection;
+                timerToShowTable = timeToShowTable;*/
 
                 foreach (Player player in playersManager.players.list) {
                     if (player.isLocalClient) {
                         playersManager.playerAnswerData.find(player.id).answerId = selectionQuestions.activeSelection;
+                        pv.RPC("RPC_RevealAnswerOfOpponentStageOne", RpcTarget.Others, player.id,
+                                                                                       selectionQuestions.activeSelection,
+                                                                                       playersManager.playerAnswerData.find(player.id).timeToAnswer);
                         break;
                     }
                 }
             }
 
-            if (timerToShowTable == 0 && showTable)
+            if (timerToShowTable == 0 && showTable && !onceShowTable)
             {
-                questionsMenu.GetComponent<Animator>().SetBool("ShowTable", true);
+                ShowTable(true);
                 tableCompiler.compileTheTable();
+                isReset = true;
+                onceShowTable = true;
+            }
+            else if (isReset) //вызов только 1 раз для сброса таблицы
+            {
+                tableCompiler.resetTable();
+                isReset = false;
             }
 
             minutes.text = "";
@@ -198,5 +240,13 @@ public class QuestionManager : MonoBehaviour
                 secundes.text += '0';
             secundes.text += ((int)(timerToQuestion % 60)).ToString();
         }
+        //Debug.Log(selectionQuestions.activeSelection);
+    }
+
+    [PunRPC]
+    public void RPC_RevealAnswerOfOpponentStageOne(int playerIdx, int answerId, float answerTime) {
+        Debug.Log($"{playerIdx} answered {answerId} within {answerTime} seconds");
+        playersManager.playerAnswerData.find(playerIdx).answerId = answerId;
+        playersManager.playerAnswerData.find(playerIdx).timeToAnswer = answerTime;
     }
 }

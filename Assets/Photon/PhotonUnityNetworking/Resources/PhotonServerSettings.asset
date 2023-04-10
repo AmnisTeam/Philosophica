@@ -67,6 +67,13 @@ MonoBehaviour:
   - RPC_ViewResultsStart
   - RPC_ViewResultsUpdate
   - RPC_StepsUpdate
+  - RPC_RevealAnswerOfOpponentStageOne
+  - RPC_RegionWasChosen
+  - RPC_GetScoresForRegion
+  - RPC_RegionDistribution
+  - RPC_SynchronizedPlayers
+  - RPC_SelectAnswerInQuestionMenu
+  - RPC_InitQuestionSession
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

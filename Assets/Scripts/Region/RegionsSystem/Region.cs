@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -10,6 +11,16 @@ using UnityEngine;
 [System.Serializable]
 public class Region : MonoBehaviour
 {
+    float aspect = 0;
+    public Player hostPlayer = null;
+
+    public void Init(RegionsSystem regionsSystem)
+    {
+        gameObject.layer = LayerMask.NameToLayer("Regions");
+        SetColor(regionsSystem.nextRegionColor);
+        SetOutlineColor(new Color(0, 0, 0, 0));
+        SetInnerGlowColor(new Color(0, 0, 0, 0));
+    }
 
     public void SetColor(UnityEngine.Color color)
     {
@@ -39,7 +50,91 @@ public class Region : MonoBehaviour
         if (GetComponent<MeshFilter>().sharedMesh == null)
             GetComponent<MeshFilter>().sharedMesh = new Mesh();
 
-        Triangulator.Triangulate(points, GetComponent<MeshFilter>().sharedMesh);
+        aspect = Triangulator.Triangulate(points, GetComponent<MeshFilter>().sharedMesh);
         GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().sharedMesh;
+    }
+
+    public void SetOutlineColorToRegionColor()
+    {
+        Material material = gameObject.GetComponent<Renderer>().materials[0];
+        Color regionColor = material.GetColor("_RegionColor");
+
+        material.SetColor("_OutlineColor", regionColor);
+    }
+
+    public void SetOutlineColor(Color color)
+    {
+        gameObject.GetComponent<Renderer>().materials[0].SetColor("_OutlineColor", color);
+    }
+
+    public void SetInnerGlowColor(Color color)
+    {
+        gameObject.GetComponent<Renderer>().materials[0].SetColor("_InnerGlowColor", color);
+    }
+
+    public void GraduallyChangeColor(Color color, float time)
+    {
+        Color regionColor = gameObject.GetComponent<Renderer>().materials[0].GetColor("_RegionColor");
+        LeanTween.value(0, 1, time).setOnUpdate((float val) =>
+        {
+            Color currentColor = Color.Lerp(regionColor, color, val);
+            SetColor(currentColor);
+        }).setEaseOutSine();
+    }
+
+    public void GraduallyChangeOutlineColor(Color color, float time)
+    {
+        Color outlineColor = gameObject.GetComponent<Renderer>().materials[0].GetColor("_OutlineColor");
+        LeanTween.value(0, 1, time).setOnUpdate((float val) =>
+        {
+            Color currentColor = Color.Lerp(outlineColor, color, val);
+            SetOutlineColor(currentColor);
+        }).setEaseOutSine();
+    }
+
+    public void GraduallyChangeInnerGlowColor(Color color, float time)
+    {
+        Color innerGlowColor = gameObject.GetComponent<Renderer>().materials[0].GetColor("_InnerGlowColor");
+        LeanTween.value(0, 1, time).setOnUpdate((float val) =>
+        {
+            Color currentColor = Color.Lerp(innerGlowColor, color, val);
+            SetInnerGlowColor(currentColor);
+        }).setEaseOutSine();
+    }
+
+    public void UpdateShaderAspectAndWidth()
+    {
+        Vector3 size = GetComponent<Renderer>().bounds.size;
+        GetComponent<Renderer>().materials[0].SetFloat("_Aspect", size.y / size.x);
+        GetComponent<Renderer>().materials[0].SetFloat("_Width", size.x);
+    }
+
+    public void Awake()
+    {
+        hostPlayer = null;
+        SetOutlineColorToRegionColor();
+    }
+
+
+    //float time = 4;
+    //float timer = 0;
+
+    public void Start()
+    {
+        
+    }
+
+
+    public void Update()
+    {
+        UpdateShaderAspectAndWidth();
+
+        //timer += Time.deltaTime;
+        //if (timer >= time)
+        //{
+        //    GraduallyChangeOutlineColor(new Color(1, 1, 1), 2);
+        //    GraduallyChangeInnerGlowColor(new Color(1, 1, 1), 2);
+        //    timer = float.NaN;
+        //}
     }
 }

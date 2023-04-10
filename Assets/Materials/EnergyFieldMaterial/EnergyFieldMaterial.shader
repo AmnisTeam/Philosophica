@@ -3,6 +3,7 @@ Shader "Unlit/EnergyFieldMaterial"
     Properties
     {
         _Albedo ("Albedo", 2D) = "white" {}
+        [HDR]
         _FieldColor("Field color", Color) = (0, 0.909, 0.988, 1)
     }
     SubShader

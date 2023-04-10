@@ -7,12 +7,20 @@ using UnityEngine;
 
 public abstract class Condition
 {
+    public int id = -1;
+
+    public Condition()
+    {
+
+    }
+
     public abstract bool CheckCondition();
 }
 
 public class Transition
 {
     public Condition condition;
+    public int order;
     public int from;
     public int to;
 
@@ -51,6 +59,8 @@ public class StateMachine
     public List<State> states = new List<State>();
     public List<Transition> transitions = new List<Transition>();
     public int activeState = 0;
+    public int globalConditionId = 0;
+    private int oldCountTransitions = 0;
 
     public StateMachine()
     {
@@ -69,7 +79,24 @@ public class StateMachine
 
     public void UpdateConditions()
     {
+        if(oldCountTransitions != transitions.Count)
+        {
+            UpdateConditionId();
+            oldCountTransitions = transitions.Count;
+        }
         CheckConditions();
+    }
+
+    public void AddTransition(Transition transition)
+    {
+        transitions.Add(transition);
+        UpdateConditionId();
+    }
+
+    public void UpdateConditionId()
+    {
+        for (int x = 0; x < transitions.Count; x++)
+            transitions[x].condition.id = x;
     }
 
     public void CheckConditions()

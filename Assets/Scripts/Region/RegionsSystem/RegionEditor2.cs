@@ -208,7 +208,8 @@ public class RegionEditor2 : Editor
     public RegionSerd CreateRegionSerd()
     {
         Region region = InstantiateNewRegion();
-        region.SetColor(regionsSystem.nextRegionColor);
+        region.Init(regionsSystem);
+
         RegionSerd regionSerd = new RegionSerd(region);
 
         Undo.RecordObject(regionsSystem, "Add new regionSerd");

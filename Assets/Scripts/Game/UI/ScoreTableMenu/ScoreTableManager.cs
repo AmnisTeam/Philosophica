@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System;
 
 public class ScoreTableManager : MonoBehaviourPunCallbacks
 {
@@ -10,6 +11,7 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
     {
         public float timeToEvent = float.NaN;
         public GameObject row;
+        public Player player = null;
 
         public RowMoveableContainer(GameObject row)
         {
@@ -40,16 +42,19 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
         for (int x = 0; x < rows.Count; x++)
         {
             RowMoveableContainer row = rows[x];
+            if (rows[x].row != null)
+            {
+                float upPos = 0;
+                if (x > 0)
+                    if(rows[x - 1].row != null)
+                        upPos = rows[x - 1].row.transform.localPosition.y - (rows[x - 1].row.GetComponent<RectTransform>().rect.height + offset);
 
-            float upPos = 0;
-            if (x > 0)
-                upPos = rows[x - 1].row.transform.localPosition.y - (rows[x - 1].row.GetComponent<RectTransform>().rect.height + offset);
+                float pos = rows[x].row.transform.localPosition.y;
+                float distance = Mathf.Abs(upPos - pos);
 
-            float pos = rows[x].row.transform.localPosition.y;
-            float distance = upPos - pos;
-
-            float velocity = curve.Evaluate((distanceToLerp - distance) / distanceToLerp) * vel;
-            row.row.transform.localPosition = new Vector2(0, row.row.transform.localPosition.y + velocity);
+                float velocity = Mathf.Sign(upPos - pos) * curve.Evaluate((distanceToLerp - distance) / distanceToLerp) * vel;
+                row.row.transform.localPosition = new Vector2(0, row.row.transform.localPosition.y + velocity);
+            }
         }
     }
 
@@ -91,6 +96,18 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
         return id;
     }
 
+    public ScoreTableRow FindRowByPlayer(Player player)
+    {
+        GameObject findedRow = null;
+        for(int x = 0; x < rows.Count; x++)
+            if(rows[x].player == player)
+            {
+                findedRow = rows[x].row;
+                break;
+            }
+        return findedRow.GetComponent<ScoreTableRow>();
+    }
+
     public void ChangeStateOfScoreTable(GameObject gameObject)
     {
         int id = findRowId(gameObject);
@@ -99,8 +116,13 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
 
     public void RemovePlayer(int id)
     {
-        PhotonNetwork.Destroy(rows[id].row);
-        rows.RemoveAt(id);
+        for (int i = 0; i < rows.Count; i++)
+            if (rows[i].player.id == id)
+            {
+                PhotonNetwork.Destroy(rows[i].row);
+                rows.RemoveAt(i);
+                break;
+            }
     }
 
     public void RecreateTable() {
@@ -120,23 +142,101 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
             RowMoveableContainer rowMovableContainer = new RowMoveableContainer(rowObject);
             rows.Add(rowMovableContainer);
         }
+
+        SetTable();
     }
 
-    public void UpdateTable()
+    public List<Player> GetSortedPlayers()
     {
-        Photon.Realtime.Player[] players = PhotonNetwork.PlayerList;
-        for(int x = 0; x < rows.Count; x++)
+        List<Player> players = new List<Player>();
+        for (int x = 0; x < playersManager.players.count; x++)
+            players.Add(playersManager.players.get(x));
+
+        players.Sort((Player a, Player b) =>
         {
+            if (a.isLose) return 1;
+            else if (b.isLose) return -1;
+            else if (a.scores > b.scores) return -1;
+            else if (a.scores < b.scores) return 1;
+            else if (a.claimedRegions.Count > b.claimedRegions.Count) return -1;
+            else if (a.claimedRegions.Count < b.claimedRegions.Count) return 1;
+            else return 0;
+        });
+
+        return players;
+    }
+
+    /*
+     * Ќазначает подр€д идущим (сверху вниз) запис€м в таблицы данные от игроков, которые
+     * сортированы по убыванию очков, а затем по убыванию регионов. 
+     * 
+     * ƒанные заново назначаютс€, без плавной сортировки!!! 
+     * 
+     * Ётот метод вызываетс€ в методе RecreateTable() и лучше нигде в другом месте его не юзать 
+     * (ну если сильно захочетс€, то можно :D )
+     */
+    public void SetTable()
+    {
+        List<Player> players = GetSortedPlayers();
+
+        for (int x = 0; x < rows.Count; x++) {
             ScoreTableRow scoreTableRow = rows[x].row.GetComponent<ScoreTableRow>();
-            Player player = playersManager.players.get(x);
+            rows[x].player = players[x];
+
             scoreTableRow.FillRow(
-                iconsContent.lobbyIcons[(int)players[x].CustomProperties["playerIconId"]], 
-                players[x].NickName, 
-                player.claimedRegions.Count, 
+                iconsContent.lobbyIcons[players[x].iconId], 
+                players[x].nickname, 
+                players[x].claimedRegions.Count, 
                 gameplayManager.regionSystem.regionSerds.Count, 
-                player.scores, 
-                colorsHolder.colors[(int)players[x].CustomProperties["playerColorIndex"]]);
+                players[x].scores, 
+                colorsHolder.colors[players[x].colorId]
+            );
         }
+    }
+
+    /*
+     * ѕеремещает уже созданные записи в таблице (в них также уже должны быть данные)
+     * в пор€дке сортировки.
+     */
+    public void UpdateRowsOrder()
+    {
+        List<Player> players = GetSortedPlayers();
+
+        for(int x = 0; x < players.Count; x++)
+        {
+            int id = -1;
+            for(int y = 0; y < rows.Count; y++)
+                if(rows[y].player == players[x])
+                {
+                    id = y;
+                    break;
+                }
+
+
+            RowMoveableContainer temp = rows[x];
+            rows[x] = rows[id];
+            rows[id] = temp;
+        }
+    }
+
+    /*
+     * ќбнавл€ет уже созданные данные в таблице, а также плавно сортирует их 
+     */
+    public void UpdateTable() {
+        for(int x = 0; x < rows.Count; x++) {
+            ScoreTableRow row = rows[x].row.GetComponent<ScoreTableRow>();
+
+            row.FillRow(
+                iconsContent.lobbyIcons[rows[x].player.iconId],
+                rows[x].player.nickname,
+                rows[x].player.claimedRegions.Count,
+                gameplayManager.regionSystem.regionSerds.Count,
+                rows[x].player.scores,
+                colorsHolder.colors[rows[x].player.colorId]
+            );
+        }
+
+        UpdateRowsOrder();
     }
 
     void Awake()
@@ -159,7 +259,6 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
         }*/
 
         RecreateTable();
-        UpdateTable();
     }
 
     void Update()
@@ -169,29 +268,27 @@ public class ScoreTableManager : MonoBehaviourPunCallbacks
 
         if (delete0)
         {
-            Destroy(rows[0].row);
-            rows.Remove(rows[0]);
+            //Destroy(rows[0].row);
+            //rows.Remove(rows[0]);
+            RemovePlayer(0);
             delete0 = false;
         }
 
         if (delete1)
         {
-            Destroy(rows[1].row);
-            rows.Remove(rows[1]);
+            RemovePlayer(1);
             delete1 = false;
         }
 
         if (delete2)
         {
-            Destroy(rows[2].row);
-            rows.Remove(rows[2]);
+            RemovePlayer(2);
             delete2 = false;
         }
 
         if (delete3)
         {
-            Destroy(rows[3].row);
-            rows.Remove(rows[2]);
+            RemovePlayer(3);
             delete3 = false;
         }
     }

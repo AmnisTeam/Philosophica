@@ -9,13 +9,8 @@ using UnityEngine.UI;
 using Color = UnityEngine.Color;
 using Photon.Pun;
 
-public class AskQuestionInBattle : MonoBehaviourPunCallbacks
+public class AskQuestionInBattle : AskQuestion
 {
-    public Color answerColor;
-    public Color correctAnswerColor;
-
-    public float buttonsChangeTime = 0.3f;
-
     public IconsContentHolder iconsContent;
     public Image opponent1Avatar;
     public TextMeshProUGUI opponent1Name;
@@ -27,27 +22,12 @@ public class AskQuestionInBattle : MonoBehaviourPunCallbacks
     public Slider opponent2HealthBar;
     public TextMeshProUGUI opponent2HealthPointsText;
 
-    public TextMeshProUGUI timerText;
-
-    public TextMeshProUGUI questionText;
-
-    public QuestionManager.Question question;
-
-    public TextMeshProUGUI[] answers;
-    public Image[] answersBackgrounds;
-    public Image[] answersBorders;
-
     public PlayerAnswerData[] opponentsAnswersData;
     public Opponent[] opponents;
-
-    public double timer = 0;
-
-    public PhotonView pv;
 
     public void Init(Opponent opponent1, Opponent opponent2, QuestionManager.Question question)
     {
         iconsContent = GameObject.FindGameObjectWithTag("ICONS_CONTENT_TAG").GetComponent<IconsContentHolder>();
-        pv = GetComponent<PhotonView>();
 
         opponentsAnswersData = new PlayerAnswerData[2];
         for (int i = 0; i < opponentsAnswersData.Length; i++)
@@ -85,19 +65,11 @@ public class AskQuestionInBattle : MonoBehaviourPunCallbacks
         //opponent2HealthPointsText.text = "<color=#FF4F4F>" + opponent2.health + "</color> / " + opponent2.maxHealh;
         opponent2HealthPointsText.text = GetHealthStr(opponent2.health, opponent2.maxHealh, GlobalVariables.healthColor);
 
-        this.questionText.text = question.question;
-        this.question = question;
-
-        for (int a = 0; a < answers.Length && a < question.answer.Length; a++)
-            answers[a].text = question.answer[a];
-        timer = 0;
-        ResetAnswersWithoutAnimation();
+        Init(question);
     }
 
-    public void SelectAnswer(int buttonId)
+    public override void SelectAnswer(int buttonId)
     {
-        Debug.Log("SelectAnswer");
-
         int clientNumber = -1;
         bool isClient = false;
         for (int i = 0; i < opponents.Length; i++)
@@ -110,13 +82,7 @@ public class AskQuestionInBattle : MonoBehaviourPunCallbacks
 
         if (isClient)
         {
-            for (int i = 0; i < answersBorders.Length; i++)
-                if (answersBorders[i].GetComponent<CanvasGroup>().alpha > 0)
-                    answersBorders[i].GetComponent<CanvasGroup>().LeanAlpha(0, buttonsChangeTime).setEaseOutSine();
-                    
-
-            answersBorders[buttonId].GetComponent<CanvasGroup>().LeanAlpha(1, buttonsChangeTime).setEaseOutSine();
-            //MarkAnswerAsCorrect(buttonId);
+            base.SelectAnswer(buttonId);
 
             Debug.Log("buttonId: " + buttonId + ", " + "timeToAnsnwer: " + timer);
 
@@ -129,13 +95,9 @@ public class AskQuestionInBattle : MonoBehaviourPunCallbacks
         }
     }
 
-    public void ShowCorrectAnswer()
+    public override void ShowCorrectAnswer()
     {
-        //for (int i = 0; i < question.answer.Length; i++)
-        //    if (i != question.idRightAnswer)
-        //        MarkAnswerAsDefault(i);
         int idx = 0;
-
         foreach (var opponent in opponents) {
             if (opponent.player.isLocalClient) {
                 pv.RPC("RPC_RevealAnswerOfOpponent", RpcTarget.Others, idx, opponent.playerAnswerData[opponents[idx].playerAnswerData.Count-1].answerId,
@@ -145,7 +107,7 @@ public class AskQuestionInBattle : MonoBehaviourPunCallbacks
             idx++;
         }
 
-        MarkAnswerAsCorrect(question.idRightAnswer);
+        base.ShowCorrectAnswer();
     }
 
     [PunRPC]
@@ -156,34 +118,7 @@ public class AskQuestionInBattle : MonoBehaviourPunCallbacks
         opponents[playerIdx].playerAnswerData[opponents[playerIdx].playerAnswerData.Count-1].timeToAnswer = answerTime;
     }
 
-    public void HideCorrectAnswer()
-    {
-        for (int i = 0; i < question.answer.Length; i++)
-            MarkAnswerAsDefault(i);
-    }
-
-    public void ResetAnswersWithoutAnimation()
-    {
-        for (int i = 0; i < question.answer.Length; i++)
-        {
-            answersBorders[i].GetComponent<CanvasGroup>().alpha = 0;
-            answersBackgrounds[i].color = answerColor;
-        }
-    }
-
-    public void MarkAnswerAsCorrect(int answerId)
-    {
-        LeanTween.color(answersBackgrounds[answerId].rectTransform, correctAnswerColor, buttonsChangeTime);
-    }
-
-    public void MarkAnswerAsDefault(int answerId)
-    {
-        LeanTween.color(answersBackgrounds[answerId].rectTransform, answerColor, buttonsChangeTime);
-    }
-
-    public static string GetHealthStr(double health, double maxHealth, Color healthColor)
-    {
-        string hex = healthColor.ToHexString();
-        return "<color=#" + hex + ">" + (int)health + "</color> / " + maxHealth;
+    public static string GetHealthStr(double health, double maxHealth, Color healthColor) {
+        return $"<color=#{healthColor.ToHexString()}>{(int)health}</color> / {maxHealth}";
     }
 }
