@@ -2313,6 +2313,28 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         //UpdateRegions();
     }
 
+    private void ChangeStageIfOnePlayerInGame()
+    {
+        if (PhotonNetwork.CountOfPlayers <= 1)
+        {
+            bool isHaveTransition = false;
+            for (int i = 0; i < gameStateMachine.transitions.Count; i++)
+            {
+                if (gameStateMachine.transitions[i].condition.CheckCondition())
+                {
+                    isHaveTransition = true;
+                    BoolCondition condition = gameStateMachine.transitions[i].condition as BoolCondition;
+                    condition.Set(false);
+                }
+            }
+
+            if (isHaveTransition)
+            {
+
+            }
+        }
+    }
+
     public void Update()
     {
         sessionElapsedTime += Time.deltaTime;
@@ -2323,6 +2345,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         {
             gameStateMachine.UpdateConditions();
             gameStateMachine.UpdateEvents();
+            ChangeStageIfOnePlayerInGame();
         }
 
         SetNextQuestionTimeText(timeToNextQuestion);
