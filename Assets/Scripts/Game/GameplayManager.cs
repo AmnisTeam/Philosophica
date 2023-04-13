@@ -1244,6 +1244,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         battle = null;
         offensivePlayerSelectionIsEnded.Set(false);
         fromOffensivePlayerSelectionToBackToStageOne.Set(false);
+        isRegionWasSelected = false;
     }
 
     public void SetAttackButtonState(bool state)
