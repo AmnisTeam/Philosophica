@@ -1217,7 +1217,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         if (winner == leavingPlayer)
             winner = null;
 
-        playersManager.disconnect(playerIdInList);
+        playersManager.disconnect(playerIdInList, otherPlayer.ActorNumber - 1);
         UpdateRegionIndices();
     }
 
@@ -2318,7 +2318,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     private void ChangeStageIfOnePlayerInGame()
     {
-        if (PhotonNetwork.CurrentRoom.PlayerCount <= 1)
+        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.PlayerCount <= 1)
         {
             bool isHaveTransition = false;
             for (int i = 0; i < gameStateMachine.transitions.Count; i++)

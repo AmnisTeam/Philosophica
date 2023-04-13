@@ -110,12 +110,12 @@ public class PlayersManager : MonoBehaviour
         //tabMenuManager.disconnectPlayer(id);
     }
 
-    public void disconnect(int id)
+    public void disconnect(int id, int actorNumber)
     {
         toastShower.showText($"Игрок <color=#{players.get(id).color.ToHexString()}>{players.get(id).nickname}</color> покинул игру.");
         leavedPlayersQueue.Enqueue(players.get(id));
         players.list.RemoveAt(id);
-        scoreTableManager.RemovePlayer(id);
+        scoreTableManager.RemovePlayer(actorNumber);
         someoneLeaved = true;
         //tabMenuManager.disconnectPlayer(id);
     }
