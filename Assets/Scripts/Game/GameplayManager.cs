@@ -80,7 +80,7 @@ public class SynchronizedBoolCondition : BoolCondition
     public override bool CheckCondition()
     {
         timer += Time.deltaTime;
-        if(timer >= time)
+        if (timer >= time)
         {
             Synchronize();
             timer = 0;
@@ -100,7 +100,7 @@ public class SynchronizedBoolCondition : BoolCondition
             }
         }
 
-        if(result)
+        if (result)
             state = false;
 
         return result;
@@ -395,7 +395,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Debug.Log("GameBegginingUpdate");
         gameBegginingTimer += Time.deltaTime;
         if (gameBegginingTimer >= gameBegginingTime)
-        {    
+        {
             gameBeggining.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
             {
                 gameBeggining.SetActive(false);
@@ -476,9 +476,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Button[] buttons = questionMenu1.GetComponent<AskQuestionInQuestionMenu>().answerButtons;
         Image[] backgrounds = questionMenu1.GetComponent<AskQuestionInQuestionMenu>().answersBackgrounds;
         // какая-то неведомая херня, работает или нет – неизвестно (тип вырубить кнопки ответа спектатору и поменять цвет на серый (кнопка не активна))
-        for (int i = 0; i < playersManager.players.count; i++) {
-            if (playersManager.players.get(i).isLose && playersManager.players.get(i).isLocalClient) {
-                for (int j = 0; j < buttons.Length; j++) {
+        for (int i = 0; i < playersManager.players.count; i++)
+        {
+            if (playersManager.players.get(i).isLose && playersManager.players.get(i).isLocalClient)
+            {
+                for (int j = 0; j < buttons.Length; j++)
+                {
                     buttons[j].enabled = false;
                     backgrounds[j].color = new Color32(0x2f, 0x2f, 0x2f, 0xff);
                 }
@@ -497,10 +500,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         askQuestionInQuestionMenu.timer += Time.deltaTime;
         float timeLeft = (float)(questionSession.GetCurrentQuestion().timeToQuestion - askQuestionInQuestionMenu.timer);
         if (timeLeft >= 0)
-            askQuestionInQuestionMenu.timerText.text = GlobalVariables.GetTimeStr(timeLeft);             
-                //(timeLeft / 60).ToString("00") + ":" + (timeLeft % 60).ToString("00");
+            askQuestionInQuestionMenu.timerText.text = GlobalVariables.GetTimeStr(timeLeft);
+        //(timeLeft / 60).ToString("00") + ":" + (timeLeft % 60).ToString("00");
 
-        if(askQuestionInQuestionMenu.timer >= questionSession.GetCurrentQuestion().timeToQuestion)
+        if (askQuestionInQuestionMenu.timer >= questionSession.GetCurrentQuestion().timeToQuestion)
         {
             fromAskQuestionToRightAnswer.Set(true);
             askQuestionInQuestionMenu.timer = float.NaN;
@@ -516,7 +519,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void RightAnswerUpdate()
     {
         timerToShowCorrectAnswer += Time.deltaTime;
-        if(timerToShowCorrectAnswer > timeToShowCorrectAnswer)
+        if (timerToShowCorrectAnswer > timeToShowCorrectAnswer)
         {
             timerToShowCorrectAnswer = float.NaN;
             questionMenu1.GetComponent<AskQuestionInQuestionMenu>().HideCorrectAnswer();
@@ -536,9 +539,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void ShowResultsInAskQuestionUpdate()
     {
         timerToShowTableMenu += Time.deltaTime;
-        if(timerToShowTableMenu >= timeToShowTableMenu)
+        if (timerToShowTableMenu >= timeToShowTableMenu)
         {
-            questionMenuTable.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => { 
+            questionMenuTable.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setOnComplete(() => {
                 questionMenuTable.SetActive(false);
                 if (steps >= maxSteps)
                     fromShowResultsInAskQuestionToEndGameMenu.Set(true);
@@ -782,7 +785,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         }
         region.GraduallyChangeSelectionColor(new Color(0, 0, 0, 0), regionChangingColorTime);
     }
-    
+
     public void UpdatePlayersRegions(Player player)
     {
         for (int i = 0; i < player.claimedRegions.Count; i++)
@@ -794,15 +797,18 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RPC_RegionWasChosen(int regionId, int playerColorId, string source) {
+    public void RPC_RegionWasChosen(int regionId, int playerColorId, string source)
+    {
         //Debug.LogError($"Player {playerId} has claimed region {regionId}");
         playSound.SoundPlay("region_claim");
 
         Region region = regionSystem.regionSerds[regionId].region;
         Player player = null;
 
-        for (int i = 0; i < playersManager.players.count; i++) {
-            if (playersManager.players.get(i).colorId == playerColorId) {
+        for (int i = 0; i < playersManager.players.count; i++)
+        {
+            if (playersManager.players.get(i).colorId == playerColorId)
+            {
                 player = playersManager.players.get(i);
                 break;
             }
@@ -815,9 +821,11 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         regionIndexes.Remove(regionId);
         //Debug.LogError($"Free regions: {string.Join(" ", regionIndexes)} ({GetFreeRegionsCount()})");
 
-        if (region && questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer) {
+        if (region && questionMenuTable.GetComponent<TableMenu>().isHaveRightAnswer)
+        {
             Vector2 regionCenter = Vector2.zero;
-            for (int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++) {
+            for (int x = 0; x < region.GetComponent<MeshFilter>().mesh.vertices.Length; x++)
+            {
                 regionCenter += region.GetComponent<MeshFilter>().mesh.vertices[x].ToXY();
             }
 
@@ -825,6 +833,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
             Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
         }
+
+        playersManager.leavedPlayersQueue.Clear();
+        playersManager.RefreshSomeoneLeaveState();
 
         SetStepsText(steps, maxSteps);
         UnselectAllSelectedRegionsWithAnimation();
@@ -850,8 +861,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     }*/
 
     [PunRPC]
-    public void RPC_RegionDistribution(Dictionary<int, int> info) {
-        foreach (var rec in info) {
+    public void RPC_RegionDistribution(Dictionary<int, int> info)
+    {
+        foreach (var rec in info)
+        {
             //Debug.LogError($"Player {rec.Key} has claimed region {rec.Value}");
 
             Player player = null;
@@ -874,8 +887,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         scoreTableManager.UpdateTable();
     }
 
-    public void GrantRandomFreeRegionToPlayer(Player player) {
-        if (!wasRpcSent) {
+    public void GrantRandomFreeRegionToPlayer(Player player)
+    {
+        if (!wasRpcSent)
+        {
             List<int> freeRegionsIndices = GetFreeRegionsIndices();
             int randId = random.Next(0, freeRegionsIndices.Count);
             pv.RPC("RPC_RegionWasChosen", RpcTarget.All, freeRegionsIndices[randId], player.colorId, "GrantRandomFreeRegionToPlayer()");
@@ -959,12 +974,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         return -1;
     }
 
-    private void GrantPlayersStartingRegions() {
-        if (PhotonNetwork.IsMasterClient) {
+    private void GrantPlayersStartingRegions()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
             Dictionary<int, int> playerIdxToRegIdx = new Dictionary<int, int>();
             List<int> regs = new List<int>(Enumerable.Range(0, regionSystem.regionSerds.Count));
 
-            for (int i = 0; i < playersManager.players.count; i++) {
+            for (int i = 0; i < playersManager.players.count; i++)
+            {
                 int playerIdx = playersManager.players.get(i).id;
                 int randRegIdx = random.Next(0, regs.Count);
 
@@ -1019,7 +1037,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         Player leavedPlayer = playersManager.leavedPlayersQueue.Dequeue();
         String hex = leavedPlayer.color.ToHexString();
-        String playerName = $"<color=#{ hex }>{leavedPlayer.nickname}</color>";
+        String playerName = $"<color=#{hex}>{leavedPlayer.nickname}</color>";
         String firstStageStr = $"<color=#00a2ff>первого этапа</color>";
 
         backToStageOneText.text = "Из-за того, что игрок " +
@@ -1050,7 +1068,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             GlobalVariables.Delay(menusTransitionTime + menusTransitionDelayTime, () =>
             {
                 fromBackToStageOneToPreparation.Set(true);
-            });        
+            });
         }
     }
 
@@ -1172,7 +1190,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < regionSystem.regionSerds.Count; i++)
             freeRegionsIndices.Add(i);
 
-            List<int> claimedRegions = new List<int>();
+        List<int> claimedRegions = new List<int>();
         for (int i = 0; i < regionSystem.regionSerds.Count; i++)
         {
             for (int p = 0; p < playersManager.players.count; p++)
@@ -1190,7 +1208,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         regionIndexes = freeRegionsIndices;
     }
 
-    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) 
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         int playerIdInList = -1;
         Player leavingPlayer = null;
@@ -1277,7 +1295,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                             attackButton.SetActive(true);
                             attackButton.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
                         }
-                    }                  
+                    }
                 }
 
                 if (regionToAttack != null)
@@ -1286,7 +1304,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     {
                         battle = StartBattle(offensePlayer, regionToAttack.hostPlayer, regionToAttack, roundsCount, maxPlayersHealth);
                         UnselectAllSelectedRegionsWithAnimation();
-                        
+
 
                         attackButton.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                         {
@@ -1305,7 +1323,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                 {
                     StartBattleWithRandomPlayer(roundsCount, maxPlayersHealth);
                 }
-            } 
+            }
 
             if (battle != null)
             {
@@ -1393,9 +1411,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RPC_AttackAnnouncementStart(int firstPlayerId, int secondPlayerId, int regionId, int roundsCount, double playersMaxHealth) {
+    public void RPC_AttackAnnouncementStart(int firstPlayerId, int secondPlayerId, int regionId, int roundsCount, double playersMaxHealth)
+    {
         playSound.SoundPlay("attack_on_the_territory");
-        
+
         Player firstPlayer = null, secondPlayer = null;
         Region region = regionSystem.regionSerds[regionId].region;
 
@@ -1408,12 +1427,15 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         regionCenter /= region.GetComponent<MeshFilter>().mesh.vertices.Length;
         Camera.main.GetComponent<MoveCameraToActiveRegion>().SetTarget(new Vector2(regionCenter.x, regionCenter.y));
 
-        for (int i = 0; i < playersManager.players.count; i++) {
-            if (playersManager.players.get(i).id == firstPlayerId) {
+        for (int i = 0; i < playersManager.players.count; i++)
+        {
+            if (playersManager.players.get(i).id == firstPlayerId)
+            {
                 firstPlayer = playersManager.players.get(i);
             }
 
-            if (playersManager.players.get(i).id == secondPlayerId) {
+            if (playersManager.players.get(i).id == secondPlayerId)
+            {
                 secondPlayer = playersManager.players.get(i);
             }
         }
@@ -1421,7 +1443,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         SelectRegionAsAttacked(region);
         if (!battleWasStarted)
         {
-            battle = StartBattle(firstPlayer, secondPlayer, region, roundsCount, playersMaxHealth);        
+            battle = StartBattle(firstPlayer, secondPlayer, region, roundsCount, playersMaxHealth);
         }
         //AttackAnnouncementStart();
     }
@@ -1483,7 +1505,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         opponentsAnnouncementOpponent2Nickname.text = player2.nickname;
         opponentsAnnouncementOpponent2Nickname.color = player2.color;
-        
+
         opponentsAnnouncementIsEnded.Set(false);
         fromOpponentsAnnouncementToBackToStageOne.Set(false);
     }
@@ -1571,7 +1593,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public void AskQuestionInBattleStart()
     {
         askQuestionInBattle.SetActive(true);
-        
+
         askQuestionInBattle.GetComponent<AskQuestionInBattle>().Init(battle.opponents[0], battle.opponents[1], battle.questions[battle.currentQuestion]);
         askQuestionInBattle.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
 
@@ -1579,8 +1601,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         fromAskQuestionInBattleToBackToStageOne.Set(false);
 
         Player me = null;
-        for (int i = 0; i < playersManager.players.count; i++) {
-            if (playersManager.players.get(i).isLocalClient) {
+        for (int i = 0; i < playersManager.players.count; i++)
+        {
+            if (playersManager.players.get(i).isLocalClient)
+            {
                 me = playersManager.players.get(i);
                 break;
             }
@@ -1589,11 +1613,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         Button[] buttons = askQuestionInBattle.GetComponent<AskQuestionInBattle>().answerButtons;
         Image[] backgrounds = askQuestionInBattle.GetComponent<AskQuestionInBattle>().answersBackgrounds;
         // какая-то неведомая херня, работает или нет – неизвестно (тип вырубить кнопки ответа спектатору и поменять цвет на серый (кнопка не активна))
-        for (int i = 0; i < playersManager.players.count; i++) {
+        for (int i = 0; i < playersManager.players.count; i++)
+        {
             if (playersManager.players.get(i).isLocalClient &&
                (playersManager.players.get(i).isLose || (battle.opponents[0].player != me && battle.opponents[1].player != me)))
             {
-                for (int j = 0; j < buttons.Length; j++) {
+                for (int j = 0; j < buttons.Length; j++)
+                {
                     buttons[j].enabled = false;
                     backgrounds[j].color = new Color32(0x4f, 0x4f, 0x4f, 0xff);
                 }
@@ -1676,9 +1702,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void BattleRoundResultsStart()
     {
-        for(int x = 0; x < battle.opponents.Length; x++) {
-            for(int y = 0; y < battle.opponents[x].playerAnswerData.Count; y++) {
-                if(battle.opponents[x].playerAnswerData[y].timeToAnswer < fastedWinner.timeToAnswer && battle.opponents[x].playerAnswerData[y].answerId >= 0) {
+        for (int x = 0; x < battle.opponents.Length; x++)
+        {
+            for (int y = 0; y < battle.opponents[x].playerAnswerData.Count; y++)
+            {
+                if (battle.opponents[x].playerAnswerData[y].timeToAnswer < fastedWinner.timeToAnswer && battle.opponents[x].playerAnswerData[y].answerId >= 0)
+                {
                     fastedWinner.player = battle.opponents[x].player;
                     fastedWinner.answer = battle.questions[battle.currentQuestion].answer[battle.opponents[x].playerAnswerData[y].answerId];
                     fastedWinner.timeToAnswer = battle.opponents[x].playerAnswerData[y].timeToAnswer;
@@ -1692,7 +1721,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         roundResults.Init(battle);
         battleRoundResults.SetActive(true);
         battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine();
-        
+
         roundResults.notification.GetComponent<CanvasGroup>().alpha = 0;
         roundResults.notification.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime).setEaseOutSine().setDelay((float)battleRoundResultsNotificationDelay);
         roundIsEnded.Set(false);
@@ -1718,9 +1747,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             battleRoundResults.GetComponent<BattleRoundResults>().UpdateOpponentsHealthGradudally(opponentsHealthUpdatingTime);
             battleRoundResults.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setDelay(battleRoundResultsDisappearingTime).
                 setOnComplete(() =>
-            {
-                battleRoundResults.SetActive(false);
-            });
+                {
+                    battleRoundResults.SetActive(false);
+                });
 
             GlobalVariables.Delay(battleRoundResultsDisappearingTime + menusTransitionDelayTime, () =>
             {
@@ -1802,7 +1831,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                         UnselectAttackedRegion();
                     });
                 }
-                
+
                 closeBattleResultsTimer = double.NaN;
             }
 
@@ -1876,7 +1905,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     public WinnerPerson GetFastedWinner()
     {
         TilesWordInfo tilesWordInfo = new TilesWordInfo();
-        for(int x = 0; x < fastedWinner.answer.Length; x++)
+        for (int x = 0; x < fastedWinner.answer.Length; x++)
             tilesWordInfo.tiles.Add(new LetterWithPoints(fastedWinner.answer[x], 0));
 
         WinnerPerson winner = new WinnerPerson();
@@ -1890,8 +1919,8 @@ public class GameplayManager : MonoBehaviourPunCallbacks
     {
         Player winnerPlayer = null;
         maxClaimedRegions = -1;
-        for(int x = 0; x < playersManager.players.count; x++)
-            if(playersManager.players.get(x).claimedRegions.Count > maxClaimedRegions)
+        for (int x = 0; x < playersManager.players.count; x++)
+            if (playersManager.players.get(x).claimedRegions.Count > maxClaimedRegions)
             {
                 maxClaimedRegions = playersManager.players.get(x).claimedRegions.Count;
                 winnerPlayer = playersManager.players.get(x);
@@ -1937,7 +1966,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             uiInterface.SetActive(false);
         });
         loadingScreen.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setDelay((float)(menusTransitionTime * 2 + endGameAnnouncmentTime + endGameLoadingScreenTime))
-            .setOnComplete(() => { 
+            .setOnComplete(() => {
                 loadingScreen.SetActive(false);
 
             });
@@ -1950,14 +1979,14 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         losePlayerAnnouncement.SetActive(true);
         losePlayerAnnouncementText.text = "Игрок " + "<color=#" + battle.GetLoser().player.color.ToHexString().Substring(0, 6) + ">" + battle.GetLoser().player.nickname + "</color> потерял все территории";
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(1, menusTransitionTime);
-        GlobalVariables.Delay(menusTransitionTime + losePlayerAnnouncmentTime / 2.0, () => { 
+        GlobalVariables.Delay(menusTransitionTime + losePlayerAnnouncmentTime / 2.0, () => {
             scoreTableManager.FindRowByPlayer(battle.GetLoser().player).GetComponent<ScoreTableRow>().isLose = true;
-            while(playersManager.players.get(currentOffensivePlayer).isLose)
+            while (playersManager.players.get(currentOffensivePlayer).isLose)
                 currentOffensivePlayer = (currentOffensivePlayer + 1) % playersManager.players.count;
-    });
+        });
         losePlayerAnnouncement.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime)
             .setDelay((float)(menusTransitionTime + losePlayerAnnouncmentTime))
-            .setOnComplete(() => { 
+            .setOnComplete(() => {
                 losePlayerAnnouncement.SetActive(false);
                 if (steps >= maxSteps || battle.GetWinner().player.claimedRegions.Count >= regionSystem.regionSerds.Count)
                     fromLosePlayerToEndGame.Set(true);
@@ -1968,7 +1997,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
     public void LosePlayerUpdate()
     {
-        
+
     }
 
     public void EndGameUpdate()
@@ -1986,9 +2015,10 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         random = new System.Random((int)PhotonNetwork.CurrentRoom.CustomProperties["seed"]);
         regionIndexes.AddRange(Enumerable.Range(0, regionSystem.regionSerds.Count));
-          
+
         int idx = 0;
-        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList) {
+        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+        {
             playersManager.connected(new Player(player.ActorNumber - 1,
                                                 (int)player.CustomProperties["playerIconId"],
                                                 (int)player.CustomProperties["playerColorIndex"],
@@ -2131,12 +2161,12 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(secondStageHintState);
 
         fromStageTwoAnnouncementToSecondStageHint = new SynchronizedBoolCondition(playersManager, pv, true);
-        gameStateMachine.AddTransition(new Transition(fromStageTwoAnnouncementToSecondStageHint, 
-                                                      stageTwoAnnouncementState, 
-                                                      secondStageHintState, 
+        gameStateMachine.AddTransition(new Transition(fromStageTwoAnnouncementToSecondStageHint,
+                                                      stageTwoAnnouncementState,
+                                                      secondStageHintState,
                                                       gameStateMachine));
 
-        
+
 
         fromStageTwoAnnouncementToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
         gameStateMachine.AddTransition(new Transition(fromStageTwoAnnouncementToBackToStageOne,
@@ -2165,9 +2195,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.AddTransition(new Transition(fromSecondStageHintToOffensivePlayerSelection, secondStageHintState, offensivePlayerSelectionState, gameStateMachine));
 
         offensivePlayerSelectionCond = new SynchronizedBoolCondition(playersManager, pv, true);
-        gameStateMachine.AddTransition(new Transition(offensivePlayerSelectionCond, 
-                                                        stageTwoAnnouncementState, 
-                                                        offensivePlayerSelectionState, 
+        gameStateMachine.AddTransition(new Transition(offensivePlayerSelectionCond,
+                                                        stageTwoAnnouncementState,
+                                                        offensivePlayerSelectionState,
                                                         gameStateMachine));
 
         fromOffensivePlayerSelectionToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
@@ -2252,9 +2282,9 @@ public class GameplayManager : MonoBehaviourPunCallbacks
         gameStateMachine.states.Add(battleRoundResultsState);
 
         correctAnsewerRevealingInBattleIsEnded = new SynchronizedBoolCondition(playersManager, pv, true);
-        gameStateMachine.AddTransition(new Transition(correctAnsewerRevealingInBattleIsEnded, 
-                                                        correctAnsewerRevealingInBattleState, 
-                                                        battleRoundResultsState, 
+        gameStateMachine.AddTransition(new Transition(correctAnsewerRevealingInBattleIsEnded,
+                                                        correctAnsewerRevealingInBattleState,
+                                                        battleRoundResultsState,
                                                         gameStateMachine));
 
         fromBattleRoundResultsToBackToStageOne = new SynchronizedBoolCondition(playersManager, pv, true);
@@ -2338,7 +2368,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     if (gameStateMachine.states[i] == endGameState)
                     {
                         gameStateMachine.activeState = i;
-                        EndGameStart(); 
+                        EndGameStart();
                         break;
                     }
                 }
@@ -2386,7 +2416,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
             {
                 region.SetColor(unclaimedRegionColor);
                 region.SetOutlineColor(unclaimedRegionColor);
-            }             
+            }
         }
     }
 
@@ -2400,13 +2430,13 @@ public class GameplayManager : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < playersManager.players.count; i++)
         {
-            for(int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++)
+            for (int j = 0; j < playersManager.players.get(i).claimedRegions.Count; j++)
             {
                 playersManager.players.get(i).claimedRegions[j].SetColor(playersManager.players.get(i).color);
             }
         }
     }
-    
+
     public void SetNextQuestionTimeText(double seconds)
     {
         int minutes = (int)seconds / 60;
