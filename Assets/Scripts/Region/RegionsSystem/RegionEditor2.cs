@@ -170,7 +170,7 @@ public class RegionEditor2 : Editor
             guiEvent.button == 0 &&
             guiEvent.modifiers == EventModifiers.Shift;
 
-        bool shift = guiEvent.modifiers == EventModifiers.Shift;
+        //bool shift = guiEvent.modifiers == EventModifiers.Shift;
 
         if (onlyLeftMouseDown)
             CreatePointOnMousePositionInSelectedRegionSerd();
@@ -210,8 +210,8 @@ public class RegionEditor2 : Editor
             }
         }
 
-        if (shift)
-            RecreateRegions();
+        //if (shift)
+        //    RecreateRegions();
     }
 
     public void RecreateRegions()
