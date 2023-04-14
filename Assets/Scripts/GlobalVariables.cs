@@ -22,18 +22,22 @@ public class GlobalVariables : MonoBehaviour
 
     public static string GetTimeStr(double seconds)
     {
-        int minutes = (int)seconds / 60;
-        int restOfSeconds = (int)seconds % 60;
+        int minutes = (int)(seconds / 60);
+        int restOfSeconds = (int)(seconds % 60);
+        int milliseconds = (int)(seconds * 100) % 100;
 
         string minutesNonsignificantZero = "";
         string secondsNonsignificantZero = "";
+        string millisecondsNonsignificantZero = "";
 
         if (Math.Abs(minutes) < 10)
             minutesNonsignificantZero = "0";
         if (Math.Abs(restOfSeconds) < 10)
             secondsNonsignificantZero = "0";
+        if (Math.Abs(milliseconds) < 10)
+            millisecondsNonsignificantZero = "0";
 
-        return $"{minutesNonsignificantZero + minutes}:{secondsNonsignificantZero + restOfSeconds}";
+        return $"{minutesNonsignificantZero + minutes}:{secondsNonsignificantZero + restOfSeconds},{millisecondsNonsignificantZero + milliseconds}";
     }
 
     public class DelayClock
