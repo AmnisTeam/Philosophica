@@ -231,7 +231,7 @@ public class BattleRoundResults : MonoBehaviour
         if (opponentAnswerId >= 0)
         {
             answer = battle.questions[battle.currentQuestion].answer[opponentAnswerId];
-            time = GlobalVariables.GetTimeStr(opponent.playerAnswerData[opponentLastAnswerData].timeToAnswer);
+            time = GetTimeStrBattle(opponent.playerAnswerData[opponentLastAnswerData].timeToAnswer);
         }          
 
         playerRow.Init(
@@ -243,6 +243,26 @@ public class BattleRoundResults : MonoBehaviour
 
         if (opponentAnswerId == battle.questions[battle.currentQuestion].idRightAnswer)
             playerRow.answerText.color = correctAnswerColor;
+    }
+
+    private string GetTimeStrBattle(double seconds)
+    {
+        int minutes = (int)(seconds / 60);
+        int restOfSeconds = (int)(seconds % 60);
+        int milliseconds = (int)(seconds * 100) % 100;
+
+        string minutesNonsignificantZero = "";
+        string secondsNonsignificantZero = "";
+        string millisecondsNonsignificantZero = "";
+
+        if (Math.Abs(minutes) < 10)
+            minutesNonsignificantZero = "0";
+        if (Math.Abs(restOfSeconds) < 10)
+            secondsNonsignificantZero = "0";
+        if (Math.Abs(milliseconds) < 10)
+            millisecondsNonsignificantZero = "0";
+
+        return $"{minutesNonsignificantZero + minutes}:{secondsNonsignificantZero + restOfSeconds},{millisecondsNonsignificantZero + milliseconds}";
     }
 
     public void ClearContent()

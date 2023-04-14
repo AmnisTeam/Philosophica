@@ -37,7 +37,7 @@ public class GlobalVariables : MonoBehaviour
         if (Math.Abs(milliseconds) < 10)
             millisecondsNonsignificantZero = "0";
 
-        return $"{minutesNonsignificantZero + minutes}:{secondsNonsignificantZero + restOfSeconds},{millisecondsNonsignificantZero + milliseconds}";
+        return $"{minutesNonsignificantZero + minutes}:{secondsNonsignificantZero + restOfSeconds}";
     }
 
     public class DelayClock
