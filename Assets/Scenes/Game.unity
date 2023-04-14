@@ -1146,7 +1146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2323598559570718962, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -7.96994
+      value: -7.9699707
       objectReference: {fileID: 0}
     - target: {fileID: 4550593499702400207, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1170,7 +1170,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6542447823186107736, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -7.96994
+      value: -7.9699707
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b0dfe39b5e171b42ad929e2af71b7ec, type: 3}
@@ -9771,7 +9771,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &393300068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9919,14 +9919,14 @@ MonoBehaviour:
     - {x: -4.8731728, y: -0.25918543, z: 0}
     needDestroyRegion: 0
   regions:
-  - {fileID: 1615332949}
-  - {fileID: 2102410128}
-  - {fileID: 1945807259}
-  - {fileID: 0}
-  - {fileID: 119281754}
-  - {fileID: 2031875832}
-  - {fileID: 796295937}
-  - {fileID: 798499898}
+  - {fileID: 750594783}
+  - {fileID: 1622689518}
+  - {fileID: 2082833173}
+  - {fileID: 1894940190}
+  - {fileID: 1385056256}
+  - {fileID: 1799162943}
+  - {fileID: 2119593884}
+  - {fileID: 228631302}
   showRegionsList: 0
   handleRadius: 0.03
   nextRegionColor: {r: 1, g: 0.7103611, b: 0, a: 0}
