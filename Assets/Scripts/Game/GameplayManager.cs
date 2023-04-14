@@ -1809,7 +1809,7 @@ public class GameplayManager : MonoBehaviourPunCallbacks
                     battleResultsVictory.GetComponent<CanvasGroup>().LeanAlpha(0, menusTransitionTime).setEaseOutSine().setOnComplete(() =>
                     {
                         battleResultsVictory.SetActive(false);
-                        if (!playersManager.DidSomeoneLeave())
+                        if (!(playersManager.DidSomeoneLeave() && playersManager.IsHaveNotLose()))
                         {
                             if (battle.GetDefender().player != battle.GetWinner().player)
                             {
