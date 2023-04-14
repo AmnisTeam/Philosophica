@@ -6526,8 +6526,8 @@ MonoBehaviour:
   currentQuestion: 0
   currentOffensivePlayer: 0
   viewResultsTime: 7
-  regionSelectionMaxTime: 15
-  preparationTime: 10
+  regionSelectionMaxTime: 10
+  preparationTime: 3
   stageTwoAnnouncmentTime: 2
   offensivePlayerSelectionTime: 10
   attackAnnouncementTime: 10
